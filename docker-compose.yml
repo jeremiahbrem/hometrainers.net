@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  frontend:
+    container_name: frontend
+    depends_on:
+      - backend
+    stdin_open: true
+    build:
+      context: ./frontend
+      target: runner
+    volumes:
+      - "./frontend:/app"
+    ports:
+      - "3000:3000"
+  backend:
+    container_name: backend
+    volumes:
+      - "./backend:/app"
+    build:
+      context: ./backend
+    ports:
+      - 8080:8080

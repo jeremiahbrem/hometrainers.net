@@ -1,0 +1,3 @@
+name: homepersonaltrainers.net
+runtime: go
+description: A minimal Google Cloud Go Pulumi program
