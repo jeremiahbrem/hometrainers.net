@@ -25,7 +25,7 @@ jobs:
     docker:
       - image: google/cloud-sdk
     environment:
-      $GOOGLE_CREDS: /home/circleci/gcp-credentials.json
+      GOOGLE_CREDS: /home/circleci/gcp-credentials.json
     steps:
       - checkout
       - setup_remote_docker
