@@ -35,6 +35,7 @@ jobs:
       - run:
           command: go mod tidy
           working_directory: ~/project/infrastructure
+      - run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
       - pulumi/login
       - pulumi/update:
           stack: home-personal-trainers/homepersonaltrainers.net/dev
