@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"runtime/debug"
+
 	"github.com/pulumi/pulumi-docker/sdk/v4/go/docker"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/artifactregistry"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/cloudrun"
@@ -47,7 +50,20 @@ func main() {
 
 		repoUrl := pulumi.Sprintf("%s-docker.pkg.dev/%s/%s", repository.Location, projectId, repository.RepositoryId)
 
-		var backendImageName = "backend:latest"
+		var gitHash = func() string {
+			if info, ok := debug.ReadBuildInfo(); ok {
+				for _, setting := range info.Settings {
+					if setting.Key == "vcs.revision" {
+						return setting.Value[0:6]
+					}
+				}
+			}
+
+			return ""
+		}()
+
+		var backendImageName = fmt.Sprintf("backend:%v", gitHash)
+		fmt.Println(backendImageName)
 
 		backend, _ := docker.NewImage(ctx, "backend", &docker.ImageArgs{
 			Registry:  docker.RegistryArgs{},
@@ -81,7 +97,7 @@ func main() {
 			Role:     pulumi.String("roles/run.invoker"),
 		})
 
-		var frontendImageName = "frontend:latest"
+		var frontendImageName = fmt.Sprintf("frontend:%v", gitHash)
 
 		frontend, _ := docker.NewImage(ctx, "frontend", &docker.ImageArgs{
 			Registry:  docker.RegistryArgs{},
