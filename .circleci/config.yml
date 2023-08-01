@@ -35,7 +35,7 @@ jobs:
       - run:
           command: go mod tidy
           working_directory: ~/project/infrastructure
-      - run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS --quiet
+      - run: echo $GOOGLE_APPLICATION_CREDENTIALS | gcloud auth activate-service-account --key-file=- --quiet
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       # - run: gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
       # - pulumi/login
