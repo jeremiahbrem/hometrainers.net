@@ -36,7 +36,7 @@ jobs:
     working_directory: infrastructure
     steps:
       - checkout
-      - pulumi/login:
+      - pulumi/login
       - pulumi/update:
           stack: homepersonaltrainers.net/dev
   # deploy:
