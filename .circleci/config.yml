@@ -36,6 +36,7 @@ jobs:
     working_directory: infrastructure
     steps:
       - checkout
+      - run: mkdir keys
       - run: echo $GCP_CREDENTIALS | base64 -di > keys/gcp-credentials.json
       - gcp-cli/install
       - run: gcloud auth activate-service-account --key-file=keys/gcp-credentials.json --quiet
