@@ -35,7 +35,6 @@ jobs:
           command: go mod tidy
           working_directory: ~/project/infrastructure
       - pulumi/login:
-          access-token: ${PULUMI_ACCESS_TOKEN}
       - pulumi/update:
           stack: home-personal-trainers/homepersonaltrainers.net/dev
           working_directory: ~/project/infrastructure
