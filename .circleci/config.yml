@@ -35,7 +35,7 @@ jobs:
       - run:
           command: go mod tidy
           working_directory: ~/project/infrastructure
-      - run: echo $GOOGLE_CREDENTIALS | base64 --decode > gcp-credentials.json
+      - run: echo $GOOGLE_CREDENTIALS | base64 > gcp-credentials.json
       - run: gcloud auth activate-service-account --key-file=gcp-credentials.json --quiet
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - pulumi/login
