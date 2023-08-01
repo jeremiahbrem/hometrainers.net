@@ -40,7 +40,7 @@ jobs:
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - pulumi/login
       - pulumi/update:
-          stack: homepersonaltrainers.net/dev
+          stack: home-personal-trainers/homepersonaltrainers.net/dev
   # deploy:
   #   docker:
   #     - image: cimg/node:16.20s
