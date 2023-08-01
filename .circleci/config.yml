@@ -2,6 +2,7 @@ version: 2.1
 orbs:
   pulumi: pulumi/pulumi@2.1.0
   gcp-cli: circleci/gcp-cli@3.0.1
+  go: circle/go@1.7.3
 commands:
   build-docker-image:
     description: Builds a docker image and tags it with the current Git commit hash
@@ -35,6 +36,9 @@ jobs:
       - image: google/cloud-sdk
     steps:
       - checkout
+      - go/load-cache
+      - go/mod-download
+      - go/save-cache
       - run: echo $GCP_CREDENTIALS | gcloud auth activate-service-account --key-file=-
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - pulumi/login
