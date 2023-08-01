@@ -40,7 +40,7 @@ jobs:
     steps:
       - checkout
       - go/install:
-          version: 1.20
+          version: "1.20"
       - run:
           command: go mod download
           working_directory: ~/project/infrastructure
