@@ -39,7 +39,8 @@ jobs:
       - image: google/cloud-sdk
     steps:
       - checkout
-      - go/install 1.18
+      - go/install:
+          version: 1.20
       - run:
           command: go mod download
           working_directory: ~/project/infrastructure
