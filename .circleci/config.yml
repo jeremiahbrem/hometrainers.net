@@ -30,6 +30,18 @@ jobs:
       - setup_remote_docker
       - build-docker-image:
           context: frontend
+  deploy:
+    docker:
+      - image: circleci/node:10
+    working_directory: infrastructure
+    steps:
+      - checkout
+      - pulumi/login:
+          version: 16.0.2
+          access-token: ${PULUMI_TOKEN}
+      - pulumi/update:
+          stack: homepersonaltrainers.net/dev
+          working_directory: ~/repo/src/website/
   # deploy:
   #   docker:
   #     - image: cimg/node:16.20
@@ -66,3 +78,4 @@ workflows:
     jobs:
       - build-backend
       - build-frontend
+      - deploy
