@@ -11,8 +11,7 @@ commands:
       context:
         type: string
     steps:
-      - run: echo $GCP_CREDENTIALS | base64 -di > $GOOGLE_APPLICATION_CREDENTIALS
-      - run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS --quiet
+      - run: gcloud auth activate-service-account --key-file=$GCP_CREDENTIALS --quiet
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - run: docker build << parameters.context >> -t << parameters.image >>
       - run: docker push << parameters.image >>
