@@ -21,7 +21,6 @@ jobs:
     docker:
       - image: google/cloud-sdk
     environment:
-      GOOGLE_APPLICATION_CREDENTIALS: /root/tls-gce-credentials.json
       DOCKER_CLI_EXPERIMENTAL: enabled
     steps:
       - checkout
