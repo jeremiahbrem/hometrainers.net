@@ -32,6 +32,9 @@ jobs:
       - build-docker-image:
           context: frontend
   deploy:
+    executor:
+      name: go/default
+      tag: '1.16'
     docker:
       - image: google/cloud-sdk
     steps:
