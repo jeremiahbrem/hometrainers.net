@@ -26,6 +26,7 @@ jobs:
       - image: google/cloud-sdk
     steps:
       - checkout
+      - setup-remote-docker
       - go/install:
           version: "1.20"
       - run:
