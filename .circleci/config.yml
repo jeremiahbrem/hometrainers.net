@@ -1,0 +1,69 @@
+version: 2.1
+orbs:
+  pulumi: pulumi/pulumi@2.1.0
+  gcp-cli: circleci/gcp-cli@3.0.1
+commands:
+  build-docker-image:
+    description: Builds a docker image and tags it with the current Git commit hash
+    parameters:
+      image:
+        type: string
+      context:
+        type: string
+    steps:
+      - run: echo $GOOGLE_CREDS_JSON | base64 -di > $GOOGLE_APPLICATION_CREDENTIALS
+      - run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS --quiet
+      - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+      - run: docker build << parameters.context >> -t << parameters.image >>
+      - run: docker push << parameters.image >>
+jobs:
+  build-backend:
+    docker:
+      - image: google/cloud-sdk
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /root/tls-gce-credentials.json
+      DOCKER_CLI_EXPERIMENTAL: enabled
+    steps:
+      - checkout
+      - setup_remote_docker
+      - build-docker-image:
+          image: us-central1-docker.pkg.dev/quiet-platform-392619/repo-7grq/backend:latest
+          context: backend
+  # deploy:
+  #   docker:
+  #     - image: cimg/node:16.20
+  #   environment:
+  #     GOOGLE_APPLICATION_CREDENTIALS: /home/circleci/gcp-credentials.json
+  #   steps:
+  #     - run: echo $GCP_CREDENTIALS | base64 -di > $GOOGLE_APPLICATION_CREDENTIALS
+  #     - setup_remote_docker
+  #     - gcp-cli/install
+  #     - run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS --quiet
+  #     - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+  #     - checkout
+  #     - restore_cache:
+  #         keys:
+  #           - v2-deps-{{ checksum "/home/circleci/project/infrastructure/package.json" }}
+  #           - v2-deps-
+  #     - run:
+  #         command: npm ci
+  #         working_directory: ~/project/infrastructure
+  #     - save_cache:
+  #         key: v2-deps-{{ checksum "/home/circleci/project/infrastructure/package.json" }}
+  #         paths:
+  #           - src/frontend/node_modules
+  #     - pulumi/login
+  #     - pulumi/refresh:
+  #         stack: home-personal-trainers/dev
+  #         working_directory: ~/project/infrastructure
+  #     - pulumi/update:
+  #         stack: home-personal-trainers/dev
+  #         working_directory: ~/project/infrastructure
+workflows:
+  version: 2
+  cd:
+    jobs:
+      - build
+      - deploy:
+          context:
+            - Pulumi
