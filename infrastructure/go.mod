@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/pulumi/pulumi-docker/sdk/v4 v4.3.1
 	github.com/pulumi/pulumi-gcp/sdk/v6 v6.61.1
+	github.com/pulumi/pulumi-random/sdk/v4 v4.13.2
 	github.com/pulumi/pulumi/sdk/v3 v3.76.1
 )
 
@@ -42,7 +43,6 @@ require (
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/term v1.1.0 // indirect
-	github.com/pulumi/pulumi-random/sdk/v4 v4.13.2 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06 // indirect
@@ -64,7 +64,6 @@ require (
 	golang.org/x/sys v0.10.0 // indirect
 	golang.org/x/term v0.10.0 // indirect
 	golang.org/x/text v0.11.0 // indirect
-	google.golang.org/genproto v0.0.0-20230706204954-ccb25ca9f130 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230726155614-23370e0ffb3e // indirect
 	google.golang.org/grpc v1.56.2 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
