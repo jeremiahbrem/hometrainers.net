@@ -32,7 +32,7 @@ jobs:
           context: frontend
   deploy:
     docker:
-      - image: circleci/node:16.15
+      - image: google/cloud-sdk
     working_directory: infrastructure
     steps:
       - checkout
