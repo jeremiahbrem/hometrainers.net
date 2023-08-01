@@ -63,7 +63,4 @@ workflows:
   version: 2
   cd:
     jobs:
-      - build
-      - deploy:
-          context:
-            - Pulumi
+      - build-backend
