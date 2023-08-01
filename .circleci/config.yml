@@ -34,7 +34,7 @@ jobs:
   deploy:
     executor:
       name: go/default
-      tag: '1.16'
+      tag: '2.00'
     docker:
       - image: google/cloud-sdk
     steps:
