@@ -39,9 +39,12 @@ jobs:
       - image: google/cloud-sdk
     steps:
       - checkout
-      - go/install:
+      - go/install 1.18
+      - run:
+          command: go mod download
           working_directory: ~/project/infrastructure
-      - go/mod-download:
+      - run:
+          command: go mod tidy
           working_directory: ~/project/infrastructure
       - run: echo $GCP_CREDENTIALS | gcloud auth activate-service-account --key-file=-
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
