@@ -37,11 +37,12 @@ jobs:
       tag: '1.16'
     docker:
       - image: google/cloud-sdk
-    working_directory: ~/project/infrastructure
     steps:
       - checkout
       - go/install
-      - run: go mod download
+      - run:
+        command: go mod download
+        working_directory: ~/project/infrastructure
       - run: echo $GCP_CREDENTIALS | gcloud auth activate-service-account --key-file=-
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - pulumi/login
