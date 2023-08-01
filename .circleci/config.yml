@@ -36,6 +36,7 @@ jobs:
     working_directory: infrastructure
     steps:
       - checkout
+      - setup_remote_docker
       - pulumi/login:
           version: 16.0.2
           access-token: ${PULUMI_TOKEN}
@@ -76,6 +77,6 @@ workflows:
   version: 2
   cd:
     jobs:
-      - build-backend
-      - build-frontend
+      # - build-backend
+      # - build-frontend
       - deploy
