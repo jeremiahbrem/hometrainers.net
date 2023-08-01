@@ -4,4 +4,13 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
+
+  .title {
+    display: flex;
+    align-items: center;
+    img {
+      width: 12vw;
+      height: 12vw;
+    }
+  }
 }

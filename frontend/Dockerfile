@@ -12,6 +12,8 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
+RUN npm run build
+
 FROM node:18-alpine AS runner
 WORKDIR /app
 
@@ -24,6 +26,7 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-COPY scripts/docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
-ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
+# COPY scripts/docker-entrypoint.sh /
+# RUN chmod +x /docker-entrypoint.sh
+# ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
+ENTRYPOINT ["npm", "run", "start"]
