@@ -36,9 +36,9 @@ jobs:
     working_directory: infrastructure
     steps:
       - checkout
-      - run: echo $GCP_CREDENTIALS | base64 -d > gcp-credentials.json
+      - run: echo $GCP_CREDENTIALS | base64 -di > keys/gcp-credentials.json
       - gcp-cli/install
-      - run: gcloud auth activate-service-account --key-file=gcp-credentials.json --quiet
+      - run: gcloud auth activate-service-account --key-file=keys/gcp-credentials.json --quiet
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - pulumi/login
       - pulumi/update:
