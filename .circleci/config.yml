@@ -36,16 +36,16 @@ jobs:
     working_directory: infrastructure
     steps:
       - checkout
-      - run: echo $GCP_CREDENTIALS | base64 -di > $GOOGLE_APPLICATION_CREDENTIALS
+      - run: echo $GCP_CREDENTIALS | base64 -d > gcp-credentials.json
       - gcp-cli/install
-      - run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS --quiet
+      - run: gcloud auth activate-service-account --key-file=gcp-credentials.json --quiet
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - pulumi/login
       - pulumi/update:
           stack: homepersonaltrainers.net/dev
   # deploy:
   #   docker:
-  #     - image: cimg/node:16.20
+  #     - image: cimg/node:16.20s
   #   environment:
   #     GOOGLE_APPLICATION_CREDENTIALS: /home/circleci/gcp-credentials.json
   #   steps:
