@@ -32,17 +32,13 @@ jobs:
           context: frontend
   deploy:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:16.15
     working_directory: infrastructure
     steps:
       - checkout
-      - setup_remote_docker
       - pulumi/login:
-          version: 16.0.2
-          access-token: ${PULUMI_TOKEN}
       - pulumi/update:
           stack: homepersonaltrainers.net/dev
-          working_directory: ~/repo/src/website/
   # deploy:
   #   docker:
   #     - image: cimg/node:16.20
