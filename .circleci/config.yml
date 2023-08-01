@@ -37,6 +37,7 @@ jobs:
       tag: '1.16'
     docker:
       - image: google/cloud-sdk
+    working_directory: ~/project/infrastructure
     steps:
       - checkout
       - go/install
