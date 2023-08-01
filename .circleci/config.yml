@@ -11,8 +11,8 @@ commands:
       context:
         type: string
     steps:
-      - run: echo $GCP_CREDENTIALS /gcp-credentials.json
-      - run: gcloud auth activate-service-account --key-file=/gcp-credentials.json --quiet
+      - run: echo $GCP_CREDENTIALS > gcp-credentials.json
+      - run: gcloud auth activate-service-account --key-file=gcp-credentials.json --quiet
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - run: docker build << parameters.context >> -t << parameters.image >>
       - run: docker push << parameters.image >>
