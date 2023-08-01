@@ -12,6 +12,7 @@ commands:
         type: string
     steps:
       - run: echo $GOOGLE_CREDS_JSON | base64 -di > $GOOGLE_APPLICATION_CREDENTIALS
+      - run: echo $GOOGLE_CREDS_JSON | base64 -di > /home/circleci/gcp-credentials.json
       - run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS --quiet
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - run: docker build << parameters.context >> -t << parameters.image >>
