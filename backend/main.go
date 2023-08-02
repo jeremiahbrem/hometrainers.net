@@ -15,7 +15,7 @@ func main() {
 	out, _ := cmd.Output()
 
 	fmt.Println("Output: ", string(out))
-	r.GET("/api", func(c *gin.Context) {
+	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"status": "ok",
 		})
