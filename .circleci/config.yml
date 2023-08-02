@@ -48,6 +48,15 @@ workflows:
   version: 2
   cd:
     jobs:
-      # - build-backend
-      # - build-frontend
-      - deploy
+      - build-backend:
+          filters:
+            ignore:
+              - main
+      - build-frontend:
+          filters:
+            ignore:
+              - main
+      # - deploy:
+      #     filters:
+      #       only:
+      #         - main
