@@ -1,6 +1,6 @@
 import Layout from '@/components/layout/layout'
 import styles from './page.module.scss'
-import { Metadata } from 'next'
+import { GetServerSideProps, Metadata } from 'next'
 import Image from 'next/image'
  
 export const metadata: Metadata = {
@@ -11,7 +11,16 @@ export const metadata: Metadata = {
   }
 }
 
-export default function Page() {
+type PageProps = { status: string }
+
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
+  const res = await fetch(`${process.env.API}`)
+  const result = await res.json()
+  return { props: { status: result.status } }
+}
+
+export default function Page(props: PageProps) {
+  console.log("status is:", props.status)
   return (
     <Layout>
       <div className={styles.container}>
