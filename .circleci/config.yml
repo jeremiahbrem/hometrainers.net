@@ -50,13 +50,16 @@ workflows:
     jobs:
       - build-backend:
           filters:
-            ignore:
-              - main
+            branches:
+              ignore:
+                - main
       - build-frontend:
           filters:
-            ignore:
-              - main
+            branches:
+              ignore:
+                - main
       - deploy:
           filters:
-            only:
-              - main
+            branches:
+              only:
+                - main
