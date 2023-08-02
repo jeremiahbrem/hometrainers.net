@@ -26,7 +26,6 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-# COPY scripts/docker-entrypoint.sh /
-# RUN chmod +x /docker-entrypoint.sh
-# ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
-ENTRYPOINT ["npm", "run", "start"]
+COPY scripts/docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
