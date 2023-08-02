@@ -39,7 +39,9 @@ jobs:
       - run: gcloud auth activate-service-account --key-file=gcp-credentials.json --quiet
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - pulumi/login
-      - pulumi/refresh
+      - pulumi/refresh:
+          stack: home-personal-trainers/homepersonaltrainers.net/dev
+          working_directory: ~/project/infrastructure
       - pulumi/update:
           stack: home-personal-trainers/homepersonaltrainers.net/dev
           working_directory: ~/project/infrastructure
