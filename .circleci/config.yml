@@ -10,14 +10,14 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - docker build backend
+      - run: docker build backend
   build-frontend:
     docker:
       - image: google/cloud-sdk
     steps:
       - checkout
       - setup_remote_docker
-      - docker build frontend
+      - run: docker build frontend
   deploy:
     executor:
       name: go/default
@@ -50,6 +50,18 @@ workflows:
   version: 2
   cd:
     jobs:
-      # - build-backend
-      # - build-frontend
-      - deploy
+      - build-backend:
+          filters:
+            branches:
+              ignore:
+                - main
+      - build-frontend:
+          filters:
+            branches:
+              ignore:
+                - main
+      - deploy:
+          filters:
+            branches:
+              only:
+                - main
