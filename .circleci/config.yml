@@ -56,7 +56,7 @@ workflows:
           filters:
             ignore:
               - main
-      # - deploy:
-      #     filters:
-      #       only:
-      #         - main
+      - deploy:
+          filters:
+            only:
+              - main
