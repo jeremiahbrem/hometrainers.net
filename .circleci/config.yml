@@ -41,6 +41,7 @@ jobs:
       - pulumi/login
       - pulumi/refresh:
           stack: home-personal-trainers/homepersonaltrainers.net/dev
+          working_directory: ~/project/infrastructure
       - pulumi/update:
           stack: home-personal-trainers/homepersonaltrainers.net/dev
           working_directory: ~/project/infrastructure
