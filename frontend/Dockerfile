@@ -24,10 +24,6 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-RUN apt-get update 
-RUN apt-get install -y gcc
-RUN apt-get install -y curl
-
 COPY scripts/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
