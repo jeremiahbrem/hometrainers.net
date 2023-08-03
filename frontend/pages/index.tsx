@@ -1,6 +1,6 @@
 import Layout from '@/components/layout/layout'
 import styles from './page.module.scss'
-import { GetStaticProps, Metadata } from 'next'
+import { GetStaticProps, GetServerSideProps, Metadata } from 'next'
 import Image from 'next/image'
 
 export const metadata: Metadata = {
@@ -13,7 +13,12 @@ export const metadata: Metadata = {
 
 type PageProps = { status: string }
 
-export const getStaticProps: GetStaticProps<PageProps> = async () => {
+// export const getStaticProps: GetStaticProps<PageProps> = async () => {
+//   const res = await fetch(`${process.env.api}`)
+//   const result = await res.json()
+//   return { props: { status: result.status } }
+// }
+export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
   const res = await fetch(`${process.env.api}`)
   const result = await res.json()
   return { props: { status: result.status } }
