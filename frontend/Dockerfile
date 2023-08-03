@@ -25,7 +25,6 @@ EXPOSE 3000
 ENV PORT 3000
 
 RUN apk --no-cache add curl
-RUN while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' ${BACKEND_URL})" != "200" ]]; do sleep 5; done
 
 COPY scripts/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
