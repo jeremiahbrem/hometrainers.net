@@ -2,7 +2,7 @@
 const nextConfig = {
   env: {
     api: process.env.NODE_ENV === 'production'
-      ? 'httpsx://homepersonaltrainers.net/api'
+      ? 'http://backend:8080'
       : 'http://localhost:8080'
   }
 }
