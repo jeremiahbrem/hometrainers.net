@@ -1,5 +1,6 @@
 FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat
+RUN apk --no-cache add curl
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -23,8 +24,6 @@ COPY --from=builder /app ./
 EXPOSE 3000
 
 ENV PORT 3000
-
-RUN npm run backend-wait
 
 COPY scripts/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
