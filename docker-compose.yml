@@ -8,6 +8,8 @@ services:
       context: ./backend
     ports:
       - 8080:8080
+    networks:
+      - my-network
   frontend:
     container_name: frontend
     depends_on:
@@ -21,3 +23,7 @@ services:
       - "./frontend:/app"
     ports:
       - "3000:3000"
+    networks:
+      - my-network
+  networks:
+    my-network:
