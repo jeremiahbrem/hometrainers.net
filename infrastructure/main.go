@@ -137,7 +137,7 @@ func main() {
 			Role:     pulumi.String("roles/run.invoker"),
 		})
 
-		cloudrun.NewDomainMapping(ctx, "frontend-domain-mapping", &cloudrun.DomainMappingArgs{
+		cloudrun.NewDomainMapping(ctx, "domain-mapping", &cloudrun.DomainMappingArgs{
 			Location: pulumi.String(location),
 			Metadata: &cloudrun.DomainMappingMetadataArgs{
 				Namespace: pulumi.String(projectId),
