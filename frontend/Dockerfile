@@ -24,8 +24,6 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
-COPY scripts/wait-for-it.sh /wait-for-it.sh
+COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["npm", "run", "start"]
+ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
