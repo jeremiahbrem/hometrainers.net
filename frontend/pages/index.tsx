@@ -14,8 +14,7 @@ export const metadata: Metadata = {
 type PageProps = { status: string }
 
 export const getStaticProps: GetStaticProps<PageProps> = async () => {
-  console.log("api", process.env.api)
-  const res = await fetch(`${process.env.api}`)
+  const res = await fetch('/api')
   const result = await res.json()
   return { props: { status: result.status } }
 }
