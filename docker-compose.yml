@@ -9,8 +9,6 @@ services:
     ports:
       - 8080:8080
   frontend:
-    environment:
-      - BACKEND_URL: 'http://backend:8080'
     container_name: frontend
     depends_on:
       - backend:
