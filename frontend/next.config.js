@@ -2,7 +2,7 @@
 const nextConfig = {
   env: {
     API: process.env.NODE_ENV === 'production'
-      ? 'http://docker.host.internal:8080'
+      ? 'http://backend:8080'
       : 'http://localhost:8080'
   },
 }
