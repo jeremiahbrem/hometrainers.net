@@ -148,19 +148,6 @@ func main() {
 			Name: pulumi.String(dnsName),
 		})
 
-		cloudrun.NewDomainMapping(ctx, "backend-domain-mapping", &cloudrun.DomainMappingArgs{
-			Location: pulumi.String(location),
-			Metadata: &cloudrun.DomainMappingMetadataArgs{
-				Namespace: pulumi.String(projectId),
-			},
-			Spec: &cloudrun.DomainMappingSpecArgs{
-				RouteName: backendService.Name,
-			},
-			Name: pulumi.String(dnsName + "/api"),
-		})
-
 		return nil
 	})
 }
-
-// gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
