@@ -8,13 +8,9 @@ services:
       context: ./backend
     ports:
       - 8080:8080
-    networks:
-      - my-network
   frontend:
     container_name: frontend
-    depends_on:
-      - backend:
-          condition: service_completed_successfully
+    depends_on: [backend]
     stdin_open: true
     build:
       context: ./frontend
@@ -23,7 +19,5 @@ services:
       - "./frontend:/app"
     ports:
       - "3000:3000"
-    networks:
-      - my-network
-  networks:
-    my-network:
+    links:
+      - "backend:api"
