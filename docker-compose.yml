@@ -1,8 +1,16 @@
 version: "3.8"
 services:
+  backend:
+    container_name: backend
+    volumes:
+      - "./backend:/app"
+    build:
+      context: ./backend
+    ports:
+      - 8080:8080
   frontend:
-    environment: 
-      - NEXT_PUBLIC_API=backend
+    environment:
+      - BACKEND_URL: 'http://backend:8080'
     container_name: frontend
     depends_on:
       - backend:
@@ -15,11 +23,4 @@ services:
       - "./frontend:/app"
     ports:
       - "3000:3000"
-  backend:
-    container_name: backend
-    volumes:
-      - "./backend:/app"
-    build:
-      context: ./backend
-    ports:
-      - 8080:8080
+ 

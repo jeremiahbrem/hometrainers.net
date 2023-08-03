@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Build the Next site including SSG
+while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' ${BACKEND_URL})" != "200" ]]; do sleep 5; done
+
 npm run build
 
-# Start the production server
 npm run start
