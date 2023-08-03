@@ -1,11 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverRuntimeConfig: {
-    api: "http://backend:8080"
+  env: {
+    API: process.env.NODE_ENV === 'production'
+      ? 'http://backend:8080/api'
+      : 'http://localhost:8080/api'
   },
-  publicRuntimeConfig: {
-    api: "http://localhost:8080"
-  }
 }
 
 module.exports = nextConfig
