@@ -1,8 +1,7 @@
 import Layout from '@/components/layout/layout'
 import styles from './page.module.scss'
-import { GetServerSideProps, Metadata } from 'next'
+import { GetStaticProps, Metadata } from 'next'
 import Image from 'next/image'
-import { api } from './getApi'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -14,8 +13,8 @@ export const metadata: Metadata = {
 
 type PageProps = { status: string }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async () => {
-  const res = await fetch(`${api}`)
+export const getStaticProps: GetStaticProps<PageProps> = async () => {
+  const res = await fetch(`${process.env.API}`)
   const result = await res.json()
   return { props: { status: result.status } }
 }
