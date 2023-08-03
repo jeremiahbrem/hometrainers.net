@@ -26,6 +26,8 @@ ENV PORT 3000
 
 RUN apk --no-cache add curl
 
+RUN node --max-old-space-size=4096 index.js
+
 COPY scripts/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
