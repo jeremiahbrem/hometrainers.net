@@ -1,11 +1,7 @@
 #!/bin/bash
 
-set -e
+# Build the Next site including SSG
+npm run build
 
-# Wait for the backend to be up, if we know where it is.
-if [ -n "$BACKEND_HOST" ]; then
-  /usr/src/app/wait-for-it.sh "$BACKEND_HOST:${BACKEND_PORT:-8080}"
-fi
-
-# Run the main container command.
-exec "$@"
+# Start the production server
+npm run start
