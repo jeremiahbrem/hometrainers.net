@@ -1,15 +1,16 @@
 #!/bin/bash
 
-RETRIES=0
-STATUS="500"
-URL='http://api:8080'
+retries=0
+status="500"
+url='http://api:8080'
 
-while [[ $STATUS -ne "200" || $RETRIES -lt 15 ]];
+while [[ $status -ne "200" && $retries -ne 3 ]];
   do
-    STATUS="$(curl -s -o /dev/null -w ''%{http_code}'' $URL)"
-    sleep 5
-    RETRIES=$((RETRIES+1))
+    status="$(curl -s -o /dev/null -w ''%{http_code}'' $url)"
+    sleep 1
+    retries=$((retries+1))
     echo "retrying api ready check..."
+    echo "$retries"
 done
 
 npm run build
