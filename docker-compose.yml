@@ -10,7 +10,9 @@ services:
       - 8080:8080
     restart: always
     links:
-      - frontend
+      - backend
+    networks:
+      - default
   frontend:
     container_name: frontend
     depends_on: [backend]
@@ -22,6 +24,10 @@ services:
       - "./frontend:/app"
     ports:
       - "3000:3000"
-    links:
-      - backend
     restart: always
+    networks:
+      - default
+  networks:
+    default:
+      external:
+        name: cloudbuild
