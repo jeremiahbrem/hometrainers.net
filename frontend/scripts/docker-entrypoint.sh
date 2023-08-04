@@ -2,7 +2,7 @@
 
 attempts=0
 status="500"
-url='0.0.0.0:8080'
+url='http://localhost:8080'
 
 while [[ $status -ne "200" && $attempts -ne 12 ]];
   do
