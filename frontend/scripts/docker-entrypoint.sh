@@ -13,7 +13,7 @@ while [[ $status -ne "200" && $retries -ne 12 ]];
     echo "$retries"
 done
 
-if [[ $status -ne "200" && $retries == 12]];
+if [[ $status -ne "200" && $retries == 12 ]];
   then
     echo "api not available"
     echo 11
