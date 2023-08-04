@@ -11,7 +11,7 @@ export const getStaticProps = async () => {
   return { props: { status: result.status } }
 }
 
-export default function Home() {
+export default function Home(props: PageProps) {
   console.log("status", props.status)
   return (
     <>
