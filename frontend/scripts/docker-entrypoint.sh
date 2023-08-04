@@ -2,7 +2,7 @@
 
 retries=0
 status="500"
-url='http://backend-1:8080'
+url='http://api:8080'
 
 while [[ $status -ne "200" && $retries -ne 12 ]];
   do
