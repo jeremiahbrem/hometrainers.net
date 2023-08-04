@@ -46,7 +46,9 @@ jobs:
           stack: home-personal-trainers/homepersonaltrainers.net/dev
           working_directory: ~/project/infrastructure
       - run: rm gcp-credentials.json
-      - run: docker inspect -f '{{ .NetworkSettings.IPAddress }}' backend:$(git rev-parse --short HEAD)
+      - run: docker network ls
+      - run: docker ps
+      - run: docker network inspect bridge 
 workflows:
   version: 2
   cd:
