@@ -63,7 +63,6 @@ func main() {
 		}()
 
 		var backendImageName = fmt.Sprintf("backend:%v", gitHash)
-		fmt.Println(backendImageName)
 
 		backend, _ := docker.NewImage(ctx, "backend", &docker.ImageArgs{
 			Registry:  docker.RegistryArgs{},

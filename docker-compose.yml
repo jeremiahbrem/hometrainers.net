@@ -8,6 +8,8 @@ services:
       context: ./backend
     ports:
       - 8080:8080
+    networks:
+      - shared-network
   frontend:
     container_name: frontend
     depends_on: [backend]
@@ -21,3 +23,8 @@ services:
       - "3000:3000"
     links:
       - "backend:api"
+    networks:
+      - shared-network
+networks:
+  shared-network:
+    driver: bridge
