@@ -2,7 +2,7 @@
 
 retries=0
 status="500"
-url='docker:8080'
+url='backend:8080'
 
 while [[ $status -ne "200" && $retries -ne 12 ]];
   do
