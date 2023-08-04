@@ -2,7 +2,7 @@
 
 retries=0
 status="500"
-url='http://api:8080'
+url='http://backend:8080'
 
 while [[ $status -ne "200" && $retries -ne 12 ]];
   do
@@ -13,6 +13,12 @@ while [[ $status -ne "200" && $retries -ne 12 ]];
     echo "$retries"
 done
 
-npm run build
+if [[ $status -ne "200" && $retries == 12]];
+  then
+    echo "api not available"
+    echo 11
+  else
+    npm run build
+    npm run start
+fi
 
-npm run start
