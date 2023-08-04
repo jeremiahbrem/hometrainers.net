@@ -8,7 +8,6 @@ services:
       context: ./backend
     ports:
       - 8080:8080
-    network_mode: "host"
     restart: always
   frontend:
     container_name: frontend
