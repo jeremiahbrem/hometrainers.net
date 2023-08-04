@@ -4,15 +4,15 @@ import Image from 'next/image'
 
 type PageProps = { status: string }
 
-// export const getStaticProps = async () => {
-//   console.log(process.env.api)
-//   const res = await fetch(`${process.env.api}`)
-//   const result = await res.json()
-//   return { props: { status: result.status } }
-// }
+export const getStaticProps = async () => {
+  console.log(process.env.api)
+  const res = await fetch(`${process.env.api}`)
+  const result = await res.json()
+  return { props: { status: result.status } }
+}
 
 export default function Home() {
-  // console.log("status", props.status)
+  console.log("status", props.status)
   return (
     <>
       <Layout>
