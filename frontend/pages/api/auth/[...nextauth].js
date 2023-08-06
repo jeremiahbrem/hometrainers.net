@@ -62,8 +62,6 @@ export default NextAuth({
       return session      
     },
     async jwt({ token, account }) {
-      console.log("token", token)
-      console.log("account", account)
       if (account) {
         token.idToken = account.id_token
       }
