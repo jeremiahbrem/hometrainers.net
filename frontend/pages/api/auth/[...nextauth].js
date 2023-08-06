@@ -8,14 +8,14 @@ const GOOGLE_AUTHORIZATION_URL =
     access_type: 'offline',
     response_type: 'code',
   })
-
+console.log(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID)
 async function refreshAccessToken(token) {
   try {
     const url =
       'https://oauth2.googleapis.com/token?' +
       new URLSearchParams({
-        client_id: process.env.googleClientId,
-        client_secret: process.env.googleClientSecret,
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+        client_secret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
         grant_type: 'refresh_token',
         refresh_token: token.refreshToken,
       })
@@ -51,8 +51,8 @@ async function refreshAccessToken(token) {
 export default NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
       authorizationUrl: GOOGLE_AUTHORIZATION_URL,
     }),
   ],
