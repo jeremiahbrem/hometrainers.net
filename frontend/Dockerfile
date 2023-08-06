@@ -28,6 +28,4 @@ ENV PORT 3000
 
 RUN apk --no-cache add curl
 
-COPY scripts/docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["npm", "run", "start"]
