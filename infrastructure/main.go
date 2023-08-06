@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"runtime/debug"
 
 	"github.com/pulumi/pulumi-docker/sdk/v4/go/docker"
@@ -83,6 +84,12 @@ func main() {
 					Containers: cloudrun.ServiceTemplateSpecContainerArray{
 						&cloudrun.ServiceTemplateSpecContainerArgs{
 							Image: backend.ImageName,
+							Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("GOOGLE_CLIENT_ID"),
+									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_ID")),
+								},
+							},
 						},
 					},
 				},
@@ -117,6 +124,20 @@ func main() {
 					Containers: cloudrun.ServiceTemplateSpecContainerArray{
 						&cloudrun.ServiceTemplateSpecContainerArgs{
 							Image: frontend.ImageName,
+							Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("NEXT_PUBLIC_GOOGLE_CLIENT_ID"),
+									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_ID")),
+								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("NEXT_PUBLIC_GOOGLE_CLIENT_SECRET"),
+									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_SECRET")),
+								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("NEXT_PUBLIC_API_URL"),
+									Value: pulumi.String(os.Getenv("API_URL")),
+								},
+							},
 						},
 					},
 				},

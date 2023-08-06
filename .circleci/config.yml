@@ -25,9 +25,9 @@ jobs:
     docker:
       - image: google/cloud-sdk
     environment:
-      - API_URL=$API_URL
-      - GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
-      - GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+      API_URL: $API_URL
+      GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID
+      GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET
     steps:
       - checkout
       - setup_remote_docker
@@ -50,9 +50,6 @@ jobs:
           stack: home-personal-trainers/homepersonaltrainers.net/dev
           working_directory: ~/project/infrastructure
       - run: rm gcp-credentials.json
-      - run: docker network ls
-      - run: docker ps
-      - run: docker network inspect bridge 
 workflows:
   version: 2
   cd:
