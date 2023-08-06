@@ -24,6 +24,10 @@ jobs:
       tag: '2.00'
     docker:
       - image: google/cloud-sdk
+    environment:
+      - API_URL=$API_URL
+      - GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
     steps:
       - checkout
       - setup_remote_docker
