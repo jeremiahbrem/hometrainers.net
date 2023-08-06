@@ -9,6 +9,8 @@ services:
     ports:
       - 8080:8080
     restart: always
+    environment:
+      - GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
   frontend:
     container_name: frontend
     depends_on: [backend]
@@ -21,3 +23,7 @@ services:
     ports:
       - "3000:3000"
     restart: always
+    environment:
+      - API_URL=$API_URL
+      - GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+      - GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
