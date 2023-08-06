@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    api: 'http://backend:8080'
+    api: process.env.API_URL
   },
   experimental: {
     esmExternals: false
