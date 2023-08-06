@@ -12,8 +12,6 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm run build
-
 FROM node:18-alpine AS runner
 WORKDIR /app
 
@@ -28,4 +26,6 @@ ENV PORT 3000
 
 RUN apk --no-cache add curl
 
-ENTRYPOINT ["npm", "run", "start"]
+COPY scripts/docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
