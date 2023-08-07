@@ -22,13 +22,13 @@ jobs:
       - setup_remote_docker
       - load-env
       - run:
-        environment:
-          - NEXT_PUBLIC_GOOGLE_CLIENT_SECRET
-          - NEXT_PUBLIC_GOOGLE_CLIENT_ID
-          - NEXT_PUBLIC_API_URL
-          - NEXTAUTH_URL
-          - NEXTAUTH_SECRET
-        command: docker build backend
+          environment:
+            - NEXT_PUBLIC_GOOGLE_CLIENT_SECRET
+            - NEXT_PUBLIC_GOOGLE_CLIENT_ID
+            - NEXT_PUBLIC_API_URL
+            - NEXTAUTH_URL
+            - NEXTAUTH_SECRET
+          command: docker build backend
   build-frontend:
     docker:
       - image: google/cloud-sdk
