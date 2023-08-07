@@ -11,6 +11,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ${NEXT_PUBLIC_GOOGLE_CLIENT_SECRET}
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID ${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+ENV NEXT_PUBLIC_API_URL ${NEXT_PUBLIC_API_URL}
+ENV NEXTAUTH_URL ${NEXTAUTH_URL}
+ENV NEXTAUTH_SECRET ${NEXTAUTH_SECRET}
 
 RUN npm run build
 
@@ -28,6 +33,4 @@ ENV PORT 3000
 
 RUN apk --no-cache add curl
 
-COPY scripts/docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["npm", "run", "start"]
