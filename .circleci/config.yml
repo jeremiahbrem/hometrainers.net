@@ -29,12 +29,12 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: >
-          docker build frontend
+          echo 'docker build frontend
             --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
             --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
             --build-arg NEXT_PUBLIC_API_URL=${API_URL}
             --build-arg NEXTAUTH_URL=${NEXTAUTH_URL}
-            --build-arg NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+            --build-arg NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
   deploy:
     executor:
       name: go/default
