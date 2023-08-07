@@ -21,23 +21,20 @@ jobs:
       - checkout
       - setup_remote_docker
       - load-env
-      - run:
-          environment:
-            - NEXT_PUBLIC_GOOGLE_CLIENT_SECRET
-            - NEXT_PUBLIC_GOOGLE_CLIENT_ID
-            - NEXT_PUBLIC_API_URL
-            - NEXTAUTH_URL
-            - NEXTAUTH_SECRET
-          command: docker build backend
+      - run: docker build backend
   build-frontend:
     docker:
       - image: google/cloud-sdk
-        environment:
-          NEXT_PUBLIC_API_URL: ${API_URL}
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker build frontend
+      - run: >
+          docker build frontend
+            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+            --build-arg NEXT_PUBLIC_API_URL=${API_URL}
+            --build-arg NEXTAUTH_URL=${NEXTAUTH_URL}
+            --build-arg NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
   deploy:
     executor:
       name: go/default
