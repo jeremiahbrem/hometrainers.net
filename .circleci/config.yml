@@ -24,10 +24,11 @@ jobs:
   build-frontend:
     docker:
       - image: google/cloud-sdk
+        environment:
+          NEXT_PUBLIC_API_URL: ${API_URL}
     steps:
       - checkout
       - setup_remote_docker
-      - load-env
       - run: docker build frontend
   deploy:
     executor:
