@@ -32,7 +32,7 @@ func getAuthorizedUser(context *gin.Context) (User, bool) {
 		context.AbortWithError(http.StatusUnauthorized, err)
 		return user, false
 	}
-
+	fmt.Println(payload.Claims)
 	emailVerified := fmt.Sprintf("%v", payload.Claims["email_verified"])
 
 	if emailVerified != "true" {
