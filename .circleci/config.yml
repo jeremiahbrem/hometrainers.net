@@ -3,6 +3,16 @@ orbs:
   pulumi: pulumi/pulumi@2.1.0
   gcp-cli: circleci/gcp-cli@3.0.1
   go: circleci/go@1.7.3
+commands:
+  load-env:
+    steps:
+      - run: echo 'export GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
+      - run: echo 'export GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
+      - run: echo 'export NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
+      - run: echo 'export NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
+      - run: echo 'export NEXT_PUBLIC_API_URL=${TEST_API_URL}'
+      - run: echo 'export NEXTAUTH_URL=${NEXTAUTH_URL}'
+      - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
 jobs:
   build-backend:
     docker:
@@ -10,6 +20,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - load-env
       - run: docker build backend
   build-frontend:
     docker:
@@ -17,7 +28,13 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker build frontend
+      - run: >
+          echo 'docker build frontend
+            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+            --build-arg NEXT_PUBLIC_API_URL=${TEST_API_URL}
+            --build-arg NEXTAUTH_URL=${NEXTAUTH_URL}
+            --build-arg NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
   deploy:
     executor:
       name: go/default
@@ -37,12 +54,7 @@ jobs:
           working_directory: ~/project/infrastructure
       - run: echo $GOOGLE_CREDENTIALS > gcp-credentials.json
       - run: gcloud auth activate-service-account --key-file=gcp-credentials.json --quiet
-      - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
-      - run: echo 'export GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
-      - run: echo 'export GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
-      - run: echo 'export API_URL=${API_URL}'
-      - run: echo 'export NEXTAUTH_URL=${NEXTAUTH_URL}'
-      - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
+      - load-env
       - pulumi/login
       - pulumi/refresh:
           stack: home-personal-trainers/homepersonaltrainers.net/dev
