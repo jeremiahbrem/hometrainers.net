@@ -1,16 +1,15 @@
 import React from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { Session } from 'next-auth'
-import { JWT } from 'next-auth/jwt'
 
 type SessionType = Session & { idToken: string }
 
 export default function AuthTest(){
   const response = useSession()
   const data = response.data as SessionType | null
-  
+ 
   const checkId = async () => {
-    await fetch('http://localhost:8080/auth-check', {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth-check`, {
       method: 'POST',
       body: JSON.stringify({
         token: data?.idToken
@@ -24,7 +23,7 @@ export default function AuthTest(){
   if (data) {
     return (
       <>
-        Signed in as {data.user?.name ?? ''} <br />
+        <p className='.signed-in'>Signed in as {data.user?.name ?? ''}</p> <br />
         <button onClick={() => signOut()}>Sign out</button>
         <button onClick={checkId}>check id</button>
       </>
@@ -34,6 +33,7 @@ export default function AuthTest(){
     <>
       Not signed in <br />
       <button onClick={() => signIn('google')}>Sign in</button>
+      <button onClick={() => signIn('auth')}>Sign in auth</button>
     </>
   )
 }
