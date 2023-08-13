@@ -10,7 +10,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - load-env
+      # - load-env
       - run: docker build backend
   build-frontend:
     docker:
