@@ -62,10 +62,10 @@ jobs:
       - load-env
       - pulumi/login
       - pulumi/refresh:
-          stack: home-personal-trainers/homepersonaltrainers.net/dev
+          stack: jeremiahbrem/homepersonaltrainers.net/dev
           working_directory: ~/project/infrastructure
       - pulumi/update:
-          stack: home-personal-trainers/homepersonaltrainers.net/dev
+          stack: jeremiahbrem/homepersonaltrainers.net/dev
           working_directory: ~/project/infrastructure
       - run: rm gcp-credentials.json
 workflows:
