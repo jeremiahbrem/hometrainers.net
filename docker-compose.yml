@@ -9,9 +9,6 @@ services:
     ports:
       - 8080:8080
     restart: always
-    args:
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
   frontend:
     container_name: frontend
     depends_on: [backend]
