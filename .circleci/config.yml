@@ -28,6 +28,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - load-env
       - run: >
           docker build frontend
             --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
