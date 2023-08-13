@@ -58,10 +58,10 @@ jobs:
           working_directory: ~/project/infrastructure
       - run: echo $GOOGLE_CREDENTIALS > gcp-credentials.json
       - run: gcloud auth activate-service-account --key-file=gcp-credentials.json --quiet
-      - run: echo 'export GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
-      - run: echo 'export GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
-      - run: echo 'export NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
-      - run: echo 'export NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
+      # - run: echo 'export GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
+      # - run: echo 'export GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
+      # - run: echo 'export NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
+      # - run: echo 'export NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
       - run: echo 'export NEXT_PUBLIC_API_URL=${API_URL}'
       - run: echo 'export NEXTAUTH_URL=${NEXTAUTH_URL}'
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
