@@ -9,6 +9,9 @@ services:
     ports:
       - 8080:8080
     restart: always
+    args:
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
   frontend:
     container_name: frontend
     depends_on: [backend]
@@ -21,4 +24,10 @@ services:
     ports:
       - "3000:3000"
     restart: always
+    args:
+      - NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - NEXT_PUBLIC_API_URL=${API_URL}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       

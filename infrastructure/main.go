@@ -89,6 +89,10 @@ func main() {
 									Name:  pulumi.String("GOOGLE_CLIENT_ID"),
 									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_ID")),
 								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("GOOGLE_CLIENT_SECRET"),
+									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_SECRET")),
+								},
 							},
 						},
 					},
@@ -136,6 +140,14 @@ func main() {
 								cloudrun.ServiceTemplateSpecContainerEnvArgs{
 									Name:  pulumi.String("NEXT_PUBLIC_API_URL"),
 									Value: pulumi.String(os.Getenv("API_URL")),
+								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("NEXTAUTH_URL"),
+									Value: pulumi.String(os.Getenv("NEXTAUTH_URL")),
+								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("NEXTAUTH_SECRET"),
+									Value: pulumi.String(os.Getenv("NEXTAUTH_SECRET")),
 								},
 							},
 						},
