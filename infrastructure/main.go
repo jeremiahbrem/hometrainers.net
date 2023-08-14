@@ -109,12 +109,20 @@ func main() {
 
 		var frontendImageName = fmt.Sprintf("frontend:%v", gitHash)
 
+		var frontendArgs = make(map[string]pulumi.StringInput)
+		frontendArgs["NEXTAUTH_URL"] = pulumi.String(os.Getenv("NEXTAUTH_URL"))
+		frontendArgs["NEXTAUTH_SECRET"] = pulumi.String(os.Getenv("NEXTAUTH_SECRET"))
+		frontendArgs["NEXT_PUBLIC_GOOGLE_CLIENT_SECRET"] = pulumi.String(os.Getenv("GOOGLE_CLIENT_SECRET"))
+		frontendArgs["NEXT_PUBLIC_GOOGLE_CLIENT_ID"] = pulumi.String(os.Getenv("GOOGLE_CLIENT_ID"))
+		frontendArgs["NEXT_PUBLIC_API_URL"] = pulumi.String(os.Getenv("API_URL"))
+
 		frontend, _ := docker.NewImage(ctx, "frontend", &docker.ImageArgs{
 			Registry:  docker.RegistryArgs{},
 			ImageName: pulumi.Sprintf("%s/%s", repoUrl, frontendImageName),
 			Build: &docker.DockerBuildArgs{
 				Context:  pulumi.String("../frontend"),
 				Platform: pulumi.String("linux/amd64"),
+				Args:     pulumi.StringMap(frontendArgs),
 			},
 		})
 
