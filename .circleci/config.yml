@@ -14,7 +14,7 @@ commands:
       - run: echo 'export NEXTAUTH_URL=${NEXTAUTH_URL}'
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
 jobs:
-  build-:
+  build:
     docker:
       - image: google/cloud-sdk
     steps:
