@@ -5,9 +5,11 @@ import Image from 'next/image'
 type PageProps = { status: string }
 
 export const getStaticProps = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`)
-  const result = await res.json()
-  return { props: { status: result.status } }
+  console.log('api url:', process.env.NEXT_PUBLIC_API_URL)
+  // const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}`)
+  // const result = await res.json()
+  // return { props: { status: result.status } }
+  return { props: { status: 'test' } }
 }
 
 export default function Home(props: PageProps) {

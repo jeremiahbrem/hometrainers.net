@@ -14,37 +14,20 @@ commands:
       - run: echo 'export NEXTAUTH_URL=${NEXTAUTH_URL}'
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
 jobs:
-  build-backend:
+  build:
     docker:
-      - image: google/cloud-sdk
+      - image: cimg/base:2021.04
     steps:
       - checkout
       - setup_remote_docker
       - load-env
-      - run: docker build backend
-  build-frontend:
-    docker:
-      - image: google/cloud-sdk
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run: >
-          echo 'docker build frontend
-            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-            --build-arg NEXT_PUBLIC_API_URL=${API_URL}
-            --build-arg NEXTAUTH_URL=${NEXTAUTH_URL}
-            --build-arg NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
+      - run: docker-compose build
   deploy:
     executor:
       name: go/default
       tag: '2.00'
     docker:
       - image: google/cloud-sdk
-    environment:
-      API_URL: $API_URL
-      GOOGLE_CLIENT_ID: $GOOGLE_CLIENT_ID
-      GOOGLE_CLIENT_SECRET: $GOOGLE_CLIENT_SECRET
     steps:
       - checkout
       - setup_remote_docker
@@ -72,12 +55,7 @@ workflows:
   version: 2
   cd:
     jobs:
-      - build-backend:
-          filters:
-            branches:
-              ignore:
-                - main
-      - build-frontend:
+      - build:
           filters:
             branches:
               ignore:
