@@ -16,7 +16,7 @@ commands:
 jobs:
   build:
     docker:
-      - image: google/cloud-sdk
+      - image: cimg/base:2021.04
     steps:
       - checkout
       - setup_remote_docker
@@ -24,7 +24,7 @@ jobs:
       - run: docker-compose build
   # build-backend:
   #   docker:
-  #     - image: google/cloud-sdk
+  #     - image: cimg/base:2021.04
   #   steps:
   #     - checkout
   #     - setup_remote_docker
@@ -32,7 +32,7 @@ jobs:
   #     - run: docker build backend
   # build-frontend:
   #   docker:
-  #     - image: google/cloud-sdk
+  #     - image: cimg/base:2021.04
   #   steps:
   #     - checkout
   #     - setup_remote_docker
