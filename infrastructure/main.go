@@ -207,6 +207,18 @@ func main() {
 			return rSetError
 		}
 
+		_, txtError := dns.NewRecordSet(ctx, "backend-txt-verification", &dns.RecordSetArgs{
+			Name:        zone.DnsName,
+			Type:        pulumi.String("TXT"),
+			Ttl:         pulumi.Int(300),
+			ManagedZone: zone.Name,
+			Rrdatas:     pulumi.StringArray{pulumi.String("google-site-verification=OzbgLfozFr5wH4fsuaYt0D1Zpf2DJ01FLzLfASiEQuM")},
+		})
+
+		if txtError != nil {
+			return rSetError
+		}
+
 		cloudrun.NewDomainMapping(ctx, "domain-mapping", &cloudrun.DomainMappingArgs{
 			Location: pulumi.String(location),
 			Metadata: &cloudrun.DomainMappingMetadataArgs{
