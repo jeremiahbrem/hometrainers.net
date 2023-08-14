@@ -14,28 +14,36 @@ commands:
       - run: echo 'export NEXTAUTH_URL=${NEXTAUTH_URL}'
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
 jobs:
-  build-backend:
+  build-:
     docker:
       - image: google/cloud-sdk
     steps:
       - checkout
       - setup_remote_docker
       - load-env
-      - run: docker build backend
-  build-frontend:
-    docker:
-      - image: google/cloud-sdk
-    steps:
-      - checkout
-      - setup_remote_docker
-      - load-env
-      - run: >
-          docker build frontend
-            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-            --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-            --build-arg NEXT_PUBLIC_API_URL=${API_URL}
-            --build-arg NEXTAUTH_URL=${NEXTAUTH_URL}
-            --build-arg NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - run: docker-compose build
+  # build-backend:
+  #   docker:
+  #     - image: google/cloud-sdk
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker
+  #     - load-env
+  #     - run: docker build backend
+  # build-frontend:
+  #   docker:
+  #     - image: google/cloud-sdk
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker
+  #     - load-env
+  #     - run: >
+  #         docker build frontend
+  #           --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+  #           --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+  #           --build-arg NEXT_PUBLIC_API_URL=${API_URL}
+  #           --build-arg NEXTAUTH_URL=${NEXTAUTH_URL}
+  #           --build-arg NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
   deploy:
     executor:
       name: go/default
@@ -69,12 +77,17 @@ workflows:
   version: 2
   cd:
     jobs:
-      - build-backend:
-          filters:
-            branches:
-              ignore:
-                - main
-      - build-frontend:
+      # - build-backend:
+      #     filters:
+      #       branches:
+      #         ignore:
+      #           - main
+      # - build-frontend:
+      #     filters:
+      #       branches:
+      #         ignore:
+      #           - main
+      - build:
           filters:
             branches:
               ignore:
