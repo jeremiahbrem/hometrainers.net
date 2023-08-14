@@ -135,7 +135,7 @@ func main() {
 				Platform: pulumi.String("linux/amd64"),
 				Args:     pulumi.StringMap(frontendArgs),
 			},
-		})
+		}, pulumi.DependsOn([]pulumi.Resource{backend, backendService}))
 
 		frontendService, _ := cloudrun.NewService(ctx, "frontend-service", &cloudrun.ServiceArgs{
 			Location: pulumi.String(location),
