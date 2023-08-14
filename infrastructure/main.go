@@ -8,6 +8,7 @@ import (
 	"github.com/pulumi/pulumi-docker/sdk/v4/go/docker"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/artifactregistry"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/cloudrun"
+	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/dns"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/projects"
 	"github.com/pulumi/pulumi-random/sdk/v4/go/random"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -28,6 +29,12 @@ func main() {
 			DisableDependentServices: pulumi.Bool(true),
 			Project:                  pulumi.String("quiet-platform-392619"),
 			Service:                  pulumi.String("run.googleapis.com"),
+		}, pulumi.DependsOn([]pulumi.Resource{enableResourceService}))
+
+		enableCloudDns, _ := projects.NewService(ctx, "EnableCloudDns", &projects.ServiceArgs{
+			DisableDependentServices: pulumi.Bool(true),
+			Project:                  pulumi.String("quiet-platform-392619"),
+			Service:                  pulumi.String("dns.googleapis.com"),
 		}, pulumi.DependsOn([]pulumi.Resource{enableResourceService}))
 
 		location := "us-central1"
@@ -177,6 +184,21 @@ func main() {
 			Role:     pulumi.String("roles/run.invoker"),
 		})
 
+		zone, _ := dns.NewManagedZone(ctx, "backend-zone", &dns.ManagedZoneArgs{
+			Description: pulumi.String("Home personal trainers api zone"),
+			DnsName:     pulumi.String(dnsName + "."),
+		}, pulumi.DependsOn([]pulumi.Resource{enableCloudDns}))
+
+		dns.NewRecordSet(ctx, "backend-record-set", &dns.RecordSetArgs{
+			Name: zone.DnsName.ApplyT(func(dnsName string) (string, error) {
+				return fmt.Sprintf("api.%v", dnsName), nil
+			}).(pulumi.StringOutput),
+			Type:        pulumi.String("CNAME"),
+			Ttl:         pulumi.Int(300),
+			ManagedZone: zone.Name,
+			Rrdatas:     pulumi.StringArray{pulumi.String("ghs.googlehosted.com")},
+		})
+
 		cloudrun.NewDomainMapping(ctx, "domain-mapping", &cloudrun.DomainMappingArgs{
 			Location: pulumi.String(location),
 			Metadata: &cloudrun.DomainMappingMetadataArgs{
@@ -186,6 +208,19 @@ func main() {
 				RouteName: frontendService.Name,
 			},
 			Name: pulumi.String(dnsName),
+		})
+
+		cloudrun.NewDomainMapping(ctx, "api-mapping", &cloudrun.DomainMappingArgs{
+			Location: pulumi.String(location),
+			Metadata: &cloudrun.DomainMappingMetadataArgs{
+				Namespace: pulumi.String(projectId),
+			},
+			Spec: &cloudrun.DomainMappingSpecArgs{
+				RouteName: backendService.Name,
+			},
+			Name: zone.DnsName.ApplyT(func(dnsName string) (string, error) {
+				return dnsName[:len(dnsName)-1], nil
+			}).(pulumi.StringOutput),
 		})
 
 		return nil
