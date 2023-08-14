@@ -19,11 +19,15 @@ func main() {
 	dnsName := "homepersonaltrainers.net"
 
 	pulumi.Run(func(ctx *pulumi.Context) error {
-		enableResourceService, _ := projects.NewService(ctx, "EnableResourceService", &projects.ServiceArgs{
+		enableResourceService, ersErr := projects.NewService(ctx, "EnableResourceService", &projects.ServiceArgs{
 			DisableDependentServices: pulumi.Bool(true),
 			Project:                  pulumi.String(projectId),
 			Service:                  pulumi.String("cloudresourcemanager.googleapis.com"),
 		})
+
+		if ersErr != nil {
+			return ersErr
+		}
 
 		enableCloudRun, _ := projects.NewService(ctx, "EnableCloudRun", &projects.ServiceArgs{
 			DisableDependentServices: pulumi.Bool(true),
@@ -189,7 +193,7 @@ func main() {
 			DnsName:     pulumi.String(dnsName + "."),
 		}, pulumi.DependsOn([]pulumi.Resource{enableCloudDns}))
 
-		dns.NewRecordSet(ctx, "backend-record-set", &dns.RecordSetArgs{
+		cname, rSetError := dns.NewRecordSet(ctx, "backend-record-set", &dns.RecordSetArgs{
 			Name: zone.DnsName.ApplyT(func(dnsName string) (string, error) {
 				return fmt.Sprintf("api.%v", dnsName), nil
 			}).(pulumi.StringOutput),
@@ -198,6 +202,10 @@ func main() {
 			ManagedZone: zone.Name,
 			Rrdatas:     pulumi.StringArray{pulumi.String("ghs.googlehosted.com.")},
 		})
+
+		if rSetError != nil {
+			return rSetError
+		}
 
 		cloudrun.NewDomainMapping(ctx, "domain-mapping", &cloudrun.DomainMappingArgs{
 			Location: pulumi.String(location),
@@ -210,7 +218,7 @@ func main() {
 			Name: pulumi.String(dnsName),
 		})
 
-		cloudrun.NewDomainMapping(ctx, "api-mapping", &cloudrun.DomainMappingArgs{
+		_, apiMapError := cloudrun.NewDomainMapping(ctx, "api-mapping", &cloudrun.DomainMappingArgs{
 			Location: pulumi.String(location),
 			Metadata: &cloudrun.DomainMappingMetadataArgs{
 				Namespace: pulumi.String(projectId),
@@ -218,10 +226,14 @@ func main() {
 			Spec: &cloudrun.DomainMappingSpecArgs{
 				RouteName: backendService.Name,
 			},
-			Name: zone.DnsName.ApplyT(func(dnsName string) (string, error) {
-				return dnsName[:len(dnsName)-1], nil
+			Name: cname.Name.ApplyT(func(cname string) (string, error) {
+				return cname[:len(cname)-1], nil
 			}).(pulumi.StringOutput),
 		})
+
+		if apiMapError != nil {
+			return apiMapError
+		}
 
 		return nil
 	})
