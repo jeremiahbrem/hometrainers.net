@@ -101,7 +101,7 @@ func main() {
 
 	router.GET("/", func(context *gin.Context) {
 		context.JSON(200, gin.H{
-			"status": "ok",
+			"status": "new",
 		})
 	})
 
