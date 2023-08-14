@@ -190,7 +190,7 @@ func main() {
 
 		zone, _ := dns.NewManagedZone(ctx, "backend-zone", &dns.ManagedZoneArgs{
 			Description: pulumi.String("Home personal trainers api zone"),
-			DnsName:     pulumi.String(dnsName + "."),
+			DnsName:     pulumi.String(dnsName),
 		}, pulumi.DependsOn([]pulumi.Resource{enableCloudDns}))
 
 		cname, rSetError := dns.NewRecordSet(ctx, "backend-record-set", &dns.RecordSetArgs{
