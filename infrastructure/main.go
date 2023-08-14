@@ -196,7 +196,7 @@ func main() {
 			Type:        pulumi.String("CNAME"),
 			Ttl:         pulumi.Int(300),
 			ManagedZone: zone.Name,
-			Rrdatas:     pulumi.StringArray{pulumi.String("api.homepersonaltrainers.net")},
+			Rrdatas:     pulumi.StringArray{pulumi.String("api.homepersonaltrainers.net.")},
 		})
 
 		cloudrun.NewDomainMapping(ctx, "domain-mapping", &cloudrun.DomainMappingArgs{
