@@ -19,7 +19,7 @@ jobs:
     docker:
       - image: cimg/base:2021.04
     executor: cypress/default
-    environment
+    environment:
       ENVIRONMENT: DEV
     steps:
       - checkout
