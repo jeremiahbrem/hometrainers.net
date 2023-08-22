@@ -25,6 +25,7 @@ jobs:
       - run: echo 'export GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
       - run: echo 'export GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
+      - run: echo 'export ENVIRONMENT=${ENVIRONMENT}'
       - run: docker-compose up --build
       - cypress/run-tests:
           cypress-command: npx cypress run
