@@ -27,7 +27,6 @@ ENV ENVIRONMENT=$ENVIRONMENT
 RUN if [ ${ENVIRONMENT} == "PROD" ]; then npm run build; fi
 
 FROM node:18-alpine AS runner
-WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
