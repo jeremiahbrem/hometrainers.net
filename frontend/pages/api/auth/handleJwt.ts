@@ -51,9 +51,9 @@ async function refreshGoogleToken(token: Token) {
 
 async function refreshAuthToken(token: Token) {
   try {
-    const response = await fetch('http://localhost:8080/refresh', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/refresh`, {
       headers: {
-        "Authorization": `Bearer: ${btoa(JSON.stringify(token))}`,
+        "Authorization": `Bearer ${btoa(JSON.stringify(token))}`,
       },
       method: "GET",
     })
@@ -68,7 +68,7 @@ async function refreshAuthToken(token: Token) {
       ...token,
       accessToken: refreshedTokens.access_token,
       idToken: '',
-      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
+      accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken
     }
   } catch (error) {
@@ -100,7 +100,7 @@ export function authJwtCallback(token: Token, account: Account) {
   if (account) {
     token.accessToken = account.access_token as string
     token.refreshToken = account.refresh_token as string
-    token.accessTokenExpires = Date.now() + (account.expires_in as number) * 1000
+    token.accessTokenExpires = Date.now() + (account.expires_at as number) * 1000
     token.provider = account.provider
   }
 

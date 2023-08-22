@@ -1,17 +1,17 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"os"
 	"time"
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/go-oauth2/oauth2/v4/generates"
 	"github.com/golang-jwt/jwt"
 
@@ -20,30 +20,37 @@ import (
 	"github.com/go-oauth2/oauth2/v4/models"
 	"github.com/go-oauth2/oauth2/v4/server"
 	"github.com/go-oauth2/oauth2/v4/store"
-	"github.com/go-session/session"
 )
 
 var (
-	dumpvar   bool
 	idvar     string
 	secretvar string
 	domainvar string
 	portvar   int
 )
 
+type SessionProvider func(context context.Context) SessionApiType
+
 func init() {
-	flag.BoolVar(&dumpvar, "d", true, "Dump requests and responses")
 	flag.StringVar(&idvar, "i", "222222", "The client id being passed in")
 	flag.StringVar(&secretvar, "s", "22222222", "The client secret being passed in")
-	flag.StringVar(&domainvar, "r", "http://localhost:3000", "The domain of the redirect url")
+	flag.StringVar(&domainvar, "r", os.Getenv("REDIRECT_URL"), "The domain of the redirect url")
 	flag.IntVar(&portvar, "p", 9096, "the base port for the server")
 }
 
-func main() {
+func setupRouter(
+	sessionProvider SessionProvider,
+) *gin.Engine {
 	flag.Parse()
-	if dumpvar {
-		log.Println("Dumping requests")
-	}
+
+	router := gin.Default()
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowHeaders = []string{"Authorization"}
+
+	router.Use(cors.New(corsConfig))
+
 	manager := manage.NewDefaultManager()
 	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
 
@@ -57,11 +64,12 @@ func main() {
 		Secret: secretvar,
 		Domain: domainvar,
 	})
+
 	manager.MapClientStorage(clientStore)
 
 	srv := server.NewServer(server.NewConfig(), manager)
 
-	srv.SetUserAuthorizationHandler(userAuthorizeHandler)
+	srv.SetUserAuthorizationHandler(userAuthorizeHandler(sessionProvider))
 
 	srv.SetInternalErrorHandler(func(err error) (re *errors.Response) {
 		log.Println("Internal Error:", err.Error())
@@ -72,18 +80,16 @@ func main() {
 		log.Println("Response Error:", re.Error.Error())
 	})
 
-	http.HandleFunc("/login", loginHandler)
-	http.HandleFunc("/auth", authHandler)
+	router.POST("/login", loginHandler(sessionProvider))
+	router.GET("/login", loginHandler(sessionProvider))
+	router.GET("/auth", authHandler(sessionProvider))
 
-	http.HandleFunc("/oauth/authorize", func(w http.ResponseWriter, r *http.Request) {
-		if dumpvar {
-			dumpRequest(os.Stdout, "authorize", r)
-		}
-
-		store, err := session.Start(r.Context(), w, r)
+	router.GET("/oauth/authorize", func(ctx *gin.Context) {
+		session := sessionProvider(ctx)
+		store, err := session.Start(ctx, ctx.Writer, ctx.Request)
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			ctx.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
 
@@ -91,152 +97,167 @@ func main() {
 		if v, ok := store.Get("ReturnUri"); ok {
 			form = v.(url.Values)
 		}
-		r.Form = form
+
+		ctx.Request.Form = form
 
 		store.Delete("ReturnUri")
 		store.Save()
-		fmt.Println("form:", r.Form)
 
-		err = srv.HandleAuthorizeRequest(w, r)
+		err = srv.HandleAuthorizeRequest(ctx.Writer, ctx.Request)
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			ctx.AbortWithError(http.StatusBadRequest, err)
 		}
 	})
 
-	http.HandleFunc("/oauth/token", func(w http.ResponseWriter, r *http.Request) {
-		if dumpvar {
-			_ = dumpRequest(os.Stdout, "token", r) // Ignore the error
-		}
-		fmt.Println("header:", r.Header)
-		err := srv.HandleTokenRequest(w, r)
+	router.POST("/oauth/token", func(context *gin.Context) {
+		context.Request.ParseForm()
+
+		err := srv.HandleTokenRequest(context.Writer, context.Request)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			context.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
 	})
 
-	http.HandleFunc("/user-info", func(w http.ResponseWriter, r *http.Request) {
-		if dumpvar {
-			_ = dumpRequest(os.Stdout, "test", r) // Ignore the error
-		}
+	router.GET("/validate", func(context *gin.Context) {
+		token, err := srv.ValidationBearerToken(context.Request)
 
-		token, err := srv.ValidationBearerToken(r)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			context.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
-		data := map[string]interface{}{
+		context.JSON(http.StatusOK, gin.H{
+			"expires_in": int64(time.Until(
+				token.GetAccessCreateAt().Add(token.GetAccessExpiresIn()),
+			).Seconds()),
+			"client_id": token.GetClientID(),
+			"user_id":   token.GetUserID(),
+		})
+	})
+
+	router.GET("/user-info", func(context *gin.Context) {
+		token, err := srv.ValidationBearerToken(context.Request)
+		if err != nil {
+			context.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+
+		context.JSON(http.StatusOK, gin.H{
 			"expires_in": int64(time.Until(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn())).Seconds()),
 			"client_id":  token.GetClientID(),
 			"id":         token.GetUserID(),
-			"name":       "guy",
 			"email":      token.GetUserID(),
-		}
-		e := json.NewEncoder(w)
-		e.SetIndent("", "  ")
-		e.Encode(data)
+		})
 	})
 
+	return router
+}
+
+func main() {
+	router := setupRouter(ProvideSessionApi)
+	router.Run(fmt.Sprintf(":%d", portvar))
 	log.Printf("Server is running at %d port.\n", portvar)
-	log.Printf("Point your OAuth client Auth endpoint to %s:%d%s", "http://localhost", portvar, "/oauth/authorize")
-	log.Printf("Point your OAuth client Token endpoint to %s:%d%s", "http://localhost", portvar, "/oauth/token")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", portvar), nil))
 }
 
-func dumpRequest(writer io.Writer, header string, r *http.Request) error {
-	data, err := httputil.DumpRequest(r, true)
-	if err != nil {
-		return err
-	}
-	writer.Write([]byte("\n" + header + ": \n"))
-	writer.Write(data)
-	return nil
-}
+func userAuthorizeHandler(
+	sessionProvider SessionProvider,
+) func(w http.ResponseWriter, r *http.Request) (userID string, err error) {
+	return func(w http.ResponseWriter, r *http.Request) (userID string, err error) {
+		session := sessionProvider(r.Context())
+		store, err := session.Start(r.Context(), w, r)
 
-func userAuthorizeHandler(w http.ResponseWriter, r *http.Request) (userID string, err error) {
-	if dumpvar {
-		_ = dumpRequest(os.Stdout, "userAuthorizeHandler", r) // Ignore the error
-	}
-	store, err := session.Start(r.Context(), w, r)
-	if err != nil {
-		return
-	}
-
-	uid, ok := store.Get("LoggedInUserID")
-	if !ok {
-		if r.Form == nil {
-			r.ParseForm()
+		if err != nil {
+			return
 		}
 
-		store.Set("ReturnUri", r.Form)
-		store.Save()
+		uid, ok := store.Get("LoggedInUserID")
 
-		w.Header().Set("Location", "/login")
-		w.WriteHeader(http.StatusFound)
-		return
-	}
-
-	userID = uid.(string)
-	store.Delete("LoggedInUserID")
-	store.Save()
-	return
-}
-
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	if dumpvar {
-		_ = dumpRequest(os.Stdout, "login", r) // Ignore the error
-	}
-	store, err := session.Start(r.Context(), w, r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if r.Method == "POST" {
-		if r.Form == nil {
-			if err := r.ParseForm(); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+		if !ok {
+			if r.Form == nil {
+				r.ParseForm()
 			}
+
+			store.Set("ReturnUri", r.Form)
+			store.Save()
+
+			w.Header().Set("Location", "/login")
+			w.WriteHeader(http.StatusFound)
+			return
 		}
-		store.Set("LoggedInUserID", r.Form.Get("username"))
+
+		userID = uid.(string)
+
+		store.Delete("LoggedInUserID")
 		store.Save()
-
-		w.Header().Set("Location", "/auth")
-		w.WriteHeader(http.StatusFound)
 		return
 	}
-	outputHTML(w, r, "static/login.html")
 }
 
-func authHandler(w http.ResponseWriter, r *http.Request) {
-	if dumpvar {
-		_ = dumpRequest(os.Stdout, "auth", r) // Ignore the error
-	}
-	store, err := session.Start(nil, w, r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+func loginHandler(
+	sessionProvider SessionProvider,
+) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		request := context.Request
+		writer := context.Writer
 
-	if _, ok := store.Get("LoggedInUserID"); !ok {
-		w.Header().Set("Location", "/login")
-		w.WriteHeader(http.StatusFound)
-		return
-	}
+		session := sessionProvider(context)
+		store, err := session.Start(context, writer, request)
 
-	w.Header().Set("Location", "/oauth/authorize")
-	w.WriteHeader(http.StatusFound)
+		if err != nil {
+			context.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		if request.Method == "POST" {
+			if request.Form == nil {
+				if err := request.ParseForm(); err != nil {
+					context.AbortWithError(http.StatusInternalServerError, err)
+					return
+				}
+			}
+
+			store.Set("LoggedInUserID", request.Form.Get("username"))
+			store.Save()
+
+			context.Redirect(http.StatusFound, "/auth")
+			return
+		}
+
+		outputHTML(context, "static/login.html")
+	}
 }
 
-func outputHTML(w http.ResponseWriter, req *http.Request, filename string) {
+func authHandler(
+	sessionProvider SessionProvider,
+) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		session := sessionProvider(context)
+
+		store, err := session.Start(context, context.Writer, context.Request)
+		if err != nil {
+			context.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		if _, ok := store.Get("LoggedInUserID"); !ok {
+			context.Redirect(http.StatusFound, "/auth")
+			return
+		}
+
+		context.Redirect(http.StatusFound, "/oauth/authorize")
+	}
+}
+
+func outputHTML(context *gin.Context, filename string) {
 	file, err := os.Open(filename)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		context.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
+
 	defer file.Close()
 	fi, _ := file.Stat()
-	http.ServeContent(w, req, file.Name(), fi.ModTime(), file)
+	http.ServeContent(context.Writer, context.Request, file.Name(), fi.ModTime(), file)
 }

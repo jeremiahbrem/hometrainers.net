@@ -9,7 +9,7 @@ export default function AuthTest(){
   const data = response.data as SessionType | null
  
   const checkId = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth-check`, {
+    await fetch(`http://localhost:8080/auth-check`, {
       method: 'POST',
       body: JSON.stringify({
         token: data?.idToken
@@ -23,7 +23,7 @@ export default function AuthTest(){
   if (data) {
     return (
       <>
-        <p className='.signed-in'>Signed in as {data.user?.name ?? ''}</p> <br />
+        <p className='.signed-in'>Signed in as {data.user?.email ?? ''}</p> <br />
         <button onClick={() => signOut()}>Sign out</button>
         <button onClick={checkId}>check id</button>
       </>

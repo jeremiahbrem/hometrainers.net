@@ -1,38 +1,28 @@
-import jwt from 'jsonwebtoken'
-
 describe('login page', () => {
   beforeEach(() => {
     cy.clearCookies()
   })
 
   it('shows signed out', () => {
-    cy.visit('/auth-test')
-    cy.contains('Sign in')
+    cy
+      .visit('/auth-test')
+      .contains('Sign in')
   })
 
-  it('shows signed in', () => {
-    const token = jwt.sign(
-      JSON.stringify({
-        token: {
-          email: 'test@example.com',
-          name: 'test guy'
-        },
-        account: {
-          id_token: 'id-token',
-          refresh_token: 'refresh-token',
-          expires_in: 100000,
-          provider: 'google'
-        },
-      }),
-      Cypress.env('API_SECRET')!
-      ,
-    )
+  it('logs in', () => {
+    cy.visit('/auth-test')
+      .contains('Sign in auth')
+      .click()
+      
+    const email = 'john.doe@test.com'
 
-    cy
-    .setCookie('next-auth.session-token', token)
-    
-   
-      cy.visit('/auth-test')
-      .contains('Signed in as')
+    cy.get('input[name="username"')
+      .type(email)
+      .get('input[name="password"')
+      .type("test password")
+      .get('button')
+      .click()
+      
+    cy.contains(`Signed in as ${email}`)
   })
 })
