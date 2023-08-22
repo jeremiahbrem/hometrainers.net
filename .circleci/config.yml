@@ -30,6 +30,9 @@ jobs:
       - run: echo 'export ENVIRONMENT=DEV'
       - run: docker-compose up -d --build 
       - cypress/install:
+          cypress-cache-key: >-
+            cypress-cache-{{ arch }}-{{ checksum "~/project/frontend/package.json"
+            }}
           working-directory: ~/project/frontend
       - cypress/run-tests:
           working-directory: ~/project/frontend
