@@ -4,6 +4,7 @@ orbs:
   gcp-cli: circleci/gcp-cli@3.0.1
   go: circleci/go@1.7.3
   cypress: cypress-io/cypress@3
+  node: circleci/node@x.y
 commands:
   load-env:
     steps:
@@ -29,6 +30,8 @@ jobs:
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
       - run: echo 'export ENVIRONMENT=DEV'
       - run: docker-compose up -d --build 
+      - node/install:
+          node-version: '19.8'
       - cypress/install:
           cypress-cache-key: >-
             cypress-cache-{{ arch }}-{{ checksum "~/project/frontend/package.json"
