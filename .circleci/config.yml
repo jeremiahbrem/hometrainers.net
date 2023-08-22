@@ -3,8 +3,6 @@ orbs:
   pulumi: pulumi/pulumi@2.1.0
   gcp-cli: circleci/gcp-cli@3.0.1
   go: circleci/go@1.7.3
-  cypress: cypress-io/cypress@3
-  node: circleci/node@5.1.0
 commands:
   load-env:
     steps:
@@ -19,27 +17,18 @@ jobs:
   test:
     docker:
       - image: cimg/base:2021.04
-    executor: cypress/default
     environment:
-      ENVIRONMENT: DEV
+      - ENVIRONMENT=DEV
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
     steps:
       - checkout
       - setup_remote_docker
-      - run: echo 'export GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
-      - run: echo 'export GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
-      - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
-      - run: echo 'export ENVIRONMENT=DEV'
       - run: docker-compose up -d --build 
-      - node/install:
-          node-version: '19.8'
-      - cypress/install:
-          cypress-cache-key: >-
-            cypress-cache-{{ arch }}-{{ checksum "~/project/frontend/package.json"
-            }}
-          working-directory: ~/project/frontend
-      - cypress/run-tests:
-          working-directory: ~/project/frontend
-          cypress-command: wait-on@latest http://localhost:3000 && npx cypress run
+      - run: npm install -g wait-on
+      - run: apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+      - run: cd ~/project/frontend && wait-on http://localhost:3000 && npx cypress run
       - run: docker-compose down
   deploy:
     executor:
