@@ -28,11 +28,12 @@ jobs:
       - run: echo 'export GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
       - run: echo 'export ENVIRONMENT=DEV'
-      - run: docker-compose up --build
+      - run: docker-compose up -d --build 
       - cypress/install
       - run: cd ~/project/frontend
       - cypress/run-tests:
-          cypress-command: npx cypress run
+          cypress-command: wait-on@latest http://localhost:3000 && npx cypress run
+      - run: docker-compose down
   deploy:
     executor:
       name: go/default
