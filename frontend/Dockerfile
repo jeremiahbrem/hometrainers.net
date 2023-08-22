@@ -24,7 +24,7 @@ ENV NEXTAUTH_URL=$NEXTAUTH_URL
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV ENVIRONMENT=$ENVIRONMENT
 
-RUN if [ ${ENVIRONMENT} = "PROD" ]; then npm run build fi
+RUN if [ ${ENVIRONMENT} = "PROD" ]; then npm run build; fi
 
 FROM node:18-alpine AS runner
 WORKDIR /app
