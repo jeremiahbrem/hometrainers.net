@@ -15,6 +15,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/idtoken"
 )
@@ -73,24 +74,24 @@ func getToken(context *gin.Context) (*oauth2.Token, error) {
 	return contextToken, nil
 }
 
-const (
-	authServerURL = "http://localhost:9096"
-)
-
-var (
-	config = oauth2.Config{
-		ClientID:     "222222",
-		ClientSecret: "22222222",
-		Scopes:       []string{"all"},
-		RedirectURL:  "http://localhost:3000/api/auth/callback/auth",
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  authServerURL + "/oauth/authorize",
-			TokenURL: authServerURL + "/oauth/token",
-		},
-	}
-)
-
 func main() {
+	godotenv.Load(".env")
+
+	authServerURL := os.Getenv("AUTH_SERVER_URL")
+
+	var (
+		config = oauth2.Config{
+			ClientID:     "222222",
+			ClientSecret: "22222222",
+			Scopes:       []string{"all"},
+			RedirectURL:  os.Getenv("BACKEND_REDIRECT_URL"),
+			Endpoint: oauth2.Endpoint{
+				AuthURL:  authServerURL + "/oauth/authorize",
+				TokenURL: authServerURL + "/oauth/token",
+			},
+		}
+	)
+
 	router := gin.Default()
 
 	corsConfig := cors.DefaultConfig()
@@ -135,11 +136,10 @@ func main() {
 		token, err := config.TokenSource(context, contextToken).Token()
 		if err != nil {
 			context.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
 
-		encoder := json.NewEncoder(context.Writer)
-		encoder.SetIndent("", "  ")
-		encoder.Encode(token)
+		context.JSON(http.StatusFound, token)
 	})
 
 	router.GET("/try", func(context *gin.Context) {
@@ -159,12 +159,12 @@ func main() {
 			return
 		}
 
-		resp, err := http.Get(fmt.Sprintf("%s/test?access_token=%s", authServerURL, contextToken.AccessToken))
+		resp, err := http.Get(fmt.Sprintf("%s/validate?access_token=%s", authServerURL, contextToken.AccessToken))
 
 		if err != nil {
 			context.AbortWithError(http.StatusBadRequest, err)
-			return
 		}
+
 		defer resp.Body.Close()
 
 		io.Copy(context.Writer, resp.Body)

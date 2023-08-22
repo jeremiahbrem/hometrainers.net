@@ -2,6 +2,7 @@ version: "3.8"
 services:
   backend:
     container_name: backend
+    depends_on: [auth]
     volumes:
       - "./backend:/app"
     build:
@@ -9,19 +10,37 @@ services:
     ports:
       - 8080:8080
     restart: always
+    environment:
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - BACKEND_REDIRECT_URL=http://localhost:3000/api/auth/callback/auth
+      - AUTH_SERVER_URL=http://auth:9096
+  auth:
+    container_name: auth
+    volumes:
+      - "./auth:/app"
+    build:
+      context: ./auth
+    ports:
+      - 9096:9096
+    restart: always
+    environment:
+      - REDIRECT_URL=http://localhost:3000
   frontend:
     container_name: frontend
-    depends_on: [backend]
+    depends_on: [backend, auth]
     stdin_open: true
+    environment:
+      - NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - NEXT_PUBLIC_API_URL=http://backend:8080
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXT_PUBLIC_LOGIN_URL=http://localhost:8080/login
+      - NEXT_PUBLIC_AUTH_SERVER=http://auth:9096
     build:
       context: ./frontend
+      dockerfile: ./development/Dockerfile
       target: runner
-      args:
-        - NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-        - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-        - NEXT_PUBLIC_API_URL=${API_URL}
-        - NEXTAUTH_URL=${NEXTAUTH_URL}
-        - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
     volumes:
       - "./frontend:/app"
     ports:
