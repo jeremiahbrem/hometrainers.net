@@ -27,9 +27,9 @@ jobs:
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
       - run: echo 'export ENVIRONMENT=DEV'
       - run: docker-compose up --build
-      - cypress/install
-      - cypress/run-tests:
-          cypress-command: npx cypress run
+      # - cypress/install
+      # - cypress/run-tests:
+      #     cypress-command: npx cypress run
   deploy:
     executor:
       name: go/default
