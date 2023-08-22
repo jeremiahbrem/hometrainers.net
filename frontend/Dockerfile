@@ -24,8 +24,7 @@ ENV NEXTAUTH_URL=$NEXTAUTH_URL
 ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 ENV ENVIRONMENT=$ENVIRONMENT
 
-# RUN if [ "$ENVIRONMENT" == "PROD" ]; then npm run build; fi
-RUN npm run build
+RUN if [ "$ENVIRONMENT" == "PROD" ]; then npm run build; fi
 
 FROM node:18-alpine AS runner
 
@@ -40,8 +39,6 @@ ENV PORT 3000
 
 RUN apk --no-cache add curl
 
-ENTRYPOINT [ "npm", "run", "start" ]
-
-# COPY ./scripts/docker-entrypoint.sh /
-# RUN chmod +x /docker-entrypoint.sh
-# ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
+COPY ./scripts/docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]
