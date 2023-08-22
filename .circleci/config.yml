@@ -19,6 +19,8 @@ jobs:
     docker:
       - image: cimg/base:2021.04
     executor: cypress/default
+    environment
+      ENVIRONMENT: DEV
     steps:
       - checkout
       - setup_remote_docker
