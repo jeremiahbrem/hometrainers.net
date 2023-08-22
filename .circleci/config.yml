@@ -29,8 +29,8 @@ jobs:
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
       - run: echo 'export ENVIRONMENT=DEV'
       - run: docker-compose up -d --build 
-      - cypress/install
       - run: cd ~/project/frontend
+      - cypress/install
       - cypress/run-tests:
           cypress-command: wait-on@latest http://localhost:3000 && npx cypress run
       - run: docker-compose down
