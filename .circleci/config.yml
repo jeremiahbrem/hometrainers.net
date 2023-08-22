@@ -27,7 +27,6 @@ jobs:
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
       - run: docker-compose up --build
       - cypress/run-tests:
-          working_directory: ~/project/frontend
           cypress-command: npx cypress run
   deploy:
     executor:
