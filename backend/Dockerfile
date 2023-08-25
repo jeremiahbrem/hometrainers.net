@@ -1,18 +1,8 @@
-FROM golang:1.20
-
+FROM golang:1.19
 WORKDIR /app
-ADD . /api
-ADD . /static
-
-COPY go.mod .
-COPY go.sum .
-
+COPY go.mod go.sum ./
 RUN go mod download
-
-COPY ./api ./api
-COPY ./static ./static
-RUN ls /app
-
-RUN go build -o ./auth ./api
-
-CMD [ "./auth" ]
+COPY *.go ./
+RUN go build -o /backend
+EXPOSE 8080
+CMD ["/backend"]
