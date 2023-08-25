@@ -9,7 +9,6 @@ import (
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/artifactregistry"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/cloudrun"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/dns"
-	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/organizations"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/projects"
 	"github.com/pulumi/pulumi-random/sdk/v4/go/random"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -43,17 +42,6 @@ func main() {
 		}, pulumi.DependsOn([]pulumi.Resource{enableResourceService}))
 
 		location := "us-central1"
-
-		admin, _ := organizations.LookupIAMPolicy(ctx, &organizations.LookupIAMPolicyArgs{
-			Bindings: []organizations.GetIAMPolicyBinding{
-				{
-					Role: "roles/run.invoker",
-					Members: []string{
-						"allUsers",
-					},
-				},
-			},
-		}, nil)
 
 		uniqueString, _ := random.NewRandomString(ctx, "unique-string", &random.RandomStringArgs{
 			Length:  pulumi.Int(4),
@@ -124,19 +112,12 @@ func main() {
 			},
 		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, auth}))
 
-		// cloudrun.NewIamPolicy(ctx, "auth-iam", &cloudrun.IamMemberArgs{
+		// cloudrun.NewIamMember(ctx, "auth-iam", &cloudrun.IamMemberArgs{
 		// 	Service:  authService.Name,
 		// 	Location: pulumi.String(location),
 		// 	Member:   pulumi.String("allUsers"),
 		// 	Role:     pulumi.String("roles/run.invoker"),
 		// }, pulumi.DependsOn([]pulumi.Resource{authService}))
-
-		_, _ = cloudrun.NewIamPolicy(ctx, "auth-iam", &cloudrun.IamPolicyArgs{
-			Location:   pulumi.String(location),
-			Project:    pulumi.String(projectId),
-			Service:    authService.Name,
-			PolicyData: pulumi.String(admin.PolicyData),
-		})
 
 		var backendImageName = fmt.Sprintf("backend:%v", gitHash)
 
@@ -175,18 +156,12 @@ func main() {
 			},
 		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, backend, authService}))
 
-		// cloudrun.NewIamMember(ctx, "backend-iam", &cloudrun.IamMemberArgs{
-		// 	Service:  backendService.Name,
-		// 	Location: pulumi.String(location),
-		// 	Member:   pulumi.String("allUsers"),
-		// 	Role:     pulumi.String("roles/run.invoker"),
-		// }, pulumi.DependsOn([]pulumi.Resource{backendService}))
-		_, _ = cloudrun.NewIamPolicy(ctx, "backend-iam", &cloudrun.IamPolicyArgs{
-			Location:   pulumi.String(location),
-			Project:    pulumi.String(projectId),
-			Service:    backendService.Name,
-			PolicyData: pulumi.String(admin.PolicyData),
-		})
+		cloudrun.NewIamMember(ctx, "backend-iam", &cloudrun.IamMemberArgs{
+			Service:  backendService.Name,
+			Location: pulumi.String(location),
+			Member:   pulumi.String("allUsers"),
+			Role:     pulumi.String("roles/run.invoker"),
+		}, pulumi.DependsOn([]pulumi.Resource{backendService}))
 
 		var frontendImageName = fmt.Sprintf("frontend:%v", gitHash)
 
@@ -259,18 +234,12 @@ func main() {
 			},
 		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, frontend, backendService, authService}))
 
-		// cloudrun.NewIamMember(ctx, "frontend-iam", &cloudrun.IamMemberArgs{
-		// 	Service:  frontendService.Name,
-		// 	Location: pulumi.String(location),
-		// 	Member:   pulumi.String("allUsers"),
-		// 	Role:     pulumi.String("roles/run.invoker"),
-		// }, pulumi.DependsOn([]pulumi.Resource{frontendService}))
-		_, _ = cloudrun.NewIamPolicy(ctx, "frontend-iam", &cloudrun.IamPolicyArgs{
-			Location:   pulumi.String(location),
-			Project:    pulumi.String(projectId),
-			Service:    frontendService.Name,
-			PolicyData: pulumi.String(admin.PolicyData),
-		})
+		cloudrun.NewIamMember(ctx, "frontend-iam", &cloudrun.IamMemberArgs{
+			Service:  frontendService.Name,
+			Location: pulumi.String(location),
+			Member:   pulumi.String("allUsers"),
+			Role:     pulumi.String("roles/run.invoker"),
+		}, pulumi.DependsOn([]pulumi.Resource{frontendService}))
 
 		zone, _ := dns.NewManagedZone(ctx, "backend-zone", &dns.ManagedZoneArgs{
 			Description: pulumi.String("Home personal trainers api zone"),
