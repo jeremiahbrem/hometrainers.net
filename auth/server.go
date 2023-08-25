@@ -36,7 +36,7 @@ type SessionProvider func(context context.Context) SessionApiType
 func init() {
 	flag.StringVar(&idvar, "i", "222222", "The client id being passed in")
 	flag.StringVar(&secretvar, "s", "22222222", "The client secret being passed in")
-	flag.StringVar(&domainvar, "r", os.Getenv("REDIRECT_URL"), "The domain of the redirect url")
+	flag.StringVar(&domainvar, "r", os.Getenv("NEXTAUTH_URL"), "The domain of the redirect url")
 	flag.IntVar(&portvar, "p", 9096, "the base port for the server")
 }
 
