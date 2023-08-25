@@ -1,7 +1,9 @@
 FROM golang:1.19
-ADD . /app
-WORKDIR /app
+RUN mkdir -p /auth/static
+COPY go.mod go.sum /auth/
 RUN go mod download
-RUN go build -o -ldflags="-extldflags=-static" /auth
+COPY *.go ./ /auth/
+COPY static /auth/static
+RUN go build -o /auth
 EXPOSE 9096
-CMD ["/auth"]
+CMD ["/backend"]
