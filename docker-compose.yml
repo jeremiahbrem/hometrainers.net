@@ -13,6 +13,8 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - BACKEND_REDIRECT_URL=http://host.docker.internal:3000/api/auth/callback/auth
       - AUTH_SERVER_URL=http://host.docker.internal:9096
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   auth:
     container_name: auth
     volumes:
@@ -23,6 +25,8 @@ services:
       - 9096:9096
     environment:
       - REDIRECT_URL=http://host.docker.internal:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   cypress:
     image: cypress
     build:
@@ -33,6 +37,8 @@ services:
     command: npm run test
     environment:
       - NEXTAUTH_URL=http://host.docker.internal:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   frontend:
     container_name: frontend
     depends_on: [backend, auth]
@@ -62,3 +68,5 @@ services:
       - "./frontend:/app"
     ports:
       - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
