@@ -26,16 +26,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker-compose up -d --build 
-      - node/install:
-          node-version: '19.8'
-      - run: npm install -g wait-on
-      - run: sudo apt update
-      - run: sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-      - run: cd ~/project/frontend
-      - run: wait-on http://localhost:3000
-      - run: npx cypress run
-      - run: docker-compose down
+      - run: docker-compose up -d --build --abort-on-container-exit --exit-code-from
   deploy:
     executor:
       name: go/default
