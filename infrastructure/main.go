@@ -171,6 +171,7 @@ func main() {
 		frontendArgs["NEXT_PUBLIC_GOOGLE_CLIENT_SECRET"] = pulumi.String(os.Getenv("GOOGLE_CLIENT_SECRET"))
 		frontendArgs["NEXT_PUBLIC_GOOGLE_CLIENT_ID"] = pulumi.String(os.Getenv("GOOGLE_CLIENT_ID"))
 		frontendArgs["NEXT_PUBLIC_API_URL"] = pulumi.String(os.Getenv("API_URL"))
+		frontendArgs["ENVIRONMENT"] = pulumi.String("PROD")
 
 		frontend, _ := docker.NewImage(ctx, "frontend", &docker.ImageArgs{
 			Registry:  docker.RegistryArgs{},
@@ -216,10 +217,6 @@ func main() {
 								cloudrun.ServiceTemplateSpecContainerEnvArgs{
 									Name:  pulumi.String("NEXT_PUBLIC_AUTH_SERVER"),
 									Value: pulumi.String(os.Getenv("AUTH_SERVER_URL")),
-								},
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("ENVIRONMENT"),
-									Value: pulumi.String("PROD"),
 								},
 							},
 						},
