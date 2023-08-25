@@ -9,7 +9,7 @@ export default function AuthTest(){
   const data = response.data as SessionType | null
  
   const checkId = async () => {
-    await fetch(`http://localhost:8080/auth-check`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth-check`, {
       method: 'POST',
       body: JSON.stringify({
         token: data?.idToken
