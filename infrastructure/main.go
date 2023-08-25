@@ -110,7 +110,7 @@ func main() {
 					},
 				},
 			},
-		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun}))
+		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, auth}))
 
 		cloudrun.NewIamMember(ctx, "auth-iam", &cloudrun.IamMemberArgs{
 			Service:  authService.Name,
@@ -128,7 +128,7 @@ func main() {
 				Context:  pulumi.String("../backend"),
 				Platform: pulumi.String("linux/amd64"),
 			},
-		})
+		}, pulumi.DependsOn([]pulumi.Resource{auth}))
 
 		backendService, _ := cloudrun.NewService(ctx, "backend-service", &cloudrun.ServiceArgs{
 			Location: pulumi.String(location),
@@ -154,7 +154,7 @@ func main() {
 					},
 				},
 			},
-		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, authService}))
+		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, backend, authService}))
 
 		cloudrun.NewIamMember(ctx, "backend-iam", &cloudrun.IamMemberArgs{
 			Service:  backendService.Name,
@@ -180,7 +180,7 @@ func main() {
 				Platform: pulumi.String("linux/amd64"),
 				Args:     pulumi.StringMap(frontendArgs),
 			},
-		}, pulumi.DependsOn([]pulumi.Resource{backend, backendService, authService}))
+		}, pulumi.DependsOn([]pulumi.Resource{backend}))
 
 		frontendService, _ := cloudrun.NewService(ctx, "frontend-service", &cloudrun.ServiceArgs{
 			Location: pulumi.String(location),
@@ -232,7 +232,7 @@ func main() {
 					LatestRevision: pulumi.Bool(true),
 				},
 			},
-		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, backendService}))
+		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, frontend, backendService, authService}))
 
 		cloudrun.NewIamMember(ctx, "frontend-iam", &cloudrun.IamMemberArgs{
 			Service:  frontendService.Name,
