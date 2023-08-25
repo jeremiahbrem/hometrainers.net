@@ -112,12 +112,12 @@ func main() {
 			},
 		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, auth}))
 
-		// cloudrun.NewIamMember(ctx, "auth-iam", &cloudrun.IamMemberArgs{
-		// 	Service:  authService.Name,
-		// 	Location: pulumi.String(location),
-		// 	Member:   pulumi.String("allUsers"),
-		// 	Role:     pulumi.String("roles/run.invoker"),
-		// }, pulumi.DependsOn([]pulumi.Resource{authService}))
+		cloudrun.NewIamMember(ctx, "auth-iam", &cloudrun.IamMemberArgs{
+			Service:  authService.Name,
+			Location: pulumi.String(location),
+			Member:   pulumi.String("allUsers"),
+			Role:     pulumi.String("roles/run.invoker"),
+		}, pulumi.DependsOn([]pulumi.Resource{authService}))
 
 		var backendImageName = fmt.Sprintf("backend:%v", gitHash)
 
