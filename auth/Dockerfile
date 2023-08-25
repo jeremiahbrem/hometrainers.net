@@ -1,10 +1,6 @@
 FROM golang:1.19
 WORKDIR /app
-RUN mkdir /static
-COPY static /static/
-COPY go.mod go.sum ./
-RUN go mod download
-COPY *.go ./
+COPY . .
 RUN go build -o /auth
 EXPOSE 8080
 CMD ["/auth"]

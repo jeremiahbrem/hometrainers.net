@@ -231,7 +231,7 @@ func loginHandler(
 			return
 		}
 
-		outputHTML(context, "login.html")
+		outputHTML(context, "static/login.html")
 	}
 }
 
