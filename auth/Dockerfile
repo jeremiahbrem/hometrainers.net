@@ -1,9 +1,10 @@
 FROM golang:1.19
-RUN mkdir -p /auth/static
-COPY go.mod go.sum /auth/
+RUN mkdir -p /server/static
+COPY go.mod go.sum /server/
+WORKDIR /server
 RUN go mod download
-COPY *.go ./ /auth/
-COPY static /auth/static
+COPY *.go / 
+COPY static /static
 RUN go build -o /auth
 EXPOSE 9096
-CMD ["/backend"]
+CMD ["/auth"]
