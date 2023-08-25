@@ -10,8 +10,8 @@ RUN go mod download
 COPY *.go ./
 
 COPY ./static ./static
-RUN ls /app
+RUN ls /app/static
 
-RUN go build -o ./auth
+RUN go build -o /auth
 
-CMD [ "./auth" ]
+CMD [ "/auth" ]
