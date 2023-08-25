@@ -27,7 +27,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker-compose build
-      - run: docker-compose up --abort-on-container-exit --exit-code-from
+      - run: docker-compose up --abort-on-container-exit --exit-code-from --no-recreate
   deploy:
     executor:
       name: go/default
