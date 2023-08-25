@@ -64,10 +64,6 @@ workflows:
   cd:
     jobs:
       - test:
-          filters:
-            branches:
-              ignore:
-                - main
       - deploy:
           filters:
             branches:
