@@ -23,6 +23,7 @@ services:
       context: ./auth
     ports:
       - 9096:9096
+    command: ls
     environment:
       - REDIRECT_URL=http://host.docker.internal:3000
     extra_hosts:
