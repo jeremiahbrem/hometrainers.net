@@ -1,9 +1,16 @@
-FROM golang:1.15.2-alpine3.12 AS builder
-WORKDIR /app
-COPY . .
-RUN go build -o auth
+FROM golang:1.19
 
-FROM alpine:3.12
-COPY --from=builder /app/auth /
-COPY --from=builder /app/static /static
-ENTRYPOINT [ "/auth" ]
+WORKDIR /app
+ADD . /static
+
+COPY go.mod .
+COPY go.sum .
+
+RUN go mod download
+COPY *.go ./
+
+COPY ./static ./static
+
+RUN go build -o /auth
+
+CMD [ "/auth" ]
