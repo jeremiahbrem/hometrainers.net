@@ -1,9 +1,18 @@
-FROM golang:1.15.2-alpine3.12 AS builder
-WORKDIR /app
-COPY . .
-RUN go build -o server
+FROM golang:1.20
 
-FROM alpine:3.12
-COPY --from=builder /app/server /bin
-COPY --from=builder /app/static /static
-ENTRYPOINT [ "/bin/server" ]
+WORKDIR /app
+ADD . /api
+ADD . /static
+
+COPY go.mod .
+COPY go.sum .
+
+RUN go mod download
+
+COPY ./api ./api
+COPY ./static ./static
+RUN ls /app
+
+RUN go build -o ./auth ./api
+
+CMD [ "./auth" ]
