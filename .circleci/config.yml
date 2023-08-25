@@ -63,7 +63,7 @@ workflows:
   version: 2
   cd:
     jobs:
-      - test:
+      - test
       - deploy:
           filters:
             branches:
