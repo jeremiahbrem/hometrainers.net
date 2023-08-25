@@ -1,16 +1,10 @@
 FROM golang:1.19
-
 WORKDIR /app
 ADD . /static
-
-COPY go.mod .
-COPY go.sum .
-
+COPY go.mod go.sum ./
 RUN go mod download
 COPY *.go ./
-
 COPY ./static ./static
-
 RUN go build -o /auth
-
-CMD [ "/auth" ]
+EXPOSE 9096
+CMD ["/auth"]
