@@ -117,7 +117,7 @@ func main() {
 			Location: pulumi.String(location),
 			Member:   pulumi.String("allUsers"),
 			Role:     pulumi.String("roles/run.invoker"),
-		})
+		}, pulumi.DependsOn([]pulumi.Resource{authService}))
 
 		var backendImageName = fmt.Sprintf("backend:%v", gitHash)
 
@@ -161,7 +161,7 @@ func main() {
 			Location: pulumi.String(location),
 			Member:   pulumi.String("allUsers"),
 			Role:     pulumi.String("roles/run.invoker"),
-		})
+		}, pulumi.DependsOn([]pulumi.Resource{backendService}))
 
 		var frontendImageName = fmt.Sprintf("frontend:%v", gitHash)
 
@@ -239,7 +239,7 @@ func main() {
 			Location: pulumi.String(location),
 			Member:   pulumi.String("allUsers"),
 			Role:     pulumi.String("roles/run.invoker"),
-		})
+		}, pulumi.DependsOn([]pulumi.Resource{frontendService}))
 
 		zone, _ := dns.NewManagedZone(ctx, "backend-zone", &dns.ManagedZoneArgs{
 			Description: pulumi.String("Home personal trainers api zone"),
