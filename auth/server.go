@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"embed"
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -37,6 +39,9 @@ func init() {
 	flag.StringVar(&domainvar, "r", os.Getenv("REDIRECT_URL"), "The domain of the redirect url")
 	flag.IntVar(&portvar, "p", 9096, "the base port for the server")
 }
+
+//go:embed static
+var staticFiles embed.FS
 
 func setupRouter(
 	sessionProvider SessionProvider,
@@ -226,7 +231,7 @@ func loginHandler(
 			return
 		}
 
-		outputHTML(context, "static/login.html")
+		outputHTML(context, "login.html")
 	}
 }
 
@@ -252,7 +257,8 @@ func authHandler(
 }
 
 func outputHTML(context *gin.Context, filename string) {
-	file, err := os.Open(filename)
+	file, err := staticFiles.Open(filename)
+
 	if err != nil {
 		context.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -260,5 +266,5 @@ func outputHTML(context *gin.Context, filename string) {
 
 	defer file.Close()
 	fi, _ := file.Stat()
-	http.ServeContent(context.Writer, context.Request, file.Name(), fi.ModTime(), file)
+	http.ServeContent(context.Writer, context.Request, filename, fi.ModTime(), file.(io.ReadSeeker))
 }
