@@ -1,10 +1,11 @@
-FROM golang:1.19
-RUN mkdir -p /server/static
-COPY go.mod go.sum /server/
-WORKDIR /server
-RUN go mod download
-COPY *.go / 
-COPY static /static
-RUN go build -o /
-EXPOSE 9096
-CMD ["/"]
+FROM golang:1.7
+ 
+RUN mkdir -p /app
+ 
+WORKDIR /app
+ 
+ADD . /app
+ 
+RUN go build ./app.go
+ 
+CMD ["./app"]
