@@ -1,8 +1,4 @@
 describe('login page', () => {
-  beforeEach(() => {
-    cy.clearCookies()
-  })
-
   it('shows signed out', () => {
     cy
       .visit('/auth-test')
@@ -22,7 +18,7 @@ describe('login page', () => {
       .type("test password")
       .get('button')
       .click()
-      
+
     cy.contains(`Signed in as ${email}`)
   })
 })

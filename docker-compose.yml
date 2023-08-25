@@ -11,8 +11,8 @@ services:
       - 8080:8080
     environment:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - BACKEND_REDIRECT_URL=http://localhost:3000/api/auth/callback/auth
-      - AUTH_SERVER_URL=http://auth:9096
+      - BACKEND_REDIRECT_URL=http://host.docker.internal:3000/api/auth/callback/auth
+      - AUTH_SERVER_URL=http://host.docker.internal:9096
   auth:
     container_name: auth
     volumes:
@@ -22,7 +22,17 @@ services:
     ports:
       - 9096:9096
     environment:
-      - REDIRECT_URL=http://localhost:3000
+      - REDIRECT_URL=http://host.docker.internal:3000
+  cypress:
+    image: cypress
+    build:
+      context: ./test
+    container_name: cypress
+    depends_on:
+      - frontend
+    command: npm run test
+    environment:
+      - NEXTAUTH_URL=http://host.docker.internal:3000
   frontend:
     container_name: frontend
     depends_on: [backend, auth]
@@ -30,24 +40,24 @@ services:
     environment:
       - NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - NEXT_PUBLIC_API_URL=http://backend:8080
-      - NEXTAUTH_URL=http://localhost:3000
+      - NEXT_PUBLIC_API_URL=http://host.docker.internal:8080
+      - NEXTAUTH_URL=http://host.docker.internal:3000
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - NEXT_PUBLIC_LOGIN_URL=http://localhost:8080/login
-      - NEXT_PUBLIC_AUTH_SERVER=http://auth:9096
-      - ENVIRONMENT=${ENVIRONMENT}
+      - NEXT_PUBLIC_LOGIN_URL=http://host.docker.internal:8080/login
+      - NEXT_PUBLIC_AUTH_SERVER=http://host.docker.internal:9096
+      - ENVIRONMENT=DEV
     build:
       context: ./frontend
       target: runner
       args:
         - NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
         - NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-        - NEXT_PUBLIC_API_URL=http://backend:8080
-        - NEXTAUTH_URL=http://localhost:3000
+        - NEXT_PUBLIC_API_URL=http://host.docker.internal:8080
+        - NEXTAUTH_URL=http://host.docker.internal:3000
         - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-        - NEXT_PUBLIC_LOGIN_URL=http://localhost:8080/login
-        - NEXT_PUBLIC_AUTH_SERVER=http://auth:9096
-        - ENVIRONMENT=${ENVIRONMENT}
+        - NEXT_PUBLIC_LOGIN_URL=http://host.docker.internal:8080/login
+        - NEXT_PUBLIC_AUTH_SERVER=http://host.docker.internal:9096
+        - ENVIRONMENT=DEV
     volumes:
       - "./frontend:/app"
     ports:

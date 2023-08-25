@@ -148,6 +148,7 @@ func setupRouter(
 			"expires_in": int64(time.Until(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn())).Seconds()),
 			"client_id":  token.GetClientID(),
 			"id":         token.GetUserID(),
+			"name":       "guy",
 			"email":      token.GetUserID(),
 		})
 	})
