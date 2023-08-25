@@ -3,7 +3,7 @@ import GoogleProvider from 'next-auth/providers/google'
 import { googleJwtCallback, authJwtCallback } from  './handleJwt'
 
 const authServer = process.env.NEXT_PUBLIC_AUTH_SERVER
-const redirectUri = process.env.NEXT_PUBLIC_REDIRECT_URI
+const redirectUri = process.env.NEXTAUTH_URL
 
 export default NextAuth({
   providers: [
@@ -93,5 +93,8 @@ export default NextAuth({
 
       return token
     },
+    async redirect({ url, baseUrl }) {
+      return url
+    }
   },
 })
