@@ -74,6 +74,46 @@ func main() {
 			return ""
 		}()
 
+		var authImageName = fmt.Sprintf("auth:%v", gitHash)
+
+		auth, _ := docker.NewImage(ctx, "auth", &docker.ImageArgs{
+			Registry:  docker.RegistryArgs{},
+			ImageName: pulumi.Sprintf("%s/%s", repoUrl, authImageName),
+			Build: &docker.DockerBuildArgs{
+				Context:  pulumi.String("../auth"),
+				Platform: pulumi.String("linux/amd64"),
+			},
+		})
+
+		authService, _ := cloudrun.NewService(ctx, "auth-service", &cloudrun.ServiceArgs{
+			Location: pulumi.String(location),
+			Metadata: &cloudrun.ServiceMetadataArgs{
+				Namespace: pulumi.String(projectId),
+			},
+			Template: &cloudrun.ServiceTemplateArgs{
+				Spec: &cloudrun.ServiceTemplateSpecArgs{
+					Containers: cloudrun.ServiceTemplateSpecContainerArray{
+						&cloudrun.ServiceTemplateSpecContainerArgs{
+							Image: auth.ImageName,
+							Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("NEXTAUTH_URL"),
+									Value: pulumi.String(os.Getenv("NEXTAUTH_URL")),
+								},
+							},
+						},
+					},
+				},
+			},
+		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun}))
+
+		cloudrun.NewIamMember(ctx, "auth-iam", &cloudrun.IamMemberArgs{
+			Service:  authService.Name,
+			Location: pulumi.String(location),
+			Member:   pulumi.String("allUsers"),
+			Role:     pulumi.String("roles/run.invoker"),
+		})
+
 		var backendImageName = fmt.Sprintf("backend:%v", gitHash)
 
 		backend, _ := docker.NewImage(ctx, "backend", &docker.ImageArgs{
@@ -109,7 +149,7 @@ func main() {
 					},
 				},
 			},
-		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun}))
+		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, authService}))
 
 		cloudrun.NewIamMember(ctx, "backend-iam", &cloudrun.IamMemberArgs{
 			Service:  backendService.Name,
@@ -135,7 +175,7 @@ func main() {
 				Platform: pulumi.String("linux/amd64"),
 				Args:     pulumi.StringMap(frontendArgs),
 			},
-		}, pulumi.DependsOn([]pulumi.Resource{backend, backendService}))
+		}, pulumi.DependsOn([]pulumi.Resource{backend, backendService, authService}))
 
 		frontendService, _ := cloudrun.NewService(ctx, "frontend-service", &cloudrun.ServiceArgs{
 			Location: pulumi.String(location),
@@ -165,8 +205,16 @@ func main() {
 									Value: pulumi.String(os.Getenv("NEXTAUTH_URL")),
 								},
 								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("NEXTAUTH_SECRET"),
-									Value: pulumi.String(os.Getenv("NEXTAUTH_SECRET")),
+									Name:  pulumi.String("NEXT_PUBLIC_LOGIN_URL"),
+									Value: pulumi.String(os.Getenv("LOGIN_URL")),
+								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("NEXT_PUBLIC_AUTH_SERVER"),
+									Value: pulumi.String(os.Getenv("AUTH_SERVER_URL")),
+								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("ENVIRONMENT"),
+									Value: pulumi.String("PROD"),
 								},
 							},
 						},
@@ -179,7 +227,7 @@ func main() {
 					LatestRevision: pulumi.Bool(true),
 				},
 			},
-		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun}))
+		}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, backendService}))
 
 		cloudrun.NewIamMember(ctx, "frontend-iam", &cloudrun.IamMemberArgs{
 			Service:  frontendService.Name,
@@ -193,7 +241,7 @@ func main() {
 			DnsName:     pulumi.String(dnsName + "."),
 		}, pulumi.DependsOn([]pulumi.Resource{enableCloudDns}))
 
-		cname, rSetError := dns.NewRecordSet(ctx, "backend-record-set", &dns.RecordSetArgs{
+		backendCname, backendRecordSetError := dns.NewRecordSet(ctx, "backend-record-set", &dns.RecordSetArgs{
 			Name: zone.DnsName.ApplyT(func(dnsName string) (string, error) {
 				return fmt.Sprintf("api.%v", dnsName), nil
 			}).(pulumi.StringOutput),
@@ -203,8 +251,22 @@ func main() {
 			Rrdatas:     pulumi.StringArray{pulumi.String("ghs.googlehosted.com.")},
 		})
 
-		if rSetError != nil {
-			return rSetError
+		if backendRecordSetError != nil {
+			return backendRecordSetError
+		}
+
+		authCname, authRecordSetError := dns.NewRecordSet(ctx, "auth-record-set", &dns.RecordSetArgs{
+			Name: zone.DnsName.ApplyT(func(dnsName string) (string, error) {
+				return fmt.Sprintf("auth.%v", dnsName), nil
+			}).(pulumi.StringOutput),
+			Type:        pulumi.String("CNAME"),
+			Ttl:         pulumi.Int(300),
+			ManagedZone: zone.Name,
+			Rrdatas:     pulumi.StringArray{pulumi.String("ghs.googlehosted.com.")},
+		})
+
+		if authRecordSetError != nil {
+			return authRecordSetError
 		}
 
 		_, txtError := dns.NewRecordSet(ctx, "backend-txt-verification", &dns.RecordSetArgs{
@@ -216,7 +278,7 @@ func main() {
 		})
 
 		if txtError != nil {
-			return rSetError
+			return txtError
 		}
 
 		cloudrun.NewDomainMapping(ctx, "domain-mapping", &cloudrun.DomainMappingArgs{
@@ -238,13 +300,30 @@ func main() {
 			Spec: &cloudrun.DomainMappingSpecArgs{
 				RouteName: backendService.Name,
 			},
-			Name: cname.Name.ApplyT(func(cname string) (string, error) {
+			Name: backendCname.Name.ApplyT(func(cname string) (string, error) {
 				return cname[:len(cname)-1], nil
 			}).(pulumi.StringOutput),
 		})
 
 		if apiMapError != nil {
 			return apiMapError
+		}
+
+		_, authMapError := cloudrun.NewDomainMapping(ctx, "auth-mapping", &cloudrun.DomainMappingArgs{
+			Location: pulumi.String(location),
+			Metadata: &cloudrun.DomainMappingMetadataArgs{
+				Namespace: pulumi.String(projectId),
+			},
+			Spec: &cloudrun.DomainMappingSpecArgs{
+				RouteName: authService.Name,
+			},
+			Name: authCname.Name.ApplyT(func(cname string) (string, error) {
+				return cname[:len(cname)-1], nil
+			}).(pulumi.StringOutput),
+		})
+
+		if authMapError != nil {
+			return authMapError
 		}
 
 		return nil
