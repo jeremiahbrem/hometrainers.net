@@ -101,6 +101,11 @@ func main() {
 									Value: pulumi.String(os.Getenv("NEXTAUTH_URL")),
 								},
 							},
+							Ports: cloudrun.ServiceTemplateSpecContainerPortArray{
+								cloudrun.ServiceTemplateSpecContainerPortArgs{
+									ContainerPort: pulumi.IntPtr(9096),
+								},
+							},
 						},
 					},
 				},
