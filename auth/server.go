@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"server/database"
+	dbModels "server/models"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -47,6 +49,8 @@ func setupRouter(
 	sessionProvider SessionProvider,
 ) *gin.Engine {
 	flag.Parse()
+
+	database.ConnectDb()
 
 	router := gin.Default()
 
@@ -88,6 +92,18 @@ func setupRouter(
 	router.POST("/login", loginHandler(sessionProvider))
 	router.GET("/login", loginHandler(sessionProvider))
 	router.GET("/auth", authHandler(sessionProvider))
+
+	router.POST("/signup", func(ctx *gin.Context) {
+		user := new(dbModels.User)
+		if err := ctx.BindJSON(&user); err != nil {
+			ctx.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+
+		database.DB.Db.Create(&user)
+
+		ctx.JSON(http.StatusOK, user)
+	})
 
 	router.GET("/oauth/authorize", func(ctx *gin.Context) {
 		session := sessionProvider(ctx)
