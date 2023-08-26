@@ -218,6 +218,10 @@ func main() {
 									Name:  pulumi.String("NEXT_PUBLIC_AUTH_SERVER"),
 									Value: pulumi.String(os.Getenv("AUTH_SERVER_URL")),
 								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("NEXTAUTH_SECRET"),
+									Value: pulumi.String(os.Getenv("NEXTAUTH_SECRET")),
+								},
 							},
 						},
 					},
