@@ -2,7 +2,7 @@ version: "3.8"
 services:
   backend:
     container_name: backend
-    depends_on: [auth]
+    depends_on: [auth, db]
     volumes:
       - "./backend:/app"
     build:
@@ -23,8 +23,12 @@ services:
       context: ./auth
     ports:
       - 9096:9096
+    depends_on: [db]
     environment:
       - REDIRECT_URL=http://host.docker.internal:3000
+      - POSTGRES_USER=hpt-user
+      - POSTGRES_PASSWORD=Password123
+      - POSTGRES_NAME=hptrainers
     extra_hosts:
       - "host.docker.internal:host-gateway"
   cypress:
@@ -70,3 +74,16 @@ services:
       - "3000:3000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  db:
+    image: postgres:12
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=hpt-user
+      - POSTGRES_PASSWORD=Password123
+      - POSTGRES_DB=hptrainers
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+
+volumes:
+  postgres-db:
