@@ -14,6 +14,13 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
+func SetEnv(name string, value string) cloudrun.ServiceTemplateSpecContainerEnvArgs {
+	return cloudrun.ServiceTemplateSpecContainerEnvArgs{
+		Name:  pulumi.String(name),
+		Value: pulumi.String(os.Getenv(value)),
+	}
+}
+
 func main() {
 	projectId := "quiet-platform-392619"
 	dnsName := "homepersonaltrainers.net"
@@ -96,10 +103,7 @@ func main() {
 						&cloudrun.ServiceTemplateSpecContainerArgs{
 							Image: auth.ImageName,
 							Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("NEXTAUTH_URL"),
-									Value: pulumi.String(os.Getenv("NEXTAUTH_URL")),
-								},
+								SetEnv("NEXTAUTH_URL", "NEXTAUTH_URL"),
 							},
 							Ports: cloudrun.ServiceTemplateSpecContainerPortArray{
 								cloudrun.ServiceTemplateSpecContainerPortArgs{
@@ -141,14 +145,8 @@ func main() {
 						&cloudrun.ServiceTemplateSpecContainerArgs{
 							Image: backend.ImageName,
 							Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("GOOGLE_CLIENT_ID"),
-									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_ID")),
-								},
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("GOOGLE_CLIENT_SECRET"),
-									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_SECRET")),
-								},
+								SetEnv("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_ID"),
+								SetEnv("GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_SECRET"),
 							},
 						},
 					},
@@ -194,30 +192,12 @@ func main() {
 						&cloudrun.ServiceTemplateSpecContainerArgs{
 							Image: frontend.ImageName,
 							Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("NEXT_PUBLIC_GOOGLE_CLIENT_ID"),
-									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_ID")),
-								},
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("NEXT_PUBLIC_GOOGLE_CLIENT_SECRET"),
-									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_SECRET")),
-								},
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("NEXT_PUBLIC_API_URL"),
-									Value: pulumi.String(os.Getenv("API_URL")),
-								},
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("NEXTAUTH_URL"),
-									Value: pulumi.String(os.Getenv("NEXTAUTH_URL")),
-								},
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("NEXT_PUBLIC_LOGIN_URL"),
-									Value: pulumi.String(os.Getenv("LOGIN_URL")),
-								},
-								cloudrun.ServiceTemplateSpecContainerEnvArgs{
-									Name:  pulumi.String("NEXT_PUBLIC_AUTH_SERVER"),
-									Value: pulumi.String(os.Getenv("AUTH_SERVER_URL")),
-								},
+								SetEnv("NEXT_PUBLIC_GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_ID"),
+								SetEnv("NEXT_PUBLIC_GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_SECRET"),
+								SetEnv("NEXT_PUBLIC_API_URL", "API_URL"),
+								SetEnv("NEXTAUTH_URL", "NEXTAUTH_URL"),
+								SetEnv("NEXT_PUBLIC_LOGIN_URL", "LOGIN_URL"),
+								SetEnv("NEXT_PUBLIC_AUTH_SERVER", "AUTH_SERVER_URL"),
 							},
 						},
 					},

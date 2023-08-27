@@ -29,6 +29,7 @@ services:
       - POSTGRES_USER=hpt-user
       - POSTGRES_PASSWORD=Password123
       - POSTGRES_NAME=hptrainers
+      - POSTGRES_HOST=db
     extra_hosts:
       - "host.docker.internal:host-gateway"
   cypress:
@@ -76,6 +77,7 @@ services:
       - "host.docker.internal:host-gateway"
   db:
     image: postgres:12
+    container_name: db
     ports:
       - "5432:5432"
     environment:
@@ -84,6 +86,8 @@ services:
       - POSTGRES_DB=hptrainers
     volumes:
       - postgres-db:/var/lib/postgresql/data
+      - ./sql:/sql
 
 volumes:
   postgres-db:
+    external: true
