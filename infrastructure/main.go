@@ -149,6 +149,10 @@ func main() {
 									Name:  pulumi.String("GOOGLE_CLIENT_SECRET"),
 									Value: pulumi.String(os.Getenv("GOOGLE_CLIENT_SECRET")),
 								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("AUTH_SERVER_URL"),
+									Value: pulumi.String(os.Getenv("AUTH_SERVER_URL")),
+								},
 							},
 						},
 					},
