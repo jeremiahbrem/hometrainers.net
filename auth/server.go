@@ -105,6 +105,15 @@ func setupRouter(
 		ctx.JSON(http.StatusOK, user)
 	})
 
+	router.GET("/get-user", func(ctx *gin.Context) {
+		var user dbModels.User
+		email := ctx.Request.URL.Query().Get("email")
+
+		database.DB.Db.Where("name = ?", email).First(&user)
+
+		ctx.JSON(http.StatusOK, user)
+	})
+
 	router.GET("/oauth/authorize", func(ctx *gin.Context) {
 		session := sessionProvider(ctx)
 		store, err := session.Start(ctx, ctx.Writer, ctx.Request)
