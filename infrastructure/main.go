@@ -153,6 +153,10 @@ func main() {
 									Name:  pulumi.String("AUTH_SERVER_URL"),
 									Value: pulumi.String(os.Getenv("AUTH_SERVER_URL")),
 								},
+								cloudrun.ServiceTemplateSpecContainerEnvArgs{
+									Name:  pulumi.String("BACKEND_REDIRECT_URL"),
+									Value: pulumi.String(os.Getenv("AUTH_SERVER_URL")),
+								},
 							},
 						},
 					},
