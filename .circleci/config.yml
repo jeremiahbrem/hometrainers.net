@@ -3,7 +3,6 @@ orbs:
   pulumi: pulumi/pulumi@2.1.0
   gcp-cli: circleci/gcp-cli@3.0.1
   go: circleci/go@1.7.3
-  node: circleci/node@5.1.0
 commands:
   load-env:
     steps:
@@ -17,7 +16,25 @@ commands:
       - run: echo 'export LOGIN_URL=${LOGIN_URL}'
       - run: echo 'export AUTH_SERVER_URL=${AUTH_SERVER_URL}'
 jobs:
-  test:
+  frontend-test:
+    docker:
+      - image: node:16
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
+      - run:
+          command: npm install
+          working_directory: ~/project/frontend
+      - save_cache:
+          key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
+          paths:
+            - ./node_modules
+          working_directory: ~/project/frontend
+      - run:
+          command: npm run test-ci
+          working_directory: ~/project/frontend
+  e2e-test:
     docker:
       - image: cimg/base:2021.04
     environment:
@@ -63,10 +80,12 @@ workflows:
   version: 2
   cd:
     jobs:
-      - test
+      - e2e-test
+      - frontend-test
       - deploy:
           requires:
-            - test
+            - e2e-test
+            - frontend-test
           filters:
             branches:
               only:

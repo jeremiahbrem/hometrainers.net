@@ -38,20 +38,20 @@ export default NextAuth({
             redirect_uri: `${redirectUri}/api/auth/callback/auth`
           }
 
-          var formBody = [];
+          var rawBody = [];
           for (const property in details) {
             var encodedKey = encodeURIComponent(property)
             var encodedValue = encodeURIComponent(details[property])
-            formBody.push(encodedKey + '=' + encodedValue)
+            rawBody.push(encodedKey + '=' + encodedValue)
           }
-          formBody = formBody.join('&')
+          const formBody = rawBody.join('&')
           
           const response = await fetch(`${authServer}/oauth/token`, {
             method: 'POST',
             body: formBody,
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': 'Basic MjIyMjIyOjIyMjIyMjIy'
+              'Authorization': `Basic ${Buffer.from('222222:22222222').toString('base64')}`
             },
           })
           const tokens = await response.json()
@@ -77,6 +77,8 @@ export default NextAuth({
     async session({ session, token }) {
       session.idToken = token.idToken
       session.accessToken = token.accessToken
+      session.refreshToken = token.refreshToken
+      session.error = token.error
       session.user = { name: token.name, email: token.email }
       return session      
     },
