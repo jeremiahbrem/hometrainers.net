@@ -18,7 +18,7 @@ commands:
 jobs:
   frontend-test:
     docker:
-      - image: circleci/node:18.16.0
+      - image: circleci/node:17-buster-browsers-legacy
     steps:
       - checkout
       - run:
