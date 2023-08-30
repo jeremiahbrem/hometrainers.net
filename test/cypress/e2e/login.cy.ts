@@ -7,9 +7,10 @@ describe('login page', () => {
 
   it('logs in', () => {
     cy.visit('/auth-test')
-      .contains('Sign in auth')
+
+    cy.contains('Sign in auth')
       .click()
-      
+
     const email = 'john.doe@test.com'
 
     cy.get('input[name="username"')
