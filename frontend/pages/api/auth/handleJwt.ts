@@ -1,6 +1,6 @@
-import { Account } from "next-auth"
+import { Account } from 'next-auth'
 
-type Token = {
+export type Token = {
   refreshToken: string
   accessToken: string
   idToken: string
@@ -11,19 +11,19 @@ type Token = {
 async function refreshGoogleToken(token: Token) {
   try {
     const url =
-      "https://oauth2.googleapis.com/token?" +
+      'https://oauth2.googleapis.com/token?' +
       new URLSearchParams({
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
         client_secret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
-        grant_type: "refresh_token",
+        grant_type: 'refresh_token',
         refresh_token: token.refreshToken,
       } as Record<string, string>)
 
     const response = await fetch(url, {
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      method: "POST",
+      method: 'POST',
     })
 
     const refreshedTokens = await response.json()
@@ -44,26 +44,42 @@ async function refreshGoogleToken(token: Token) {
 
     return {
       ...token,
-      error: "RefreshAccessTokenError",
+      error: 'RefreshAccessTokenError',
     }
   }
 }
 
 async function refreshAuthToken(token: Token) {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/refresh`, {
-      headers: {
-        "Authorization": `Bearer ${btoa(JSON.stringify(token))}`,
-      },
-      method: "GET",
-    })
+    const details: Record<string, string> = {
+      grant_type: 'refresh_token',
+      refresh_token: token.refreshToken,
+      scope: 'all'
+    }
 
+    var rawBody = [];
+    for (const property in details) {
+      var encodedKey = encodeURIComponent(property)
+      var encodedValue = encodeURIComponent(details[property])
+      rawBody.push(encodedKey + '=' + encodedValue)
+    }
+    const formBody = rawBody.join('&')
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_SERVER}/oauth/token`, {
+      headers: {
+        'Authorization': `Basic ${Buffer.from('222222:22222222').toString('base64')}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      method: 'POST',
+      body: formBody
+    })
+    
     const refreshedTokens = await response.json()
 
     if (!response.ok) {
       throw refreshedTokens
     }
-
+   
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
@@ -76,12 +92,12 @@ async function refreshAuthToken(token: Token) {
 
     return {
       ...token,
-      error: "RefreshAccessTokenError",
+      error: 'RefreshAccessTokenError',
     }
   }
 }
 
-export function googleJwtCallback(token: Token, account: Account) {
+export function googleJwtCallback(token: Token, account?: Account) {
   if (account) {
     token.idToken = account.id_token as string
     token.refreshToken = account.refresh_token as string
@@ -96,7 +112,7 @@ export function googleJwtCallback(token: Token, account: Account) {
   return refreshGoogleToken(token)
 }
 
-export function authJwtCallback(token: Token, account: Account) {
+export function authJwtCallback(token: Token, account?: Account) {
   if (account) {
     token.accessToken = account.access_token as string
     token.refreshToken = account.refresh_token as string

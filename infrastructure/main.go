@@ -147,6 +147,8 @@ func main() {
 							Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
 								SetEnv("GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_ID"),
 								SetEnv("GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_SECRET"),
+								SetEnv("AUTH_SERVER_URL", "AUTH_SERVER_URL"),
+								SetEnv("BACKEND_REDIRECT_URL", "BACKEND_REDIRECT_URL"),
 							},
 						},
 					},
@@ -198,6 +200,7 @@ func main() {
 								SetEnv("NEXTAUTH_URL", "NEXTAUTH_URL"),
 								SetEnv("NEXT_PUBLIC_LOGIN_URL", "LOGIN_URL"),
 								SetEnv("NEXT_PUBLIC_AUTH_SERVER", "AUTH_SERVER_URL"),
+								SetEnv("NEXTAUTH_SECRET", "NEXTAUTH_SECRET"),
 							},
 						},
 					},
