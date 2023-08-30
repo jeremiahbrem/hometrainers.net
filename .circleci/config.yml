@@ -18,12 +18,9 @@ commands:
 jobs:
   frontend-test:
     docker:
-      - image: circleci/node:17-buster-browsers-legacy
+      - image: node:16
     steps:
       - checkout
-      - run:
-          command: sudo npm install -g npm@5
-          working_directory: ~/project/frontend
       - restore_cache:
           key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
       - run:
