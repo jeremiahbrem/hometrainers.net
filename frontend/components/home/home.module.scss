@@ -62,7 +62,7 @@
     }
 
     .trainers, .clients {
-      & > div {
+      & > ul {
         display: grid;
         grid-template-columns: 2.5rem 3fr;
         align-items: center;
