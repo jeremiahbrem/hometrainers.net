@@ -18,6 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-oauth2/oauth2/v4/generates"
 	"github.com/golang-jwt/jwt"
+	"github.com/joho/godotenv"
 
 	"github.com/go-oauth2/oauth2/v4/errors"
 	"github.com/go-oauth2/oauth2/v4/manage"
@@ -49,6 +50,8 @@ func setupRouter(
 	sessionProvider SessionProvider,
 ) *gin.Engine {
 	flag.Parse()
+
+	godotenv.Load(".env")
 
 	database.ConnectDb()
 
