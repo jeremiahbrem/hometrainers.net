@@ -49,6 +49,7 @@
   
         h4 {
           font-weight: lighter;
+          margin: .5rem;
         }
   
         &.trainers {
@@ -63,8 +64,20 @@
     .trainers, .clients {
       & > div {
         display: grid;
-        grid-template-columns: 1fr 3fr;
+        grid-template-columns: 2.5rem 3fr;
+        align-items: center;
+
+        span {
+          height: 2rem;
+          width: 2rem;
+          font-size: 28px;
+        }
       }
     }
+  }
+
+  .coming {
+    font-size: 1.5rem;
+    font-weight: bold;
   }
 }
