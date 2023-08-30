@@ -95,7 +95,7 @@ describe('token refresh', () => {
     
         expect(result).toEqual({
           ...token,
-          error: 'RefreshAccessTokenErrorxxx'
+          error: 'RefreshAccessTokenError'
         })
 
         expect(global.fetch).toHaveBeenCalledWith(
