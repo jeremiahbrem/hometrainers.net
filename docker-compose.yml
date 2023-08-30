@@ -76,7 +76,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   db:
-    image: postgres:12
+    image: postgres:alpine
     container_name: db
     ports:
       - "5432:5432"
