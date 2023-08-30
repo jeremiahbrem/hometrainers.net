@@ -26,18 +26,17 @@ jobs:
           command: sudo npm install -g npm@5
           working_directory: ~/project/frontend
       - restore_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
-          working_directory: ~/project/frontend
+          key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
       - run:
           command: npm install
           working_directory: ~/project/frontend
       - save_cache:
-          key: dependency-cache-{{ checksum "package-lock.json" }}
+          key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
           paths:
             - ./node_modules
           working_directory: ~/project/frontend
       - run:
-          command: npm run test
+          command: npm run test-ci
           working_directory: ~/project/frontend
   e2e-test:
     docker:
