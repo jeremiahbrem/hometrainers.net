@@ -32,7 +32,7 @@ jobs:
       - run: docker-compose up -d auth
       - run: docker-compose up -d backend
       - run: docker-compose up -d frontend
-      - run: docker-compose exec frontend npm test-ci
+      - run: docker-compose exec frontend npm run test-ci
       - run: docker-compose up --abort-on-container-exit --exit-code-from cypress
   deploy:
     executor:
