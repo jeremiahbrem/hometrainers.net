@@ -18,11 +18,20 @@
 
   .headlines-container {
     margin-bottom: 3rem;
+    padding: 0 3rem;
+    display: flex;
+    justify-content: center;
+
+    @media(max-width: 770px) {
+      padding: 0;
+    }
+
     .headlines {
       display: grid;
       grid-template-columns: 50% 50%;
       width: 100%;
       box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
+      max-width: 50rem;
 
       @media (max-width: 600px) {
         grid-template-columns: 100%;

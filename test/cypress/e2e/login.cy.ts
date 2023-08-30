@@ -2,7 +2,7 @@ describe('login page', () => {
   it('shows signed out', () => {
     cy
       .visit('/auth-test')
-      .contains('Sign in')
+      .contains('Sign infff')
   })
 
   it('logs in', () => {
