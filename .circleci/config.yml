@@ -83,10 +83,10 @@ workflows:
     jobs:
       # - e2e-test
       - frontend-test
-      - deploy:
-          requires:
-            - e2e-test
-          filters:
-            branches:
-              only:
-                - main
+      # - deploy:
+      #     requires:
+      #       - e2e-test
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
