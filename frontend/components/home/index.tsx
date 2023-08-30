@@ -16,7 +16,12 @@ export function HomeComponent() {
         <div className={styles.headlines}>
           <div className={styles.trainers}>
             <h2 className={oswald.className}>Trainers</h2>
-            <h4>Build a page</h4>
+            <div>
+              <h4>Build a page</h4>
+              <span className="material-symbols-outlined">
+                home
+              </span>
+            </div>
             <h4>Connect with clients</h4>
             <h4>Grow your network</h4>
           </div>
