@@ -3,20 +3,17 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"golang.org/x/oauth2"
 	"google.golang.org/api/idtoken"
 )
 
@@ -53,44 +50,10 @@ func getAuthorizedUser(context *gin.Context) (User, bool) {
 	return user, true
 }
 
-func getToken(context *gin.Context) (*oauth2.Token, error) {
-	authHeader := context.Request.Header["Authorization"]
-	token := strings.Split(authHeader[0], "Bearer ")[1]
-
-	decoded, decodeErr := base64.StdEncoding.DecodeString(token)
-
-	if decodeErr != nil {
-		return nil, decodeErr
-	}
-
-	var contextToken *oauth2.Token
-
-	jsondecodeErr := json.Unmarshal([]byte(decoded), &contextToken)
-
-	if jsondecodeErr != nil {
-		return nil, jsondecodeErr
-	}
-
-	return contextToken, nil
-}
-
 func main() {
 	godotenv.Load(".env")
 
 	authServerURL := os.Getenv("AUTH_SERVER_URL")
-
-	var (
-		config = oauth2.Config{
-			ClientID:     "222222",
-			ClientSecret: "22222222",
-			Scopes:       []string{"all"},
-			RedirectURL:  os.Getenv("BACKEND_REDIRECT_URL"),
-			Endpoint: oauth2.Endpoint{
-				AuthURL:  authServerURL + "/oauth/authorize",
-				TokenURL: authServerURL + "/oauth/token",
-			},
-		}
-	)
 
 	router := gin.Default()
 
@@ -117,58 +80,49 @@ func main() {
 	})
 
 	router.GET("/login", func(context *gin.Context) {
-		state := context.Query("state")
-		url := config.AuthCodeURL(state,
-			oauth2.SetAuthURLParam("code_challenge", genCodeChallengeS256("s256example")),
-			oauth2.SetAuthURLParam("code_challenge_method", "S256"))
-		context.Redirect(http.StatusFound, url)
+		oldUrl := context.Request.URL.String()
+		params := strings.Split(oldUrl, "?")[1]
+		newUrl := fmt.Sprintf("%s%s%s", authServerURL, "/oauth/authorize?", params)
+
+		finalUrl, _ := url.Parse(newUrl)
+
+		values := finalUrl.Query()
+
+		values.Set("code_challenge", genCodeChallengeS256("s256example"))
+		values.Set("code_challenge_method", "S256")
+
+		finalUrl.RawQuery = values.Encode()
+
+		context.Redirect(http.StatusFound, finalUrl.String())
 	})
 
-	router.GET("/refresh", func(context *gin.Context) {
-		contextToken, err := getToken(context)
+	// 	router.GET("/try", func(context *gin.Context) {
+	// 		cachedToken, err := context.Cookie("auth-token")
 
-		if err != nil {
-			context.AbortWithError(http.StatusUnauthorized, err)
-			return
-		}
+	// 		if err != nil {
+	// 			context.Redirect(http.StatusFound, "/")
+	// 			return
+	// 		}
 
-		contextToken.Expiry = time.Now()
-		token, err := config.TokenSource(context, contextToken).Token()
-		if err != nil {
-			context.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
+	// 		var contextToken *oauth2.Token
 
-		context.JSON(http.StatusFound, token)
-	})
+	// 		decodeErr := json.Unmarshal([]byte(cachedToken), &contextToken)
 
-	router.GET("/try", func(context *gin.Context) {
-		cachedToken, err := context.Cookie("auth-token")
+	// 		if decodeErr != nil {
+	// 			context.Redirect(http.StatusFound, "/")
+	// 			return
+	// 		}
 
-		if err != nil {
-			context.Redirect(http.StatusFound, "/")
-			return
-		}
+	// 		resp, err := http.Get(fmt.Sprintf("%s/validate?access_token=%s", authServerURL, contextToken.AccessToken))
 
-		var contextToken *oauth2.Token
+	// 		if err != nil {
+	// 			context.AbortWithError(http.StatusBadRequest, err)
+	// 		}
 
-		decodeErr := json.Unmarshal([]byte(cachedToken), &contextToken)
+	// 		defer resp.Body.Close()
 
-		if decodeErr != nil {
-			context.Redirect(http.StatusFound, "/")
-			return
-		}
-
-		resp, err := http.Get(fmt.Sprintf("%s/validate?access_token=%s", authServerURL, contextToken.AccessToken))
-
-		if err != nil {
-			context.AbortWithError(http.StatusBadRequest, err)
-		}
-
-		defer resp.Body.Close()
-
-		io.Copy(context.Writer, resp.Body)
-	})
+	// 		io.Copy(context.Writer, resp.Body)
+	// 	})
 
 	router.Run(":8080")
 
