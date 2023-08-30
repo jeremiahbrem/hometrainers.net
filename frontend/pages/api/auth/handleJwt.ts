@@ -67,7 +67,7 @@ async function refreshAuthToken(token: Token) {
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_SERVER}/oauth/token`, {
       headers: {
-        'Authorization': `Basic ${Buffer.from('222222:22222222', 'base64')}`,
+        'Authorization': `Basic ${Buffer.from('222222:22222222').toString('base64')}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       method: 'POST',

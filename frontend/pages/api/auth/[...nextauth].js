@@ -51,7 +51,7 @@ export default NextAuth({
             body: formBody,
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': `Basic ${Buffer.from('222222:22222222', 'base64')}`
+              'Authorization': `Basic ${Buffer.from('222222:22222222').toString('base64')}`
             },
           })
           const tokens = await response.json()
