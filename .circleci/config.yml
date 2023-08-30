@@ -3,7 +3,6 @@ orbs:
   pulumi: pulumi/pulumi@2.1.0
   gcp-cli: circleci/gcp-cli@3.0.1
   go: circleci/go@1.7.3
-  node: circleci/node@5.1.0
 commands:
   load-env:
     steps:
@@ -19,7 +18,7 @@ commands:
 jobs:
   frontend-test:
     docker:
-      - image: circleci/node:10.16.3
+      - image: circleci/node:16.0.1
     steps:
       - checkout
       - run:
