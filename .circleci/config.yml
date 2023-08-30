@@ -29,9 +29,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker-compose build
-      - run: docker-compose up auth
-      - run: docker-compose up backend
-      - run: docker-compose up frontend
+      - run: docker-compose up -d auth
+      - run: docker-compose up -d backend
+      - run: docker-compose up -d frontend
       - run: docker-compose exec frontend npm test-ci
       - run: docker-compose up --abort-on-container-exit --exit-code-from cypress
   deploy:
