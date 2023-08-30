@@ -1,8 +1,13 @@
 import Head from 'next/head'
 import ErrorBoundary from '../errorBoundary'
-import { Inter } from 'next/font/google'
+import { Roboto } from 'next/font/google'
+import Header from '../header'
+import styles from './layout.module.scss'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Roboto({
+  subsets: ['latin'],
+  weight: ['400','500','700','900']
+})
 
 export default function Layout({
   children,
@@ -18,7 +23,10 @@ export default function Layout({
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        {children}
+        <Header />
+          <main className={styles.main}>
+            {children}
+          </main>
       </div>
     </ErrorBoundary>
   )

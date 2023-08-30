@@ -1,0 +1,44 @@
+@import '@/styles/global.scss';
+
+.header {
+  width: 100vw;
+  height: 4rem;
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  position: fixed;
+  top: 0;
+  left: 0;
+  align-items: center;
+  box-shadow: 0.1rem 0.1rem 0.3rem rgba(0, 0, 0, 0.15);
+  background: white;
+  z-index: 10;
+
+  .logo-container {
+    height: 100%;
+    width: 6rem;
+    overflow: hidden;
+    padding-left: .25rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: $fontColor;
+  }
+
+  @media(max-width: 370px) {
+    grid-template-columns: 4.5rem 1fr;
+
+    .logo-container {
+      width: 4.5rem;
+      img {
+        transform: translateY(5%) scale(1.1);
+      }
+    }
+  
+    p {
+      font-size: .8rem;
+      color: $fontColor;
+    }
+  }
+}

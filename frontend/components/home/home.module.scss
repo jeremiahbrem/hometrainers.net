@@ -1,0 +1,54 @@
+@import '@/styles/global.scss';
+
+.home {
+  padding: 5rem;
+
+  @media (max-width: 600px) {
+    padding: 3rem;
+  }
+  @media (max-width: 400px) {
+    padding: 3rem 1.5rem;
+  }
+
+  h1 {
+    line-height: 1.4;
+    color: $fontColor;
+    margin-bottom: 2rem;
+  }
+
+  .headlines-container {
+    margin-bottom: 3rem;
+    .headlines {
+      display: grid;
+      grid-template-columns: 50% 50%;
+      width: 100%;
+      box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
+
+      @media (max-width: 600px) {
+        grid-template-columns: 100%;
+      }
+  
+      & > div {
+        width: 100%;
+        padding: 1rem 2rem;
+        color: white;
+  
+        h2 {
+          margin-top: 0;
+          font-size: 2rem;
+        }
+  
+        h4 {
+          font-weight: lighter;
+        }
+  
+        &.trainers {
+          background-color: $fontColor;
+        }
+        &.clients {
+          background-color: #dd940c;
+        };
+      }
+    }
+  }
+}
