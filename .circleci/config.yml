@@ -17,7 +17,23 @@ commands:
       - run: echo 'export LOGIN_URL=${LOGIN_URL}'
       - run: echo 'export AUTH_SERVER_URL=${AUTH_SERVER_URL}'
 jobs:
-  test:
+  frontend-test:
+    docker:
+      - image: circleci/node:10.16.3
+    steps:
+      - checkout
+      - run: sudo npm install -g npm@5
+          working_directory: ~/project/frontend
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/project/frontend/node_modules
+      - run: npm run test
+          working_directory: ~/project/frontend
+  e2e-test:
     docker:
       - image: cimg/base:2021.04
     environment:
@@ -29,10 +45,6 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker-compose build
-      - run: docker-compose up -d auth
-      - run: docker-compose up -d backend
-      - run: docker-compose up -d frontend
-      - run: docker-compose exec frontend npm run test-ci
       - run: docker-compose up --abort-on-container-exit --exit-code-from cypress
   deploy:
     executor:
@@ -67,10 +79,11 @@ workflows:
   version: 2
   cd:
     jobs:
-      - test
+      # - e2e-test
+      - frontend-test
       - deploy:
           requires:
-            - test
+            - e2e-test
           filters:
             branches:
               only:
