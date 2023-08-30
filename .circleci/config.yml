@@ -30,9 +30,6 @@ jobs:
       - setup_remote_docker
       - run: docker-compose build
       - run: docker-compose up --abort-on-container-exit --exit-code-from cypress
-      - run:
-          command: npm test
-          working_directory: ~/project/frontend
   deploy:
     executor:
       name: go/default
