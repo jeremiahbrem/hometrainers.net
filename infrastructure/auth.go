@@ -16,6 +16,7 @@ func AuthService(
 	enableCloudRun *projects.Service,
 	dbUser pulumi.StringOutput,
 	dbPwd pulumi.StringOutput,
+	dbHost pulumi.StringOutput,
 ) *cloudrun.Service {
 	var authImageName = fmt.Sprintf("auth:%v", gitHash)
 
@@ -52,12 +53,12 @@ func AuthService(
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_HOST"),
-								Value:     pulumi.String("/cloudsql"),
+								Value:     pulumi.Sprintf("/cloudsql/%s", dbHost),
 								ValueFrom: nil,
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_DB"),
-								Value:     pulumi.String("/hptrainers"),
+								Value:     pulumi.String("hptrainers"),
 								ValueFrom: nil,
 							},
 						},
