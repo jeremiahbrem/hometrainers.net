@@ -58,11 +58,15 @@ func main() {
 			return ""
 		}()
 
+		username, password, dbErr = Database(ctx)
+
 		authService := AuthService(
 			gitHash,
 			ctx,
 			repoUrl,
 			enableCloudRun,
+			username,
+			password,
 		)
 
 		backendService := BackendService(
