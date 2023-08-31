@@ -26,22 +26,12 @@ func ConnectDb() {
 		os.Getenv("POSTGRES_PASSWORD"),
 	)
 
-	var db *gorm.DB
-	var dbErr error
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 
-	if os.Getenv("ENVIRONMENT") == "PROD" {
-		db, dbErr = gorm.Open(postgres.New(postgres.Config{
-			DriverName: "cloudsqlpostgres",
-			DSN:        dsn,
-		}))
-	} else {
-		db, dbErr = gorm.Open(postgres.Open(dsn), &gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
-		})
-	}
-
-	if dbErr != nil {
-		log.Fatal("Failed to connect to database. \n", dbErr)
+	if err != nil {
+		log.Fatal("Failed to connect to database. \n", err)
 		os.Exit(1)
 	}
 
