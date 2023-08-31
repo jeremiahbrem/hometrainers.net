@@ -13,8 +13,8 @@ ARG POSTGRES_HOST
 
 EXPOSE 9096
 
-CMD sudo mkdir /cloudsql & \
-    sudo chmod 777 /cloudsql & \
+CMD mkdir /cloudsql & \
+    chmod 777 /cloudsql & \
     ./cloudsql --unix-socket /cloudsql $POSTGRES_HOST & \
     /auth
 
