@@ -23,7 +23,9 @@ services:
       context: ./auth
     ports:
       - 9096:9096
-    depends_on: [db]
+    depends_on:
+      db:
+        condition: service_healty
     environment:
       - REDIRECT_URL=http://host.docker.internal:3000
       - POSTGRES_USER=postgres
@@ -87,6 +89,12 @@ services:
     volumes:
       - postgres-db:/var/lib/postgresql/data
       - ./sql:/sql
+    healthcheck:
+      test: ["CMD_SHELL", "sh -c pg_isready -U postgres -d hptrainers"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
 
 volumes:
   postgres-db:
