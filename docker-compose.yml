@@ -25,7 +25,7 @@ services:
       - 9096:9096
     depends_on:
       db:
-        condition: service_healty
+        condition: service_healthy
     environment:
       - REDIRECT_URL=http://host.docker.internal:3000
       - POSTGRES_USER=postgres
@@ -90,7 +90,7 @@ services:
       - postgres-db:/var/lib/postgresql/data
       - ./sql:/sql
     healthcheck:
-      test: ["CMD_SHELL", "sh -c pg_isready -U postgres -d hptrainers"]
+      test: ["CMD-SHELL", "sh -c pg_isready -U postgres -d hptrainers"]
       interval: 10s
       timeout: 3s
       retries: 10
