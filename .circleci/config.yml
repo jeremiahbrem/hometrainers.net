@@ -45,6 +45,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - run: docker volume create --name=postgres-db
       - run: docker-compose build
       - run: docker-compose up --abort-on-container-exit --exit-code-from cypress
   deploy:

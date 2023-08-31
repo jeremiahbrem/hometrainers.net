@@ -10,12 +10,15 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"server/database"
+	dbModels "server/models"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-oauth2/oauth2/v4/generates"
 	"github.com/golang-jwt/jwt"
+	"github.com/joho/godotenv"
 
 	"github.com/go-oauth2/oauth2/v4/errors"
 	"github.com/go-oauth2/oauth2/v4/manage"
@@ -47,6 +50,10 @@ func setupRouter(
 	sessionProvider SessionProvider,
 ) *gin.Engine {
 	flag.Parse()
+
+	godotenv.Load(".env")
+
+	database.ConnectDb()
 
 	router := gin.Default()
 
@@ -88,6 +95,27 @@ func setupRouter(
 	router.POST("/login", loginHandler(sessionProvider))
 	router.GET("/login", loginHandler(sessionProvider))
 	router.GET("/auth", authHandler(sessionProvider))
+
+	router.POST("/signup", func(ctx *gin.Context) {
+		user := new(dbModels.User)
+		if err := ctx.BindJSON(&user); err != nil {
+			ctx.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+
+		database.DB.Db.Create(&user)
+
+		ctx.JSON(http.StatusOK, user)
+	})
+
+	router.GET("/get-user", func(ctx *gin.Context) {
+		var user dbModels.User
+		email := ctx.Request.URL.Query().Get("email")
+
+		database.DB.Db.Where("name = ?", email).First(&user)
+
+		ctx.JSON(http.StatusOK, user)
+	})
 
 	router.GET("/oauth/authorize", func(ctx *gin.Context) {
 		session := sessionProvider(ctx)
