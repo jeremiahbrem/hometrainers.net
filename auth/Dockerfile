@@ -1,4 +1,4 @@
-FROM golang:1.19 as dev
+FROM golang:1.19 as prod
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ EXPOSE 9096
 
 CMD ./cloudsql $POSTGRES_HOST & /auth
 
-FROM golang:1.19 as prod
+FROM golang:1.19 as dev
 
 WORKDIR /app
 
