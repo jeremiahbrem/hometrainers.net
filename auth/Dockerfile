@@ -10,7 +10,7 @@ RUN curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/
 
 RUN chmod +x cloud-sql-proxy
 RUN mkdir /cloudsql
-
+RUN chmod +x /cloudsql
 COPY . .
 RUN go build -o /auth
 
