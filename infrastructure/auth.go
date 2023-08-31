@@ -33,6 +33,11 @@ func AuthService(
 		Location: pulumi.String(Location),
 		Metadata: &cloudrun.ServiceMetadataArgs{
 			Namespace: pulumi.String(ProjectId),
+			Annotations: pulumi.StringMap(
+				map[string]pulumi.StringInput{
+					"run.googleapis.co/cloudsql-instances": dbHost,
+				},
+			),
 		},
 		Template: &cloudrun.ServiceTemplateArgs{
 			Spec: &cloudrun.ServiceTemplateSpecArgs{
