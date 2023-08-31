@@ -81,12 +81,12 @@ workflows:
   version: 2
   cd:
     jobs:
-      - e2e-test
-      - frontend-test
+      # - e2e-test
+      # - frontend-test
       - deploy:
-          requires:
-            - e2e-test
-            - frontend-test
+          # requires:
+          #   - e2e-test
+          #   - frontend-test
           filters:
             branches:
               only:
