@@ -9,8 +9,8 @@ EXPOSE 9096
 RUN curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.6.1/cloud-sql-proxy.linux.amd64
 
 RUN chmod +x cloud-sql-proxy
-RUN mkdir /cloudsql
-RUN chmod +x /cloudsql
+RUN mkdir cloudsql
+RUN chmod +x cloudsql
 COPY . .
 RUN go build -o /auth
 
