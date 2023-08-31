@@ -58,7 +58,11 @@ func main() {
 			return ""
 		}()
 
-		username, password, dbErr = Database(ctx)
+		username, password, dbErr := Database(ctx)
+
+		if dbErr != nil {
+			return dbErr
+		}
 
 		authService := AuthService(
 			gitHash,
