@@ -50,8 +50,16 @@ func AuthService(
 								Value:     dbPwd,
 								ValueFrom: nil,
 							},
-							SetEnv("POSTGRES_HOST", "/cloudsql"),
-							SetEnv("POSTGRES_DB", "hptrainers"),
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("POSTGRES_HOST"),
+								Value:     pulumi.String("/cloudsql"),
+								ValueFrom: nil,
+							},
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("POSTGRES_DB"),
+								Value:     pulumi.String("/hptrainers"),
+								ValueFrom: nil,
+							},
 						},
 						Ports: cloudrun.ServiceTemplateSpecContainerPortArray{
 							cloudrun.ServiceTemplateSpecContainerPortArgs{
