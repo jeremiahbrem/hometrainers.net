@@ -5,16 +5,12 @@ WORKDIR /app
 COPY . .
 RUN go build -o /auth
 
-RUN if [ "$ENVIRONMENT" == "PROD" ]; \
-  then curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.6.1/cloud-sql-proxy.linux.amd64; fi
+RUN if [ "$ENVIRONMENT" == "PROD" ]; then curl -o cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.6.1/cloud-sql-proxy.linux.amd64; fi
 
-RUN if [ "$ENVIRONMENT" == "PROD" ]; \
-  then chmod +x cloud-sql-proxy; fi
+RUN if [ "$ENVIRONMENT" == "PROD" ]; then chmod +x cloud-sql-proxy; fi
 
 ARG POSTGRES_HOST
 
 EXPOSE 9096
 
-CMD if [ "$ENVIRONMENT" == "PROD" ]; \
-    then ./cloud-sql-proxy $POSTGRES_HOST & /auth; \
-    else /auth; fi
+CMD if [ "$ENVIRONMENT" == "PROD" ]; then ./cloud-sql-proxy $POSTGRES_HOST & /auth; else /auth; fi
