@@ -61,5 +61,5 @@ func Database(
 		Name:     pulumi.String("hptrainers"),
 	})
 
-	return user.Name, password.Result, instance.ConnectionName, err
+	return user.Name, password.Result, instance.PublicIpAddress, err
 }
