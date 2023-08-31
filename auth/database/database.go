@@ -19,19 +19,29 @@ var DB Dbinstance
 
 func ConnectDb() {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=America/Chicago",
+		"host=%s user=%s dbname=%s password=%s sslmode=disable",
 		os.Getenv("POSTGRES_HOST"),
 		os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_DB"),
+		os.Getenv("POSTGRES_PASSWORD"),
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	var db *gorm.DB
+	var dbErr error
 
-	if err != nil {
-		log.Fatal("Failed to connect to database. \n", err)
+	if os.Getenv("ENVIRONMENT") == "PROD" {
+		db, dbErr = gorm.Open(postgres.New(postgres.Config{
+			DriverName: "cloudsqlpostgres",
+			DSN:        dsn,
+		}))
+	} else {
+		db, dbErr = gorm.Open(postgres.Open(dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
+	}
+
+	if dbErr != nil {
+		log.Fatal("Failed to connect to database. \n", dbErr)
 		os.Exit(1)
 	}
 

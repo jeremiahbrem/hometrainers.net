@@ -32,6 +32,7 @@ services:
       - POSTGRES_PASSWORD=Password123
       - POSTGRES_DB=hptrainers
       - POSTGRES_HOST=db
+      - ENVIRONMENT=DEV
     extra_hosts:
       - "host.docker.internal:host-gateway"
   cypress:
