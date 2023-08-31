@@ -13,7 +13,7 @@ ARG POSTGRES_HOST
 
 EXPOSE 9096
 
-CMD ./cloudsql $POSTGRES_HOST & /auth; else /auth
+CMD ./cloudsql $POSTGRES_HOST & /auth
 
 FROM golang:1.19 as prod
 
