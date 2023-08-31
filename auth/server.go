@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"server/database"
 	dbModels "server/models"
 	"time"
@@ -52,6 +53,13 @@ func setupRouter(
 	flag.Parse()
 
 	godotenv.Load(".env")
+
+	out, _ := exec.Command("ls").Output()
+	output := string(out)
+	fmt.Println(output)
+	out2, _ := exec.Command("ls cloudsql").Output()
+	output2 := string(out2)
+	fmt.Println(output2)
 
 	database.ConnectDb()
 
