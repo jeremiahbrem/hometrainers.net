@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/projects"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/sql"
 	"github.com/pulumi/pulumi-random/sdk/v4/go/random"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -13,6 +14,12 @@ func Database(
 	pulumi.StringOutput,
 	error,
 ) {
+	enableSqlAdmin, _ := projects.NewService(ctx, "EnableSqlAdmin", &projects.ServiceArgs{
+		DisableDependentServices: pulumi.Bool(true),
+		Project:                  pulumi.String(ProjectId),
+		Service:                  pulumi.String("sqladmin.googleapis.com"),
+	})
+
 	instance, err := sql.NewDatabaseInstance(ctx, "instance", &sql.DatabaseInstanceArgs{
 		Region:          pulumi.String("us-central1"),
 		DatabaseVersion: pulumi.String("POSTGRES_14"),
@@ -20,7 +27,7 @@ func Database(
 			Tier: pulumi.String("db-f1-micro"),
 		},
 		DeletionProtection: pulumi.Bool(true),
-	})
+	}, pulumi.DependsOn([]pulumi.Resource{enableSqlAdmin}))
 
 	emptyString := pulumi.String("").ToStringOutput()
 
