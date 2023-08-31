@@ -58,7 +58,7 @@ func AuthService(
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_HOST"),
-								Value:     pulumi.Sprintf("%s:%s:%s", ProjectId, Location, dbHost),
+								Value:     pulumi.Sprintf("/cloudsql/%s:%s:%s", ProjectId, Location, dbHost),
 								ValueFrom: nil,
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
