@@ -6,6 +6,13 @@ const oswald = Oswald({
   subsets: ['latin'],
 })
 
+const IconListItem: React.FC<{ text: string; icon: string; }> = ({ text, icon }) => (
+  <div>
+    <span className="material-symbols-outlined">{icon}</span>
+    <h4>{text}</h4>
+  </div>
+)
+
 export function HomeComponent() {
 
   return (
@@ -16,20 +23,38 @@ export function HomeComponent() {
         <div className={styles.headlines}>
           <div className={styles.trainers}>
             <h2 className={oswald.className}>Trainers</h2>
-            <h4>Build a page</h4>
-            <h4>Connect with clients</h4>
-            <h4>Grow your network</h4>
+            <IconListItem {...{
+              text: 'Build a page',
+              icon: 'contact_page'
+            }} />
+            <IconListItem {...{
+              text: 'Connect with clients',
+              icon: 'person_add'
+            }} />
+            <IconListItem {...{
+              text: 'Grow your network',
+              icon: 'hub'
+            }} />
           </div>
           <div className={styles.clients}>
             <h2 className={oswald.className}>Clients</h2>
-            <h4>Find trainers in your area</h4>
-            <h4>Get matched based on your needs</h4>
-            <h4>Reach your fitness goals at home</h4>
+            <IconListItem {...{
+              text: 'Find trainers in your area',
+              icon: 'manage_search'
+            }} />
+            <IconListItem {...{
+              text: 'Get matched based on your needs',
+              icon: 'join_right'
+            }} />
+            <IconListItem {...{
+              text: 'Reach your fitness goals at home',
+              icon: 'home'
+            }} />
           </div>
         </div>
       </div>
 
-      <p>Coming soon...</p>
+      <p className={styles.coming}>Coming soon...</p>
     </div>
   )
 }

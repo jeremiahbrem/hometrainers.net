@@ -2,7 +2,7 @@ version: "3.8"
 services:
   backend:
     container_name: backend
-    depends_on: [auth]
+    depends_on: [auth, db]
     volumes:
       - "./backend:/app"
     build:
@@ -23,8 +23,15 @@ services:
       context: ./auth
     ports:
       - 9096:9096
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       - REDIRECT_URL=http://host.docker.internal:3000
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Password123
+      - POSTGRES_NAME=hptrainers
+      - POSTGRES_HOST=db
     extra_hosts:
       - "host.docker.internal:host-gateway"
   cypress:
@@ -70,3 +77,25 @@ services:
       - "3000:3000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  db:
+    image: postgres:alpine
+    container_name: db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Password123
+      - POSTGRES_DB=hptrainers
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+      - ./sql:/sql
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c pg_isready -U postgres -d hptrainers"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  postgres-db:
+    external: true
