@@ -14,7 +14,7 @@ RUN chmod +x cloudsql
 COPY . .
 RUN go build -o /auth
 
-CMD ./cloud-sql-proxy --unix-socket /cloudsql $POSTGRES_HOST & /auth
+CMD ./cloud-sql-proxy --unix-socket cloudsql $POSTGRES_HOST & /auth
 
 FROM golang:1.19 as dev
 
