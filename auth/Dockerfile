@@ -13,7 +13,10 @@ ARG POSTGRES_HOST
 
 EXPOSE 9096
 
-CMD ./cloudsql $POSTGRES_HOST & /auth
+CMD sudo mkdir /cloudsql & \
+    sudo chmod 777 /cloudsql & \
+    ./cloudsql --unix-socket /cloudsql $POSTGRES_HOST & \
+    /auth
 
 FROM golang:1.19 as dev
 
