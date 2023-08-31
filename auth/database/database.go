@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"server/models"
 
 	"gorm.io/driver/postgres"
@@ -19,10 +18,6 @@ type Dbinstance struct {
 var DB Dbinstance
 
 func ConnectDb() {
-	out, _ := exec.Command("ls -a").Output()
-	output := string(out[:])
-	fmt.Println(output)
-
 	dsn := fmt.Sprintf(
 		"host=%s user=%s dbname=%s password=%s sslmode=disable",
 		os.Getenv("POSTGRES_HOST"),
