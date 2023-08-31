@@ -90,7 +90,7 @@ services:
       - postgres-db:/var/lib/postgresql/data
       - ./sql:/sql
     healthcheck:
-      test: ["CMD_SHELL", "sh -c pg_isready -U postgres -d hptrainers"]
+      test: ["CMD-SHELL", "sh -c pg_isready -U postgres -d hptrainers"]
       interval: 10s
       timeout: 3s
       retries: 10
