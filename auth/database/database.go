@@ -28,7 +28,7 @@ func exitWithError(err error) {
 	os.Exit(1)
 }
 
-func ConnectDb() error {
+func ConnectDb() {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s dbname=%s password=%s sslmode=disable",
 		os.Getenv("POSTGRES_HOST"),
