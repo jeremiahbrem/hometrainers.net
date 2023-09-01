@@ -6,6 +6,7 @@ import (
 	"github.com/pulumi/pulumi-docker/sdk/v4/go/docker"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/cloudrun"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/projects"
+	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/sql"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -14,6 +15,7 @@ func AuthService(
 	ctx *pulumi.Context,
 	repoUrl pulumi.StringOutput,
 	enableCloudRun *projects.Service,
+	db *sql.Database,
 	dbUser pulumi.StringOutput,
 	dbPwd pulumi.StringOutput,
 	dbHost pulumi.StringOutput,
@@ -36,7 +38,6 @@ func AuthService(
 			Annotations: pulumi.StringMap(
 				map[string]pulumi.StringInput{
 					"run.googleapis.co/cloudsql-instances": dbHost,
-					"run.googleapis.com/launch-stage": pulumi.String("BETA"),
 				},
 			),
 		},
@@ -82,7 +83,7 @@ func AuthService(
 				},
 			},
 		},
-	}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, auth}))
+	}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, db, auth}))
 
 	cloudrun.NewIamMember(ctx, "auth-iam", &cloudrun.IamMemberArgs{
 		Service:  authService.Name,
