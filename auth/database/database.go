@@ -1,6 +1,7 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -26,11 +27,20 @@ func ConnectDb() {
 		os.Getenv("POSTGRES_PASSWORD"),
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+	sqlDB, err := sql.Open("pgx", dsn)
+
+	if err != nil {
+		log.Fatal("Failed to connect to database. \n", err)
+		os.Exit(1)
+	}
+
+	db, dbErr := gorm.Open(postgres.New(postgres.Config{
+		Conn: sqlDB,
+	}), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	if err != nil {
+	if dbErr != nil {
 		log.Fatal("Failed to connect to database. \n", err)
 		os.Exit(1)
 	}
