@@ -46,6 +46,13 @@ func AuthService(
 				Containers: cloudrun.ServiceTemplateSpecContainerArray{
 					&cloudrun.ServiceTemplateSpecContainerArgs{
 						Image: auth.ImageName,
+						VolumeMounts: cloudrun.ServiceTemplateSpecContainerVolumeMountArray{
+							cloudrun.ServiceTemplateSpecContainerVolumeMountArgs{
+								Name:      pulumi.String("cloudsql"),
+								MountPath: pulumi.String("/cloudsql"),
+							},
+						},
+
 						Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
 							SetEnv("NEXTAUTH_URL", "NEXTAUTH_URL"),
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
@@ -79,6 +86,11 @@ func AuthService(
 								ContainerPort: pulumi.IntPtr(9096),
 							},
 						},
+					},
+				},
+				Volumes: cloudrun.ServiceTemplateSpecVolumeArray{
+					cloudrun.ServiceTemplateSpecVolumeArgs{
+						Name: pulumi.String("cloudsql"),
 					},
 				},
 			},
