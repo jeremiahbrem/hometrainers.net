@@ -36,6 +36,7 @@ func AuthService(
 			Annotations: pulumi.StringMap(
 				map[string]pulumi.StringInput{
 					"run.googleapis.co/cloudsql-instances": dbHost,
+					"run.googleapis.com/launch-stage": pulumi.String("BETA"),
 				},
 			),
 		},
