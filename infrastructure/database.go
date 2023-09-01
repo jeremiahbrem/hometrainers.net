@@ -13,6 +13,7 @@ func Database(
 	pulumi.StringOutput,
 	pulumi.StringOutput,
 	pulumi.StringOutput,
+	*sql.Database,
 	error,
 ) {
 	enableSqlAdmin, _ := projects.NewService(ctx, "EnableSqlAdmin", &projects.ServiceArgs{
@@ -33,13 +34,13 @@ func Database(
 	emptyString := pulumi.String("").ToStringOutput()
 
 	if err != nil {
-		return emptyString, emptyString, emptyString, err
+		return emptyString, emptyString, emptyString, nil, err
 	}
 	_, err = sql.NewDatabase(ctx, "database", &sql.DatabaseArgs{
 		Instance: instance.Name,
 	})
 	if err != nil {
-		return emptyString, emptyString, emptyString, err
+		return emptyString, emptyString, emptyString, nil, err
 	}
 
 	password, _ := random.NewRandomPassword(ctx, "hpt-db-password", &random.RandomPasswordArgs{
@@ -56,10 +57,10 @@ func Database(
 		Password: password.Result,
 	})
 
-	sql.NewDatabase(ctx, "hptrainers", &sql.DatabaseArgs{
+	db, _ := sql.NewDatabase(ctx, "hptrainers", &sql.DatabaseArgs{
 		Instance: instance.Name,
 		Name:     pulumi.String("hptrainers"),
 	})
 
-	return user.Name, password.Result, instance.ConnectionName, err
+	return user.Name, password.Result, instance.ConnectionName, db, err
 }

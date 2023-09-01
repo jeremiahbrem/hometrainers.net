@@ -36,6 +36,7 @@ func ConnectDb() {
 		os.Getenv("POSTGRES_DB"),
 		os.Getenv("POSTGRES_PASSWORD"),
 	)
+
 	config, parseErr := pgx.ParseConfig(dsn)
 	if parseErr != nil {
 		exitWithError(parseErr)
@@ -44,7 +45,6 @@ func ConnectDb() {
 	dialer, dialerErr := cloudsqlconn.NewDialer(context.Background())
 	if dialerErr != nil {
 		exitWithError(dialerErr)
-
 	}
 
 	config.DialFunc = func(ctx context.Context, network, instance string) (net.Conn, error) {

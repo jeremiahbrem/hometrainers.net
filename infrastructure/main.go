@@ -58,7 +58,7 @@ func main() {
 			return ""
 		}()
 
-		username, password, dbHost, dbErr := Database(ctx)
+		username, password, dbHost, db, dbErr := Database(ctx)
 
 		if dbErr != nil {
 			return dbErr
@@ -69,6 +69,7 @@ func main() {
 			ctx,
 			repoUrl,
 			enableCloudRun,
+			db,
 			username,
 			password,
 			dbHost,
