@@ -7,10 +7,10 @@ const oswald = Oswald({
 })
 
 const IconListItem: React.FC<{ text: string; icon: string; }> = ({ text, icon }) => (
-  <div>
+  <li>
     <span className="material-symbols-outlined">{icon}</span>
     <h4>{text}</h4>
-  </div>
+  </li>
 )
 
 export function HomeComponent() {
@@ -23,33 +23,37 @@ export function HomeComponent() {
         <div className={styles.headlines}>
           <div className={styles.trainers}>
             <h2 className={oswald.className}>Trainers</h2>
-            <IconListItem {...{
-              text: 'Build a page',
-              icon: 'contact_page'
-            }} />
-            <IconListItem {...{
-              text: 'Connect with clients',
-              icon: 'person_add'
-            }} />
-            <IconListItem {...{
-              text: 'Grow your network',
-              icon: 'hub'
-            }} />
+            <ul>
+              <IconListItem {...{
+                text: 'Build a page',
+                icon: 'contact_page'
+              }} />
+              <IconListItem {...{
+                text: 'Connect with clients',
+                icon: 'person_add'
+              }} />
+              <IconListItem {...{
+                text: 'Grow your network',
+                icon: 'hub'
+              }} />
+            </ul>
           </div>
           <div className={styles.clients}>
             <h2 className={oswald.className}>Clients</h2>
-            <IconListItem {...{
-              text: 'Find trainers in your area',
-              icon: 'manage_search'
-            }} />
-            <IconListItem {...{
-              text: 'Get matched based on your needs',
-              icon: 'join_right'
-            }} />
-            <IconListItem {...{
-              text: 'Reach your fitness goals at home',
-              icon: 'home'
-            }} />
+            <ul>
+              <IconListItem {...{
+                text: 'Find trainers in your area',
+                icon: 'manage_search'
+              }} />
+              <IconListItem {...{
+                text: 'Get matched based on your needs',
+                icon: 'join_right'
+              }} />
+              <IconListItem {...{
+                text: 'Reach your fitness goals at home',
+                icon: 'home'
+              }} />
+            </ul>
           </div>
         </div>
       </div>
