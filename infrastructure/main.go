@@ -17,6 +17,12 @@ func main() {
 			Service:                  pulumi.String("cloudresourcemanager.googleapis.com"),
 		})
 
+		projects.NewService(ctx, "EnableServiceNetworking", &projects.ServiceArgs{
+			DisableDependentServices: pulumi.Bool(true),
+			Project:                  pulumi.String(ProjectId),
+			Service:                  pulumi.String("servicenetworking.googleapis.com"),
+		}, pulumi.DependsOn([]pulumi.Resource{enableResourceService}))
+
 		if ersErr != nil {
 			return ersErr
 		}
