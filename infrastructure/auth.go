@@ -26,7 +26,6 @@ func AuthService(
 		Build: &docker.DockerBuildArgs{
 			Context:  pulumi.String("../auth"),
 			Platform: pulumi.String("linux/amd64"),
-			Target:   pulumi.String("prod"),
 		},
 	})
 
