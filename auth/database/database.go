@@ -30,8 +30,7 @@ func exitWithError(err error) {
 
 func ConnectDb() {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s dbname=%s password=%s sslmode=disable",
-		os.Getenv("POSTGRES_HOST"),
+		"user=%s database=%s password=%s",
 		os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_DB"),
 		os.Getenv("POSTGRES_PASSWORD"),
