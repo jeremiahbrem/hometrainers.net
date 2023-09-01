@@ -9,21 +9,15 @@ import (
 
 func Database(
 	ctx *pulumi.Context,
+	enableSqlAdmin *projects.Service,
 ) (
 	pulumi.StringOutput,
 	pulumi.StringOutput,
 	pulumi.StringOutput,
-	*sql.Database,
 	error,
 ) {
-	enableSqlAdmin, _ := projects.NewService(ctx, "EnableSqlAdmin", &projects.ServiceArgs{
-		DisableDependentServices: pulumi.Bool(true),
-		Project:                  pulumi.String(ProjectId),
-		Service:                  pulumi.String("sqladmin.googleapis.com"),
-	})
-
 	instance, err := sql.NewDatabaseInstance(ctx, "instance", &sql.DatabaseInstanceArgs{
-		Region:          pulumi.String("us-central1"),
+		Region:          pulumi.String(Location),
 		DatabaseVersion: pulumi.String("POSTGRES_14"),
 		Settings: &sql.DatabaseInstanceSettingsArgs{
 			Tier: pulumi.String("db-f1-micro"),
@@ -34,13 +28,13 @@ func Database(
 	emptyString := pulumi.String("").ToStringOutput()
 
 	if err != nil {
-		return emptyString, emptyString, emptyString, nil, err
+		return emptyString, emptyString, emptyString, err
 	}
 	_, err = sql.NewDatabase(ctx, "database", &sql.DatabaseArgs{
 		Instance: instance.Name,
 	})
 	if err != nil {
-		return emptyString, emptyString, emptyString, nil, err
+		return emptyString, emptyString, emptyString, err
 	}
 
 	password, _ := random.NewRandomPassword(ctx, "hpt-db-password", &random.RandomPasswordArgs{
@@ -57,10 +51,10 @@ func Database(
 		Password: password.Result,
 	})
 
-	db, _ := sql.NewDatabase(ctx, "hptrainers", &sql.DatabaseArgs{
+	sql.NewDatabase(ctx, "hptrainers", &sql.DatabaseArgs{
 		Instance: instance.Name,
 		Name:     pulumi.String("hptrainers"),
 	})
 
-	return user.Name, password.Result, instance.ConnectionName, db, err
+	return user.Name, password.Result, instance.ConnectionName, err
 }

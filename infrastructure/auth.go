@@ -6,7 +6,6 @@ import (
 	"github.com/pulumi/pulumi-docker/sdk/v4/go/docker"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/cloudrun"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/projects"
-	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/sql"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -15,7 +14,7 @@ func AuthService(
 	ctx *pulumi.Context,
 	repoUrl pulumi.StringOutput,
 	enableCloudRun *projects.Service,
-	db *sql.Database,
+	enableSqlAdmin *projects.Service,
 	dbUser pulumi.StringOutput,
 	dbPwd pulumi.StringOutput,
 	dbHost pulumi.StringOutput,
@@ -38,6 +37,7 @@ func AuthService(
 			Annotations: pulumi.StringMap(
 				map[string]pulumi.StringInput{
 					"run.googleapis.co/cloudsql-instances": dbHost,
+					"autoscaling.knative.dev/maxScale":     pulumi.String("5"),
 				},
 			),
 		},
@@ -46,13 +46,6 @@ func AuthService(
 				Containers: cloudrun.ServiceTemplateSpecContainerArray{
 					&cloudrun.ServiceTemplateSpecContainerArgs{
 						Image: auth.ImageName,
-						VolumeMounts: cloudrun.ServiceTemplateSpecContainerVolumeMountArray{
-							cloudrun.ServiceTemplateSpecContainerVolumeMountArgs{
-								Name:      pulumi.String("cloudsql"),
-								MountPath: pulumi.String("/cloudsql"),
-							},
-						},
-
 						Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
 							SetEnv("NEXTAUTH_URL", "NEXTAUTH_URL"),
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
@@ -88,14 +81,9 @@ func AuthService(
 						},
 					},
 				},
-				Volumes: cloudrun.ServiceTemplateSpecVolumeArray{
-					cloudrun.ServiceTemplateSpecVolumeArgs{
-						Name: pulumi.String("cloudsql"),
-					},
-				},
 			},
 		},
-	}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, db, auth}))
+	}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, enableSqlAdmin, auth}))
 
 	cloudrun.NewIamMember(ctx, "auth-iam", &cloudrun.IamMemberArgs{
 		Service:  authService.Name,
