@@ -58,7 +58,7 @@ func AuthService(
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_HOST"),
-								Value:     pulumi.Sprintf("/cloudsql/%s", dbHost),
+								Value:     dbHost,
 								ValueFrom: nil,
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
@@ -76,13 +76,6 @@ func AuthService(
 							cloudrun.ServiceTemplateSpecContainerPortArgs{
 								ContainerPort: pulumi.IntPtr(9096),
 							},
-						},
-					},
-					&cloudrun.ServiceTemplateSpecContainerArgs{
-						Image: auth.ImageName,
-						Args: pulumi.StringArray{
-							pulumi.String("--port=5432"),
-							dbHost,
 						},
 					},
 				},

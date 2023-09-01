@@ -1,12 +1,17 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"server/models"
 
+	"cloud.google.com/go/cloudsqlconn"
+	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v4/stdlib"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -18,7 +23,12 @@ type Dbinstance struct {
 
 var DB Dbinstance
 
-func ConnectDb() {
+func exitWithError(err error) {
+	log.Fatal("Failed to connect to database. \n", err)
+	os.Exit(1)
+}
+
+func ConnectDb() error {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s dbname=%s password=%s sslmode=disable",
 		os.Getenv("POSTGRES_HOST"),
@@ -26,12 +36,27 @@ func ConnectDb() {
 		os.Getenv("POSTGRES_DB"),
 		os.Getenv("POSTGRES_PASSWORD"),
 	)
+	config, parseErr := pgx.ParseConfig(dsn)
+	if parseErr != nil {
+		exitWithError(parseErr)
+	}
 
-	sqlDB, err := sql.Open("pgx", dsn)
+	dialer, dialerErr := cloudsqlconn.NewDialer(context.Background())
+	if dialerErr != nil {
+		exitWithError(dialerErr)
+
+	}
+
+	config.DialFunc = func(ctx context.Context, network, instance string) (net.Conn, error) {
+		return dialer.Dial(ctx, os.Getenv("POSTGRES_HOST"))
+	}
+
+	dbURI := stdlib.RegisterConnConfig(config)
+
+	sqlDB, err := sql.Open("pgx", dbURI)
 
 	if err != nil {
-		log.Fatal("Failed to connect to database. \n", err)
-		os.Exit(1)
+		exitWithError(err)
 	}
 
 	db, dbErr := gorm.Open(postgres.New(postgres.Config{
@@ -41,8 +66,7 @@ func ConnectDb() {
 	})
 
 	if dbErr != nil {
-		log.Fatal("Failed to connect to database. \n", err)
-		os.Exit(1)
+		exitWithError(dbErr)
 	}
 
 	log.Println("connected")
