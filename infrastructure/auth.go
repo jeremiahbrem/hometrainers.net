@@ -78,6 +78,13 @@ func AuthService(
 							},
 						},
 					},
+					&cloudrun.ServiceTemplateSpecContainerArgs{
+						Image: auth.ImageName,
+						Args: pulumi.StringArray{
+							pulumi.String("--port=5432"),
+							dbHost,
+						},
+					},
 				},
 			},
 		},
