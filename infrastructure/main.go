@@ -27,6 +27,12 @@ func main() {
 			Service:                  pulumi.String("run.googleapis.com"),
 		}, pulumi.DependsOn([]pulumi.Resource{enableResourceService}))
 
+		enableSqlAdmin, _ := projects.NewService(ctx, "EnableSqlAdmin", &projects.ServiceArgs{
+			DisableDependentServices: pulumi.Bool(true),
+			Project:                  pulumi.String(ProjectId),
+			Service:                  pulumi.String("sqladmin.googleapis.com"),
+		})
+
 		uniqueString, _ := random.NewRandomString(ctx, "unique-string", &random.RandomStringArgs{
 			Length:  pulumi.Int(4),
 			Lower:   pulumi.Bool(true),
@@ -58,7 +64,7 @@ func main() {
 			return ""
 		}()
 
-		username, password, dbHost, db, dbErr := Database(ctx)
+		username, password, dbHost, dbErr := Database(ctx, enableSqlAdmin)
 
 		if dbErr != nil {
 			return dbErr
@@ -69,7 +75,7 @@ func main() {
 			ctx,
 			repoUrl,
 			enableCloudRun,
-			db,
+			enableSqlAdmin,
 			username,
 			password,
 			dbHost,
