@@ -28,7 +28,46 @@ func exitWithError(err error) {
 	os.Exit(1)
 }
 
+func initializeDb(db *gorm.DB, dbErr error) {
+	if dbErr != nil {
+		exitWithError(dbErr)
+	}
+
+	log.Println("connected")
+	db.Logger = logger.Default.LogMode(logger.Info)
+
+	log.Println("running migrations")
+	db.AutoMigrate(&models.User{})
+
+	DB = Dbinstance{
+		Db: db,
+	}
+}
+
+func connectDevDB() {
+	dsn := fmt.Sprintf(
+		"host=%s user=%s database=%s password=%s",
+		os.Getenv("POSTGRES_HOST"),
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_DB"),
+		os.Getenv("POSTGRES_PASSWORD"),
+	)
+
+	db, dbErr := gorm.Open(postgres.New(postgres.Config{
+		DSN: dsn,
+	}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+
+	initializeDb(db, dbErr)
+}
+
 func ConnectDb() {
+	if os.Getenv("ENVIRONMENT") != "PROD" {
+		connectDevDB()
+		return
+	}
+
 	dsn := fmt.Sprintf(
 		"user=%s database=%s password=%s",
 		os.Getenv("POSTGRES_USER"),
@@ -64,17 +103,5 @@ func ConnectDb() {
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 
-	if dbErr != nil {
-		exitWithError(dbErr)
-	}
-
-	log.Println("connected")
-	db.Logger = logger.Default.LogMode(logger.Info)
-
-	log.Println("running migrations")
-	db.AutoMigrate(&models.User{})
-
-	DB = Dbinstance{
-		Db: db,
-	}
+	initializeDb(db, dbErr)
 }
