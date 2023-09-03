@@ -47,10 +47,10 @@ func init() {
 	flag.IntVar(&portvar, "p", 9096, "the base port for the server")
 }
 
-//go:embed static
+//go:embed static/*
 var staticFiles embed.FS
 
-//go:embed templates
+//go:embed templates/*
 var templateFiles embed.FS
 
 func hashPassword(password string) (string, error) {
