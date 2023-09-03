@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "wait-on http://host.docker.internal:3000 && npx cypress run",
-    "test-dev": "export CYPRESS_BASE_URL=http://localhost:3000 && npx cypress run",
-    "open-dev": "export CYPRESS_BASE_URL=http://localhost:3000 && npx cypress open"
+    "test-dev": "export CYPRESS_BASE_URL=http://localhost:3000 CYPRESS_AUTH_URL=localhost && npx cypress run",
+    "open-dev": "export CYPRESS_BASE_URL=http://localhost:3000 CYPRESS_AUTH_URL=localhost && npx cypress open"
   },
   "author": "",
   "license": "ISC",

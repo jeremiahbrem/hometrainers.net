@@ -44,7 +44,7 @@ services:
       - frontend
     command: npm run test
     environment:
-      - NEXTAUTH_URL=http://host.docker.internal:3000
+      - CYPRESS_AUTH_URL=host.docker.internal
     extra_hosts:
       - "host.docker.internal:host-gateway"
   frontend:

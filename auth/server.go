@@ -48,6 +48,9 @@ func init() {
 //go:embed static
 var staticFiles embed.FS
 
+//go:embed templates
+var templateFiles embed.FS
+
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err

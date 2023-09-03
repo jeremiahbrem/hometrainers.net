@@ -1,25 +1,39 @@
 describe('login page', () => {
   it('shows signed out', () => {
     cy
-      .visit('/auth-test')
+      .visit('/')
       .contains('Sign in')
   })
 
   it('logs in', () => {
-    cy.visit('/auth-test')
+    const testUser = {
+      email: 'test@example.com',
+      name: 'tester',
+      password: 'test-password',
+    }
 
-    cy.contains('Sign in auth')
+    cy.request({
+      method: 'POST',
+      url: `http://${Cypress.env('AUTH_URL')}:9096/signup`,
+      body: JSON.stringify({ ...testUser }),
+      failOnStatusCode: false,
+    })
+
+    cy.visit('/')
+
+    cy.contains('Sign in')
       .click()
 
-    const email = 'john.doe@test.com'
-
-    cy.get('input[name="username"')
-      .type(email)
+    cy.contains('Sign in with email')
+      .click()
+      .get('input[name="email"')
+      .type(testUser.email)
       .get('input[name="password"')
-      .type("test password")
+      .type(testUser.password)
       .get('button')
+      .contains('Login')
       .click()
 
-    cy.contains(`Signed in as ${email}`)
+    cy.contains('Sign out')
   })
 })
