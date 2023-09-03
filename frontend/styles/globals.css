@@ -6,3 +6,12 @@ body, p {
 body, div, section {
   box-sizing: border-box;
 }
+
+button {
+  padding: 0;
+  border: none;
+  background-color: transparent;
+
+  transition: all .25s ease-in-out;
+  cursor: pointer;
+}
