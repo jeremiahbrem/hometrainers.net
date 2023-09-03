@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"flag"
 	"fmt"
@@ -17,6 +16,7 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -38,8 +38,6 @@ var (
 	portvar   int
 )
 
-type SessionProvider func(context context.Context) SessionApiType
-
 func init() {
 	flag.StringVar(&idvar, "i", "222222", "The client id being passed in")
 	flag.StringVar(&secretvar, "s", "22222222", "The client secret being passed in")
@@ -53,24 +51,23 @@ var staticFiles embed.FS
 //go:embed templates/*
 var templateFiles embed.FS
 
-func hashPassword(password string) (string, error) {
+func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
-func checkPasswordHash(password, hash string) bool {
+func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
 
 func setupRouter(
-	sessionProvider SessionProvider,
+	session SessionApiType,
+	db *gorm.DB,
 ) *gin.Engine {
 	flag.Parse()
 
 	godotenv.Load(".env")
-
-	database.ConnectDb()
 
 	router := gin.Default()
 
@@ -111,7 +108,7 @@ func setupRouter(
 
 	srv := server.NewServer(server.NewConfig(), manager)
 
-	srv.SetUserAuthorizationHandler(userAuthorizeHandler(sessionProvider))
+	srv.SetUserAuthorizationHandler(userAuthorizeHandler(session))
 
 	srv.SetInternalErrorHandler(func(err error) (re *errors.Response) {
 		log.Println("Internal Error:", err.Error())
@@ -122,9 +119,9 @@ func setupRouter(
 		log.Println("Response Error:", re.Error.Error())
 	})
 
-	router.POST("/login", loginHandler(sessionProvider, userRepo))
-	router.GET("/login", loginHandler(sessionProvider, userRepo))
-	router.GET("/auth", authHandler(sessionProvider))
+	router.POST("/login", loginHandler(session, userRepo))
+	router.GET("/login", loginHandler(session, userRepo))
+	router.GET("/auth", authHandler(session))
 
 	router.POST("/signup", func(ctx *gin.Context) {
 		var user dbModels.User
@@ -140,7 +137,7 @@ func setupRouter(
 			return
 		}
 
-		hash, hashErr := hashPassword(user.Password)
+		hash, hashErr := HashPassword(user.Password)
 
 		if hashErr != nil {
 			ctx.AbortWithError(http.StatusInternalServerError, hashErr)
@@ -169,7 +166,6 @@ func setupRouter(
 	})
 
 	router.GET("/oauth/authorize", func(ctx *gin.Context) {
-		session := sessionProvider(ctx)
 		store, err := session.Start(ctx, ctx.Writer, ctx.Request)
 
 		if err != nil {
@@ -241,16 +237,16 @@ func setupRouter(
 }
 
 func main() {
-	router := setupRouter(ProvideSessionApi)
+	database.ConnectDb()
+	router := setupRouter(&SessionApi{}, database.DB.Db)
 	router.Run(fmt.Sprintf(":%d", portvar))
 	log.Printf("Server is running at %d port.\n", portvar)
 }
 
 func userAuthorizeHandler(
-	sessionProvider SessionProvider,
+	session SessionApiType,
 ) func(w http.ResponseWriter, r *http.Request) (userID string, err error) {
 	return func(w http.ResponseWriter, r *http.Request) (userID string, err error) {
-		session := sessionProvider(r.Context())
 		store, err := session.Start(r.Context(), w, r)
 
 		if err != nil {
@@ -281,14 +277,13 @@ func userAuthorizeHandler(
 }
 
 func loginHandler(
-	sessionProvider SessionProvider,
+	session SessionApiType,
 	userRepo repositories.UserRepository,
 ) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		request := context.Request
 		writer := context.Writer
 
-		session := sessionProvider(context)
 		store, err := session.Start(context, writer, request)
 
 		if err != nil {
@@ -318,7 +313,7 @@ func loginHandler(
 				return
 			}
 
-			if !checkPasswordHash(password, user.Password) {
+			if !CheckPasswordHash(password, user.Password) {
 				context.HTML(http.StatusBadRequest, "login.tmpl", gin.H{
 					"error":    "Incorrect password",
 					"email":    email,
@@ -343,11 +338,9 @@ func loginHandler(
 }
 
 func authHandler(
-	sessionProvider SessionProvider,
+	session SessionApiType,
 ) gin.HandlerFunc {
 	return func(context *gin.Context) {
-		session := sessionProvider(context)
-
 		store, err := session.Start(context, context.Writer, context.Request)
 		if err != nil {
 			context.AbortWithError(http.StatusInternalServerError, err)

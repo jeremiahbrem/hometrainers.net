@@ -15,13 +15,7 @@ type SessionApiType interface {
 	) (session.Store, error)
 }
 
-type SessionApi struct {
-	context context.Context
-}
-
-func ProvideSessionApi(c context.Context) SessionApiType {
-	return &SessionApi{context: c}
-}
+type SessionApi struct{}
 
 func (s *SessionApi) Start(
 	context context.Context,

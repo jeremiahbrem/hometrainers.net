@@ -86,7 +86,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=Password123
-      - POSTGRES_DB=hptrainers
+      - POSTGRES_DB=hptrainers_test
     volumes:
       - postgres-db:/var/lib/postgresql/data
       - ./sql:/sql

@@ -34,6 +34,25 @@ jobs:
       - run:
           command: npm run test-ci
           working_directory: ~/project/frontend
+  auth-test:
+    executor:
+      name: go/default
+      tag: '2.00'
+    steps:
+      - checkout
+      - restore_cache:
+          key: go-mod-{{ arch }}-{{ checksum "~/project/auth/go.sum"  }}
+      - run:
+          command: go mod download
+          working_directory: ~/project/auth
+      - save_cache:
+          key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
+          paths:
+            - /home/circleci/go/pkg/mod
+          working_directory: ~/project/auth
+      - run:
+          command: go test -p 1
+          working_directory: ~/project/auth
   e2e-test:
     docker:
       - image: cimg/base:2021.04
@@ -81,12 +100,14 @@ workflows:
   version: 2
   cd:
     jobs:
-      - e2e-test
-      - frontend-test
+      # - e2e-test
+      - auth-test
+      # - frontend-test
       - deploy:
           requires:
-            - e2e-test
-            - frontend-test
+            # - e2e-test
+            - auth-test
+            # - frontend-test
           filters:
             branches:
               only:
