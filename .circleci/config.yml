@@ -16,43 +16,25 @@ commands:
       - run: echo 'export LOGIN_URL=${LOGIN_URL}'
       - run: echo 'export AUTH_SERVER_URL=${AUTH_SERVER_URL}'
 jobs:
-  frontend-test:
+  test:
     docker:
-      - image: node:16
+      - image: cimg/base:2021.04
+    environment:
+      - ENVIRONMENT=DEV
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
     steps:
       - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
-      - run:
-          command: npm install
-          working_directory: ~/project/frontend
-      - save_cache:
-          key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
-          paths:
-            - ./node_modules
-          working_directory: ~/project/frontend
-      - run:
-          command: npm run test-ci
-          working_directory: ~/project/frontend
-  auth-test:
-    executor:
-      name: go/default
-      tag: '2.00'
-    steps:
-      - checkout
-      - restore_cache:
-          key: go-mod-{{ arch }}-{{ checksum "~/project/auth/go.sum"  }}
-      - run:
-          command: go mod download
-          working_directory: ~/project/auth
-      - save_cache:
-          key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
-          paths:
-            - /home/circleci/go/pkg/mod
-          working_directory: ~/project/auth
-      - run:
-          command: go test -p 1
-          working_directory: ~/project/auth
+      - setup_remote_docker
+      - run: docker volume create --name=postgres-db
+      - run: docker-compose build
+      - run: docker-compose up -d auth
+      - run: docker-compose up -d backend
+      - run: docker-compose up -d frontend
+      - run: docker execute auth go test -p 1
+      - run: docker execute frontend npm test
+      - run: docker-compose up cypress --abort-on-container-exit --exit-code-from cypress
   e2e-test:
     docker:
       - image: cimg/base:2021.04
@@ -101,12 +83,12 @@ workflows:
   cd:
     jobs:
       # - e2e-test
-      - auth-test
+      - test
       # - frontend-test
       - deploy:
           requires:
             # - e2e-test
-            - auth-test
+            - test
             # - frontend-test
           filters:
             branches:
