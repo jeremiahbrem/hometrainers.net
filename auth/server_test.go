@@ -1,19 +1,60 @@
 package main
 
 import (
-	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"server/database"
+	"server/mocks"
+	"server/models"
 	"strings"
 	"testing"
 
-	"github.com/go-session/session"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
+var Db *gorm.DB
+
+func Setup() {
+	godotenv.Load(".env")
+
+	dsn := fmt.Sprintf(
+		"host=%s user=%s database=%s password=%s",
+		os.Getenv("POSTGRES_HOST"),
+		os.Getenv("POSTGRES_USER"),
+		os.Getenv("TEST_DB"),
+		os.Getenv("POSTGRES_PASSWORD"),
+	)
+
+	db, _ := gorm.Open(postgres.New(postgres.Config{
+		DSN: dsn,
+	}), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
+
+	db.AutoMigrate(&models.User{})
+
+	Db = db
+}
+
+func Teardown() {
+	sql := `
+		delete from users;
+	`
+	Db.Exec(sql)
+}
+
 func TestGetLogin(t *testing.T) {
-	router := setupRouter(ProvideSessionApi)
+	Setup()
+	defer Teardown()
+
+	router := setupRouter(&SessionApi{}, Db)
 
 	w := httptest.NewRecorder()
 
@@ -26,12 +67,24 @@ func TestGetLogin(t *testing.T) {
 }
 
 func TestPostLogin(t *testing.T) {
-	router := setupRouter(ProvideSessionApi)
+	Setup()
+	defer Teardown()
+
+	router := setupRouter(&SessionApi{}, Db)
+
+	password, _ := HashPassword("12345")
+
+	sql := fmt.Sprintf(`
+		insert into users (email, name, password)
+		values ('john.doe', 'john doe', '%s')
+	`, password)
+
+	database.DB.Db.Exec(sql)
 
 	w := httptest.NewRecorder()
 
 	form := url.Values{}
-	form.Add("username", "john.doe")
+	form.Add("email", "john.doe")
 	form.Add("password", "12345")
 
 	req, _ := http.NewRequest("POST", "/login", strings.NewReader(form.Encode()))
@@ -43,54 +96,33 @@ func TestPostLogin(t *testing.T) {
 	assert.NotContains(t, w.Body.String(), "Login")
 }
 
-type MockSessionApi struct {
-	valFound bool
-}
+var form = func() url.Values {
+	form := url.Values{}
+	form.Add("client_id", "222222")
+	form.Add("code_challenge", "Qn3Kywp0OiU4NK_AFzGPlmrcYJDJ13Abj_jdL08Ahg8%3D")
+	form.Add("code_challenge_method", "S256")
+	form.Add("redirect_uri", "http://localhost:3000/api/auth/callback/auth")
+	form.Add("response_type", "code")
+	form.Add("scope", "all")
+	form.Add("state", "SMtRWUWwaryeP6sI7CS4ynDMwpdRGRqdFgM0D_k-qtI")
+	return form
+}()
 
-type MockStore struct {
-	ctx      context.Context
-	valFound bool
-}
-
-func (s *MockStore) Context() context.Context          { return nil }
-func (s *MockStore) SessionID() string                 { return "" }
-func (s *MockStore) Set(key string, value interface{}) {}
-
-func (s *MockStore) Get(key string) (interface{}, bool) {
-	if key == "ReturnUri" {
-		form := url.Values{}
-		form.Add("client_id", "222222")
-		form.Add("code_challenge", "Qn3Kywp0OiU4NK_AFzGPlmrcYJDJ13Abj_jdL08Ahg8%3D")
-		form.Add("code_challenge_method", "S256")
-		form.Add("redirect_uri", "http://localhost:3000/api/auth/callback/auth")
-		form.Add("response_type", "code")
-		form.Add("scope", "all")
-		form.Add("state", "SMtRWUWwaryeP6sI7CS4ynDMwpdRGRqdFgM0D_k-qtI")
-		return form, s.valFound
-	}
-	return "john.doe", s.valFound
-}
-
-func (s *MockStore) Delete(key string) interface{} { return nil }
-func (s *MockStore) Save() error                   { return nil }
-func (s *MockStore) Flush() error                  { return nil }
-
-func (s *MockSessionApi) Start(
-	context context.Context,
-	writer http.ResponseWriter,
-	request *http.Request,
-) (session.Store, error) {
-	store := &MockStore{ctx: context, valFound: s.valFound}
-	return store, nil
-}
+var uid = "john.doe"
 
 func TestAuthHandlerLoggedIn(t *testing.T) {
+	Setup()
+	defer Teardown()
+
 	w := httptest.NewRecorder()
 
-	session := MockSessionApi{valFound: true}
+	session := mocks.MockSessionApi{
+		ValFound: true,
+		Form:     form,
+		Uid:      uid,
+	}
 
-	provider := func(c context.Context) SessionApiType { return &session }
-	router := setupRouter(provider)
+	router := setupRouter(&session, Db)
 
 	req, _ := http.NewRequest("GET", "/auth", nil)
 
@@ -100,12 +132,18 @@ func TestAuthHandlerLoggedIn(t *testing.T) {
 }
 
 func TestAuthHandlerNotLoggedOut(t *testing.T) {
+	Setup()
+	defer Teardown()
+
 	w := httptest.NewRecorder()
 
-	session := MockSessionApi{valFound: false}
+	session := mocks.MockSessionApi{
+		ValFound: false,
+		Form:     form,
+		Uid:      uid,
+	}
 
-	provider := func(c context.Context) SessionApiType { return &session }
-	router := setupRouter(provider)
+	router := setupRouter(&session, Db)
 
 	req, _ := http.NewRequest("GET", "/auth", nil)
 
@@ -115,10 +153,16 @@ func TestAuthHandlerNotLoggedOut(t *testing.T) {
 }
 
 func TestOauthAuthorize(t *testing.T) {
-	session := MockSessionApi{valFound: true}
+	Setup()
+	defer Teardown()
 
-	provider := func(c context.Context) SessionApiType { return &session }
-	router := setupRouter(provider)
+	session := mocks.MockSessionApi{
+		ValFound: true,
+		Form:     form,
+		Uid:      uid,
+	}
+
+	router := setupRouter(&session, Db)
 
 	w := httptest.NewRecorder()
 
