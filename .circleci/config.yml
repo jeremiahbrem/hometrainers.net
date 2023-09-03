@@ -32,8 +32,8 @@ jobs:
       - run: docker-compose up -d auth
       - run: docker-compose up -d backend
       - run: docker-compose up -d frontend
-      - run: docker execute auth "go test -p 1"
-      - run: docker execute frontend npm test
+      - run: docker exec auth go test -p 1
+      - run: docker exec frontend npm test
       - run: docker-compose up cypress --abort-on-container-exit --exit-code-from cypress
   e2e-test:
     docker:
