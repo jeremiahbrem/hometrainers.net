@@ -3,6 +3,7 @@ orbs:
   pulumi: pulumi/pulumi@2.1.0
   gcp-cli: circleci/gcp-cli@3.0.1
   go: circleci/go@1.7.3
+  wait-for: cobli/wait-for@1.0.0
 commands:
   load-env:
     steps:
@@ -32,6 +33,7 @@ jobs:
       - run: docker-compose up -d auth
       - run: docker-compose up -d backend
       - run: docker-compose up -d frontend
+      - wait-for/auth
       - run: docker exec auth go test -p 1
       - run: docker exec frontend npm test
       - run: docker-compose up cypress --abort-on-container-exit --exit-code-from cypress
