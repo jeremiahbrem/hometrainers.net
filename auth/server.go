@@ -5,14 +5,16 @@ import (
 	"embed"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"server/database"
 	dbModels "server/models"
+	"server/repositories"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -46,6 +48,16 @@ func init() {
 //go:embed static
 var staticFiles embed.FS
 
+func hashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+func checkPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
 func setupRouter(
 	sessionProvider SessionProvider,
 ) *gin.Engine {
@@ -56,6 +68,13 @@ func setupRouter(
 	database.ConnectDb()
 
 	router := gin.Default()
+	router.LoadHTMLGlob("templates/*")
+
+	userRepo := repositories.UserRepository{
+		Db: database.DB.Db,
+	}
+
+	router.StaticFile("/hpt-logo.svg", "./static/hpt-logo.svg")
 
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowAllOrigins = true
@@ -92,16 +111,32 @@ func setupRouter(
 		log.Println("Response Error:", re.Error.Error())
 	})
 
-	router.POST("/login", loginHandler(sessionProvider))
-	router.GET("/login", loginHandler(sessionProvider))
+	router.POST("/login", loginHandler(sessionProvider, userRepo))
+	router.GET("/login", loginHandler(sessionProvider, userRepo))
 	router.GET("/auth", authHandler(sessionProvider))
 
 	router.POST("/signup", func(ctx *gin.Context) {
-		user := new(dbModels.User)
-		if err := ctx.BindJSON(&user); err != nil {
+		var user dbModels.User
+		if err := ctx.ShouldBindJSON(&user); err != nil {
 			ctx.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
+
+		existing, _ := userRepo.GetUser(user.Email)
+
+		if existing != nil {
+			ctx.JSON(http.StatusBadRequest, fmt.Sprintf("User %s already exists", user.Email))
+			return
+		}
+
+		hash, hashErr := hashPassword(user.Password)
+
+		if hashErr != nil {
+			ctx.AbortWithError(http.StatusInternalServerError, hashErr)
+			return
+		}
+
+		user.Password = hash
 
 		database.DB.Db.Create(&user)
 
@@ -109,10 +144,15 @@ func setupRouter(
 	})
 
 	router.GET("/get-user", func(ctx *gin.Context) {
-		var user dbModels.User
+
 		email := ctx.Request.URL.Query().Get("email")
 
-		database.DB.Db.Where("name = ?", email).First(&user)
+		user, err := userRepo.GetUser(email)
+
+		if err != nil {
+			ctx.JSON(http.StatusNotFound, fmt.Sprintf("User %s not found", email))
+			return
+		}
 
 		ctx.JSON(http.StatusOK, user)
 	})
@@ -231,6 +271,7 @@ func userAuthorizeHandler(
 
 func loginHandler(
 	sessionProvider SessionProvider,
+	userRepo repositories.UserRepository,
 ) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		request := context.Request
@@ -252,14 +293,41 @@ func loginHandler(
 				}
 			}
 
-			store.Set("LoggedInUserID", request.Form.Get("username"))
+			email := request.Form.Get("email")
+			password := request.Form.Get("password")
+
+			user, _ := userRepo.GetUser(email)
+
+			if user == nil {
+				context.HTML(http.StatusBadRequest, "login.tmpl", gin.H{
+					"error":    "User not found",
+					"email":    email,
+					"password": password,
+				})
+				return
+			}
+
+			if !checkPasswordHash(password, user.Password) {
+				context.HTML(http.StatusBadRequest, "login.tmpl", gin.H{
+					"error":    "Incorrect password",
+					"email":    email,
+					"password": password,
+				})
+				return
+			}
+
+			store.Set("LoggedInUserID", email)
 			store.Save()
 
 			context.Redirect(http.StatusFound, "/auth")
 			return
 		}
 
-		outputHTML(context, "static/login.html")
+		context.HTML(http.StatusOK, "login.tmpl", gin.H{
+			"error":    nil,
+			"email":    nil,
+			"password": nil,
+		})
 	}
 }
 
@@ -282,17 +350,4 @@ func authHandler(
 
 		context.Redirect(http.StatusFound, "/oauth/authorize")
 	}
-}
-
-func outputHTML(context *gin.Context, filename string) {
-	file, err := staticFiles.Open(filename)
-
-	if err != nil {
-		context.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	defer file.Close()
-	fi, _ := file.Stat()
-	http.ServeContent(context.Writer, context.Request, filename, fi.ModTime(), file.(io.ReadSeeker))
 }
