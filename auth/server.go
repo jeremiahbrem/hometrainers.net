@@ -70,23 +70,16 @@ func setupRouter(
 
 	godotenv.Load(".env")
 
-	var isProd = os.Getenv("ENVIRONMENT") == "PROD"
-
 	database.ConnectDb()
 
 	router := gin.Default()
 
-	if isProd {
-		templ := template.Must(template.New("").ParseFS(
-			templateFiles, "templates/*.html",
-		))
-		router.SetHTMLTemplate(templ)
-		staticFS, _ := fs.Sub(staticFiles, "static")
-		router.StaticFS("/static", http.FS(staticFS))
-	} else {
-		router.LoadHTMLGlob("templates/*")
-		router.Static("/static", "./static")
-	}
+	templ := template.Must(template.New("").ParseFS(
+		templateFiles, "templates/*.tmpl",
+	))
+	router.SetHTMLTemplate(templ)
+	staticFS, _ := fs.Sub(staticFiles, "static")
+	router.StaticFS("/static", http.FS(staticFS))
 
 	userRepo := repositories.UserRepository{
 		Db: database.DB.Db,
