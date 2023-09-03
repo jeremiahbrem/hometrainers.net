@@ -71,7 +71,7 @@ func setupRouter(
 	database.ConnectDb()
 
 	router := gin.Default()
-	router.LoadHTMLGlob("templates/*")
+	router.LoadHTMLGlob("./templates/*")
 
 	userRepo := repositories.UserRepository{
 		Db: database.DB.Db,
