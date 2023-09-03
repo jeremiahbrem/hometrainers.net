@@ -5,6 +5,8 @@ import (
 	"embed"
 	"flag"
 	"fmt"
+	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"net/url"
@@ -68,10 +70,23 @@ func setupRouter(
 
 	godotenv.Load(".env")
 
+	var isProd = os.Getenv("ENVIRONMENT") == "PROD"
+
 	database.ConnectDb()
 
 	router := gin.Default()
-	router.LoadHTMLGlob("./templates/*")
+
+	if isProd {
+		templ := template.Must(template.New("").ParseFS(
+			templateFiles, "templates/*.html",
+		))
+		router.SetHTMLTemplate(templ)
+		staticFS, _ := fs.Sub(staticFiles, "static")
+		router.StaticFS("/static", http.FS(staticFS))
+	} else {
+		router.LoadHTMLGlob("templates/*")
+		router.Static("/static", "./static")
+	}
 
 	userRepo := repositories.UserRepository{
 		Db: database.DB.Db,
