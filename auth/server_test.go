@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
-	"server/database"
 	"server/mocks"
 	"server/models"
 	"strings"
@@ -16,12 +15,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
-var Db *gorm.DB
-
-func Setup() {
+func Setup() *gorm.DB {
 	godotenv.Load(".env")
 
 	dsn := fmt.Sprintf(
@@ -34,27 +30,27 @@ func Setup() {
 
 	db, _ := gorm.Open(postgres.New(postgres.Config{
 		DSN: dsn,
-	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	}))
+
+	fmt.Println(db)
 
 	db.AutoMigrate(&models.User{})
 
-	Db = db
+	return db
 }
 
-func Teardown() {
+func Teardown(db *gorm.DB) {
 	sql := `
 		delete from users;
 	`
-	Db.Exec(sql)
+	db.Exec(sql)
 }
 
 func TestGetLogin(t *testing.T) {
-	Setup()
-	defer Teardown()
+	db := Setup()
+	defer Teardown(db)
 
-	router := setupRouter(&SessionApi{}, Db)
+	router := setupRouter(&SessionApi{}, db)
 
 	w := httptest.NewRecorder()
 
@@ -67,10 +63,10 @@ func TestGetLogin(t *testing.T) {
 }
 
 func TestPostLogin(t *testing.T) {
-	Setup()
-	defer Teardown()
+	db := Setup()
+	defer Teardown(db)
 
-	router := setupRouter(&SessionApi{}, Db)
+	router := setupRouter(&SessionApi{}, db)
 
 	password, _ := HashPassword("12345")
 
@@ -79,7 +75,7 @@ func TestPostLogin(t *testing.T) {
 		values ('john.doe', 'john doe', '%s')
 	`, password)
 
-	database.DB.Db.Exec(sql)
+	db.Exec(sql)
 
 	w := httptest.NewRecorder()
 
@@ -111,8 +107,8 @@ var form = func() url.Values {
 var uid = "john.doe"
 
 func TestAuthHandlerLoggedIn(t *testing.T) {
-	Setup()
-	defer Teardown()
+	db := Setup()
+	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
@@ -122,7 +118,7 @@ func TestAuthHandlerLoggedIn(t *testing.T) {
 		Uid:      uid,
 	}
 
-	router := setupRouter(&session, Db)
+	router := setupRouter(&session, db)
 
 	req, _ := http.NewRequest("GET", "/auth", nil)
 
@@ -132,8 +128,8 @@ func TestAuthHandlerLoggedIn(t *testing.T) {
 }
 
 func TestAuthHandlerNotLoggedOut(t *testing.T) {
-	Setup()
-	defer Teardown()
+	db := Setup()
+	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
@@ -143,7 +139,7 @@ func TestAuthHandlerNotLoggedOut(t *testing.T) {
 		Uid:      uid,
 	}
 
-	router := setupRouter(&session, Db)
+	router := setupRouter(&session, db)
 
 	req, _ := http.NewRequest("GET", "/auth", nil)
 
@@ -153,8 +149,8 @@ func TestAuthHandlerNotLoggedOut(t *testing.T) {
 }
 
 func TestOauthAuthorize(t *testing.T) {
-	Setup()
-	defer Teardown()
+	db := Setup()
+	defer Teardown(db)
 
 	session := mocks.MockSessionApi{
 		ValFound: true,
@@ -162,7 +158,7 @@ func TestOauthAuthorize(t *testing.T) {
 		Uid:      uid,
 	}
 
-	router := setupRouter(&session, Db)
+	router := setupRouter(&session, db)
 
 	w := httptest.NewRecorder()
 

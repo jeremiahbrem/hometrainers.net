@@ -30,8 +30,9 @@ services:
       - REDIRECT_URL=http://host.docker.internal:3000
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=Password123
-      - POSTGRES_DB=hptrainers
+      - POSTGRES_DB=hptrainers_test
       - POSTGRES_HOST=db
+      - TEST_DB=hptrainers_test
       - ENVIRONMENT=DEV
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -91,7 +92,7 @@ services:
       - postgres-db:/var/lib/postgresql/data
       - ./sql:/sql
     healthcheck:
-      test: ["CMD-SHELL", "sh -c pg_isready -U postgres -d hptrainers"]
+      test: ["CMD-SHELL", "sh -c pg_isready -U postgres -d hptrainers_test"]
       interval: 10s
       timeout: 3s
       retries: 10
