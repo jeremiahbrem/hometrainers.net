@@ -59,7 +59,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
       - run:
-          command: go mod install
+          command: go mod download
           working_directory: ~/project/auth
       - save_cache:
           key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
