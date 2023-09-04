@@ -32,8 +32,7 @@ jobs:
       - run: docker-compose up -d auth
       - run: docker-compose up -d backend
       - run: docker-compose up -d frontend
-      # - run: dockerize -wait tcp://localhost:9096 -timeout 1m
-      - run: docker exec auth go test -p 1
+      - run: docker-compose exec -w /auth go test -p 1
       - run: docker exec frontend npm test
       - run: docker-compose up cypress --abort-on-container-exit --exit-code-from cypress
   e2e-test:
