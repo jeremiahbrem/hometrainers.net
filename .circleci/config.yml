@@ -49,6 +49,8 @@ jobs:
           command: npm run test-ci
           working_directory: ~/project/frontend
   auth-test:
+    docker:
+      - image: golang:1.19
     executor:
       name: go/default
       tag: '2.00'
