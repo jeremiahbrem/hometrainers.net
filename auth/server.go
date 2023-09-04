@@ -79,7 +79,7 @@ func setupRouter(
 	router.StaticFS("/static", http.FS(staticFS))
 
 	userRepo := repositories.UserRepository{
-		Db: database.DB.Db,
+		Db: db,
 	}
 
 	router.StaticFile("/hpt-logo.svg", "./static/hpt-logo.svg")
@@ -146,7 +146,7 @@ func setupRouter(
 
 		user.Password = hash
 
-		database.DB.Db.Create(&user)
+		db.Create(&user)
 
 		ctx.JSON(http.StatusOK, user)
 	})
