@@ -29,12 +29,44 @@ jobs:
       - setup_remote_docker
       - run: docker volume create --name=postgres-db
       - run: docker-compose build
-      - run: docker-compose up -d auth
-      - run: docker-compose up -d backend
-      - run: docker-compose up -d frontend
-      - run: docker-compose exec -w /auth go test -p 1
-      - run: docker exec frontend npm test
       - run: docker-compose up cypress --abort-on-container-exit --exit-code-from cypress
+  frontend-test:
+    docker:
+      - image: node:16
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
+      - run:
+          command: npm install
+          working_directory: ~/project/frontend
+      - save_cache:
+          key: dependency-cache-{{ checksum "~/project/frontend/package-lock.json" }}
+          paths:
+            - ./node_modules
+          working_directory: ~/project/frontend
+      - run:
+          command: npm run test-ci
+          working_directory: ~/project/frontend
+  auth-test:
+    executor:
+      name: go/default
+      tag: '2.00'
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
+      - run:
+          command: go mod install
+          working_directory: ~/project/auth
+      - save_cache:
+          key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
+          paths:
+            - ./go.mod
+          working_directory: ~/project/auth
+      - run:
+          command: go test -p 1
+          working_directory: ~/project/auth
   e2e-test:
     docker:
       - image: cimg/base:2021.04
@@ -82,13 +114,13 @@ workflows:
   version: 2
   cd:
     jobs:
+      - auth-test
       # - e2e-test
-      - test
       # - frontend-test
       - deploy:
           requires:
+            - auth-test
             # - e2e-test
-            - test
             # - frontend-test
           filters:
             branches:
