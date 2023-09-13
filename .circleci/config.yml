@@ -52,13 +52,14 @@ jobs:
     docker:
       - image: golang:1.19
       - image: cimg/postgres:11.18
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Password123
+          POSTGRES_DB: hptrainers_test
     executor:
       name: go/default
       tag: '2.00'
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Password123
-      - POSTGRES_DB=hptrainers_test
+    
     steps:
       - checkout
       - restore_cache:
