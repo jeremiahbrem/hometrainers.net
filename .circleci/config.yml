@@ -60,7 +60,7 @@ jobs:
       - REDIRECT_URL=http://host.docker.internal:3000
       - POSTGRES_USER=postgres
       - POSTGRES_DB=circle_test
-      - POSTGRES_HOST=postgresql://postgres@localhost/circle_test
+      - POSTGRES_HOST=postgres://postgres@localhost:5432/circle_test?sslmode=disable
       - ENVIRONMENT=DEV
     executor:
       name: go/default
