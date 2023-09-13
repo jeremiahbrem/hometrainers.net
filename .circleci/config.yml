@@ -48,24 +48,32 @@ jobs:
       - run:
           command: npm run test-ci
           working_directory: ~/project/frontend
-  go-test:
+  auth-test:
     docker:
-      - image: cimg/base:2021.04
+      - image: golang:1.19
+      - image: cimg/postgres:11.18
     executor:
       name: go/default
       tag: '2.00'
     environment:
-      - ENVIRONMENT=DEV
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Password123
+      - POSTGRES_DB=hptrainers_test
     steps:
       - checkout
-      - setup_remote_docker
-      - run: docker volume create --name=postgres-db
-      - run: docker-compose build db
-      - run: docker-compose build auth
-      - run: docker-compose up -d db
-      - run: docker-compose up -d auth
-      - run: docker-compose exec auth go test
-      - run: docker-compose down
+      - restore_cache:
+          key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
+      - run:
+          command: go mod download
+          working_directory: ~/project/auth
+      - save_cache:
+          key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
+          paths:
+            - ./go.mod
+          working_directory: ~/project/auth
+      - run:
+          command: go test -p 1
+          working_directory: ~/project/auth
   e2e-test:
     docker:
       - image: cimg/base:2021.04
@@ -113,14 +121,13 @@ workflows:
   version: 2
   cd:
     jobs:
-      # - auth-test
-      # - e2e-test
-      # - frontend-test
-      - go-test:
+      - auth-test:
           filters:
             branches:
               ignore: 
-                main
+                - main
+      # - e2e-test  
+      # - frontend-test
       - deploy:
           # requires:
             # - auth-test
