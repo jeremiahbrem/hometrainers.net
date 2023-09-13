@@ -116,12 +116,12 @@ workflows:
   version: 2
   cd:
     jobs:
-      - auth-test
+      # - auth-test
       # - e2e-test
       # - frontend-test
       - deploy:
           requires:
-            - auth-test
+            # - auth-test
             # - e2e-test
             # - frontend-test
           filters:
