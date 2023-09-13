@@ -57,8 +57,11 @@ jobs:
           POSTGRES_DB: circle_test
     environment:
       - ENVIRONMENT=DEV
-      - DB_HOST=postgresql://postgres@localhost/circle_test
-      - DB_NAME=circle_test
+      - REDIRECT_URL=http://host.docker.internal:3000
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=circle_test
+      - POSTGRES_HOST=postgresql://postgres@localhost/circle_test
+      - ENVIRONMENT=DEV
     executor:
       name: go/default
       tag: '2.00'
