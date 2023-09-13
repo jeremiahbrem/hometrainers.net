@@ -37,7 +37,7 @@ func main() {
 			DisableDependentServices: pulumi.Bool(true),
 			Project:                  pulumi.String(ProjectId),
 			Service:                  pulumi.String("sqladmin.googleapis.com"),
-		})
+		}, pulumi.DependsOn([]pulumi.Resource{enableResourceService}))
 
 		uniqueString, _ := random.NewRandomString(ctx, "unique-string", &random.RandomStringArgs{
 			Length:  pulumi.Int(4),

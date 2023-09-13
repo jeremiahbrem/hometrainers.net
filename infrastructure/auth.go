@@ -28,7 +28,7 @@ func AuthService(
 			Context:  pulumi.String("../auth"),
 			Platform: pulumi.String("linux/amd64"),
 		},
-	})
+	}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, enableSqlAdmin}))
 
 	authService, _ := cloudrun.NewService(ctx, "auth-service", &cloudrun.ServiceArgs{
 		Location: pulumi.String(Location),
@@ -37,7 +37,6 @@ func AuthService(
 			Annotations: pulumi.StringMap(
 				map[string]pulumi.StringInput{
 					"run.googleapis.co/cloudsql-instances": dbHost,
-					"autoscaling.knative.dev/maxScale":     pulumi.String("5"),
 				},
 			),
 		},
