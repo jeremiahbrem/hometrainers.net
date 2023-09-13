@@ -50,7 +50,7 @@ jobs:
           working_directory: ~/project/frontend
   auth-test:
     docker:
-      - image: golang:1.19
+      - image: cimg/go:1.19
       - image: cimg/postgres:11.18
         environment:
           POSTGRES_USER: postgres
@@ -62,9 +62,6 @@ jobs:
       - POSTGRES_DB=circle_test
       - POSTGRES_HOST=postgres://postgres@localhost:5432/circle_test?sslmode=disable
       - ENVIRONMENT=DEV
-    executor:
-      name: go/default
-      tag: '2.00'
     steps:
       - checkout
       - run:
