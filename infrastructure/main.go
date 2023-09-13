@@ -94,24 +94,24 @@ func main() {
 			[]pulumi.Resource{enableCloudRun, authService},
 		)
 
-		frontendService := FrontendService(
+		FrontendService(
 			gitHash,
 			ctx,
 			repoUrl,
 			[]pulumi.Resource{enableCloudRun, authService, backendService},
 		)
 
-		dnsErr := Dns(
-			ctx,
-			enableResourceService,
-			authService,
-			backendService,
-			frontendService,
-		)
+		// dnsErr := Dns(
+		// 	ctx,
+		// 	enableResourceService,
+		// 	authService,
+		// 	backendService,
+		// 	frontendService,
+		// )
 
-		if dnsErr != nil {
-			return dnsErr
-		}
+		// if dnsErr != nil {
+		// 	return dnsErr
+		// }
 
 		return nil
 	})
