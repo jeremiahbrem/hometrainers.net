@@ -2,7 +2,7 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import { Logo } from '../logo'
 import styles from './header.module.scss'
 import { Session } from 'next-auth'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import classnames from 'classnames'
 

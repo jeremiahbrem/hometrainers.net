@@ -18,7 +18,7 @@ export default function Layout({
     <ErrorBoundary fallback={<>error</>}>
       <div className={inter.className}>
         <Head>
-          <title>HomePersonalTrainers.net | In-home Personal Trainer Networking Platform</title>
+          <title>HomeTrainers.net | In-home Personal Trainer Networking Platform</title>
           <meta name="description" content="A networking platform for in-home personal trainers and clients" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <link rel="icon" href="/favicon.ico" />
