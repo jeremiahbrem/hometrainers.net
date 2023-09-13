@@ -55,10 +55,10 @@ jobs:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: circle_test
-      environment:
-        - ENVIRONMENT=DEV
-        - DB_HOST=postgresql://postgres@localhost/circle_test
-        - DB_NAME=circle_test
+    environment:
+      - ENVIRONMENT=DEV
+      - DB_HOST=postgresql://postgres@localhost/circle_test
+      - DB_NAME=circle_test
     executor:
       name: go/default
       tag: '2.00'
