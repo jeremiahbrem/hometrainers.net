@@ -105,12 +105,12 @@ jobs:
       - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - load-env
       - pulumi/login
-      - pulumi/up:
+      - pulumi/refresh:
           stack: jeremiahbrem/homepersonaltrainers.net/dev
           working_directory: ~/project/infrastructure
-      # - pulumi/update:
-      #     stack: jeremiahbrem/homepersonaltrainers.net/dev
-      #     working_directory: ~/project/infrastructure
+      - pulumi/update:
+          stack: jeremiahbrem/homepersonaltrainers.net/dev
+          working_directory: ~/project/infrastructure
       - run: rm gcp-credentials.json
 workflows:
   version: 2
