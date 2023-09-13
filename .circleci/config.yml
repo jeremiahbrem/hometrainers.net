@@ -50,7 +50,7 @@ jobs:
           working_directory: ~/project/frontend
   go-test:
     docker:
-      - image: golang:1.19
+      - image: cimg/base:2021.04
     executor:
       name: go/default
       tag: '2.00'
