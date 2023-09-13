@@ -120,7 +120,7 @@ workflows:
       # - e2e-test
       # - frontend-test
       - deploy:
-          requires:
+          # requires:
             # - auth-test
             # - e2e-test
             # - frontend-test
