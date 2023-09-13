@@ -101,18 +101,6 @@ func main() {
 			[]pulumi.Resource{enableCloudRun, authService, backendService},
 		)
 
-		// dnsErr := Dns(
-		// 	ctx,
-		// 	enableResourceService,
-		// 	authService,
-		// 	backendService,
-		// 	frontendService,
-		// )
-
-		// if dnsErr != nil {
-		// 	return dnsErr
-		// }
-
 		return nil
 	})
 }
