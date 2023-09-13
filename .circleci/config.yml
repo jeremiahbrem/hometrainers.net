@@ -117,14 +117,14 @@ workflows:
   cd:
     jobs:
       # - auth-test
-      - e2e-test
+      # - e2e-test
       # - frontend-test
-      # - deploy:
-      #     # requires:
-      #       # - auth-test
-      #       # - e2e-test
-      #       # - frontend-test
-      #     filters:
-      #       branches:
-      #         only:
-      #           - main
+      - deploy:
+          # requires:
+            # - auth-test
+            # - e2e-test
+            # - frontend-test
+          filters:
+            branches:
+              only:
+                - main

@@ -17,4 +17,4 @@ func SetEnv(name string, value string) cloudrun.ServiceTemplateSpecContainerEnvA
 
 var Location = "us-central1"
 
-var ProjectId = "quiet-platform-392619"
+var ProjectId = "home-trainers"
