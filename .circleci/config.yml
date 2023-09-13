@@ -67,6 +67,8 @@ jobs:
       tag: '2.00'
     steps:
       - checkout
+      - run:
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - restore_cache:
           key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
       - run:
