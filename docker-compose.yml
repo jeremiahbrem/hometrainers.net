@@ -30,8 +30,8 @@ services:
       - REDIRECT_URL=http://host.docker.internal:3000
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=Password123
-      - POSTGRES_DB=hptrainers_test
-      - POSTGRES_HOST=db
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_HOST=${DB_HOST}
       - TEST_DB=hptrainers_test
       - ENVIRONMENT=DEV
     extra_hosts:

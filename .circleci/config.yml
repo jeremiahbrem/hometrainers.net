@@ -54,12 +54,14 @@ jobs:
       - image: cimg/postgres:11.18
         environment:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: Password123
-          POSTGRES_DB: hptrainers_test
+          POSTGRES_DB: circle_test
+      environment:
+        - ENVIRONMENT=DEV
+        - DB_HOST=postgresql://postgres@localhost/circle_test
+        - DB_NAME=circle_test
     executor:
       name: go/default
       tag: '2.00'
-    
     steps:
       - checkout
       - restore_cache:
@@ -80,6 +82,8 @@ jobs:
       - image: cimg/base:2021.04
     environment:
       - ENVIRONMENT=DEV
+      - DB_HOST=db
+      - DB_NAME=hptrainers_test
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
