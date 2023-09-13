@@ -80,7 +80,6 @@ func AuthService(
 						},
 					},
 				},
-				TimeoutSeconds: pulumi.Int(300),
 			},
 		},
 	}, pulumi.DependsOn([]pulumi.Resource{enableCloudRun, enableSqlAdmin, auth}))
