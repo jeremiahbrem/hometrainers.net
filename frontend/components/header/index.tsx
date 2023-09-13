@@ -49,7 +49,7 @@ const SignIn: React.FC = () => {
 export default function Header() {
   return <div className={styles.header}>
     <Logo className={styles.logoContainer} />
-    <p>HomePersonalTrainers.net</p>
+    <p>HomeTrainers.net</p>
     <SignIn />
   </div>
 }
