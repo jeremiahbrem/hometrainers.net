@@ -32,7 +32,6 @@ services:
       - POSTGRES_PASSWORD=Password123
       - POSTGRES_DB=hptrainers_test
       - POSTGRES_HOST=db
-      - TEST_DB=hptrainers_test
       - ENVIRONMENT=DEV
     extra_hosts:
       - "host.docker.internal:host-gateway"
