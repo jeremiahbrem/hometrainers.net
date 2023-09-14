@@ -8,14 +8,21 @@ import (
 	"os"
 	"server/mocks"
 	"server/models"
+	"server/services"
 	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+	"github.com/go-session/session"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+var testUser = "test-user"
+var testName = "Tester"
+var testPassword = "test-password"
 
 func Setup() *gorm.DB {
 	godotenv.Load(".env")
@@ -32,9 +39,16 @@ func Setup() *gorm.DB {
 		DSN: dsn,
 	}))
 
-	fmt.Println(db)
-
 	db.AutoMigrate(&models.User{})
+
+	password, _ := HashPassword(testPassword)
+
+	db.Exec(
+		"insert into users (name, email, password) values(?,?,?)",
+		testName,
+		testUser,
+		password,
+	)
 
 	return db
 }
@@ -46,11 +60,25 @@ func Teardown(db *gorm.DB) {
 	db.Exec(sql)
 }
 
+func SetupRouter(
+	db *gorm.DB,
+	session services.SessionApiType,
+) *gin.Engine {
+
+	serviceProvider := services.CreateServiceProvider(
+		session,
+		db,
+	)
+	router := setupRouter(serviceProvider)
+
+	return router
+}
+
 func TestGetLogin(t *testing.T) {
 	db := Setup()
 	defer Teardown(db)
 
-	router := setupRouter(&SessionApi{}, db)
+	router := SetupRouter(db, &services.SessionApi{})
 
 	w := httptest.NewRecorder()
 
@@ -66,22 +94,13 @@ func TestPostLogin(t *testing.T) {
 	db := Setup()
 	defer Teardown(db)
 
-	router := setupRouter(&SessionApi{}, db)
-
-	password, _ := HashPassword("12345")
-
-	sql := fmt.Sprintf(`
-		insert into users (email, name, password)
-		values ('john.doe', 'john doe', '%s')
-	`, password)
-
-	db.Exec(sql)
+	router := SetupRouter(db, &services.SessionApi{})
 
 	w := httptest.NewRecorder()
 
 	form := url.Values{}
-	form.Add("email", "john.doe")
-	form.Add("password", "12345")
+	form.Add("email", testUser)
+	form.Add("password", testPassword)
 
 	req, _ := http.NewRequest("POST", "/login", strings.NewReader(form.Encode()))
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -92,19 +111,47 @@ func TestPostLogin(t *testing.T) {
 	assert.NotContains(t, w.Body.String(), "Login")
 }
 
-var form = func() url.Values {
-	form := url.Values{}
-	form.Add("client_id", "222222")
-	form.Add("code_challenge", "Qn3Kywp0OiU4NK_AFzGPlmrcYJDJ13Abj_jdL08Ahg8%3D")
-	form.Add("code_challenge_method", "S256")
-	form.Add("redirect_uri", "http://localhost:3000/api/auth/callback/auth")
-	form.Add("response_type", "code")
-	form.Add("scope", "all")
-	form.Add("state", "SMtRWUWwaryeP6sI7CS4ynDMwpdRGRqdFgM0D_k-qtI")
-	return form
-}()
+func TestPostUserNotFound(t *testing.T) {
+	db := Setup()
+	defer Teardown(db)
 
-var uid = "john.doe"
+	router := SetupRouter(db, &services.SessionApi{})
+
+	w := httptest.NewRecorder()
+
+	form := url.Values{}
+	form.Add("email", "other-user")
+	form.Add("password", testPassword)
+
+	req, _ := http.NewRequest("POST", "/login", strings.NewReader(form.Encode()))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	router.ServeHTTP(w, req)
+
+	assert.Contains(t, w.Body.String(), "Login")
+	assert.Contains(t, w.Body.String(), "User not found")
+}
+
+func TestPostUserIncorrectPassword(t *testing.T) {
+	db := Setup()
+	defer Teardown(db)
+
+	router := SetupRouter(db, &services.SessionApi{})
+
+	w := httptest.NewRecorder()
+
+	form := url.Values{}
+	form.Add("email", testUser)
+	form.Add("password", "bad-password")
+
+	req, _ := http.NewRequest("POST", "/login", strings.NewReader(form.Encode()))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	router.ServeHTTP(w, req)
+
+	assert.Contains(t, w.Body.String(), "Login")
+	assert.Contains(t, w.Body.String(), "Incorrect password")
+}
 
 func TestAuthHandlerLoggedIn(t *testing.T) {
 	db := Setup()
@@ -112,13 +159,14 @@ func TestAuthHandlerLoggedIn(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	session := mocks.MockSessionApi{
-		ValFound: true,
-		Form:     form,
-		Uid:      uid,
+	storeFn := func(store session.Store) {
+		store.Set("LoggedInUserID", testUser)
+		store.Save()
 	}
 
-	router := setupRouter(&session, db)
+	mockSession := mocks.CreateSession(storeFn)
+
+	router := SetupRouter(db, &mockSession)
 
 	req, _ := http.NewRequest("GET", "/auth", nil)
 
@@ -133,13 +181,7 @@ func TestAuthHandlerNotLoggedOut(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	session := mocks.MockSessionApi{
-		ValFound: false,
-		Form:     form,
-		Uid:      uid,
-	}
-
-	router := setupRouter(&session, db)
+	router := SetupRouter(db, &services.SessionApi{})
 
 	req, _ := http.NewRequest("GET", "/auth", nil)
 
@@ -152,13 +194,27 @@ func TestOauthAuthorize(t *testing.T) {
 	db := Setup()
 	defer Teardown(db)
 
-	session := mocks.MockSessionApi{
-		ValFound: true,
-		Form:     form,
-		Uid:      uid,
+	var form = func() url.Values {
+		form := url.Values{}
+		form.Add("client_id", "222222")
+		form.Add("code_challenge", "Qn3Kywp0OiU4NK_AFzGPlmrcYJDJ13Abj_jdL08Ahg8%3D")
+		form.Add("code_challenge_method", "S256")
+		form.Add("redirect_uri", "http://localhost:3000/api/auth/callback/auth")
+		form.Add("response_type", "code")
+		form.Add("scope", "all")
+		form.Add("state", "SMtRWUWwaryeP6sI7CS4ynDMwpdRGRqdFgM0D_k-qtI")
+		return form
+	}()
+
+	storeFn := func(store session.Store) {
+		store.Set("LoggedInUserID", testUser)
+		store.Set("ReturnUri", form)
+		store.Save()
 	}
 
-	router := setupRouter(&session, db)
+	mockSession := mocks.CreateSession(storeFn)
+
+	router := SetupRouter(db, &mockSession)
 
 	w := httptest.NewRecorder()
 
@@ -169,7 +225,7 @@ func TestOauthAuthorize(t *testing.T) {
 	expected := []string{
 		"http://localhost:3000/api/auth/callback/auth",
 		"code=",
-		"state=",
+		"state=SMtRWUWwaryeP6sI7CS4ynDMwpdRGRqdFgM0D_k-qtI",
 	}
 
 	for _, val := range expected {
