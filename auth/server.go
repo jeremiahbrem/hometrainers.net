@@ -12,23 +12,14 @@ import (
 	"os"
 	"server/database"
 	dbModels "server/models"
-	"server/repositories"
+	"server/services"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/go-oauth2/oauth2/v4/generates"
-	"github.com/golang-jwt/jwt"
 	"github.com/joho/godotenv"
-
-	"github.com/go-oauth2/oauth2/v4/errors"
-	"github.com/go-oauth2/oauth2/v4/manage"
-	"github.com/go-oauth2/oauth2/v4/models"
-	"github.com/go-oauth2/oauth2/v4/server"
-	"github.com/go-oauth2/oauth2/v4/store"
 )
 
 var (
@@ -62,8 +53,7 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func setupRouter(
-	session SessionApiType,
-	db *gorm.DB,
+	serviceProvider services.ServiceProvider,
 ) *gin.Engine {
 	flag.Parse()
 
@@ -78,10 +68,6 @@ func setupRouter(
 	staticFS, _ := fs.Sub(staticFiles, "static")
 	router.StaticFS("/static", http.FS(staticFS))
 
-	userRepo := repositories.UserRepository{
-		Db: db,
-	}
-
 	router.StaticFile("/hpt-logo.svg", "./static/hpt-logo.svg")
 
 	corsConfig := cors.DefaultConfig()
@@ -90,37 +76,13 @@ func setupRouter(
 
 	router.Use(cors.New(corsConfig))
 
-	manager := manage.NewDefaultManager()
-	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
+	session := serviceProvider.GetSession()
+	userRepo := serviceProvider.GetUserRepo()
 
-	manager.MustTokenStorage(store.NewMemoryTokenStore())
+	srv := CreateOauthServer(session)
 
-	manager.MapAccessGenerate(generates.NewJWTAccessGenerate("", []byte("00000000"), jwt.SigningMethodHS512))
+	CreateLoginHandler(router, &serviceProvider)
 
-	clientStore := store.NewClientStore()
-	clientStore.Set(idvar, &models.Client{
-		ID:     idvar,
-		Secret: secretvar,
-		Domain: domainvar,
-	})
-
-	manager.MapClientStorage(clientStore)
-
-	srv := server.NewServer(server.NewConfig(), manager)
-
-	srv.SetUserAuthorizationHandler(userAuthorizeHandler(session))
-
-	srv.SetInternalErrorHandler(func(err error) (re *errors.Response) {
-		log.Println("Internal Error:", err.Error())
-		return
-	})
-
-	srv.SetResponseErrorHandler(func(re *errors.Response) {
-		log.Println("Response Error:", re.Error.Error())
-	})
-
-	router.POST("/login", loginHandler(session, userRepo))
-	router.GET("/login", loginHandler(session, userRepo))
 	router.GET("/auth", authHandler(session))
 
 	router.POST("/signup", func(ctx *gin.Context) {
@@ -146,13 +108,12 @@ func setupRouter(
 
 		user.Password = hash
 
-		db.Create(&user)
+		userRepo.CreateUser(user)
 
 		ctx.JSON(http.StatusOK, user)
 	})
 
 	router.GET("/get-user", func(ctx *gin.Context) {
-
 		email := ctx.Request.URL.Query().Get("email")
 
 		user, err := userRepo.GetUser(email)
@@ -162,7 +123,10 @@ func setupRouter(
 			return
 		}
 
-		ctx.JSON(http.StatusOK, user)
+		ctx.JSON(http.StatusOK, gin.H{
+			"name":  user.Name,
+			"email": user.Email,
+		})
 	})
 
 	router.GET("/oauth/authorize", func(ctx *gin.Context) {
@@ -238,107 +202,19 @@ func setupRouter(
 
 func main() {
 	database.ConnectDb()
-	router := setupRouter(&SessionApi{}, database.DB.Db)
+
+	serviceProvider := services.CreateServiceProvider(
+		&services.SessionApi{},
+		database.DB.Db,
+	)
+
+	router := setupRouter(serviceProvider)
 	router.Run(fmt.Sprintf(":%d", portvar))
 	log.Printf("Server is running at %d port.\n", portvar)
 }
 
-func userAuthorizeHandler(
-	session SessionApiType,
-) func(w http.ResponseWriter, r *http.Request) (userID string, err error) {
-	return func(w http.ResponseWriter, r *http.Request) (userID string, err error) {
-		store, err := session.Start(r.Context(), w, r)
-
-		if err != nil {
-			return
-		}
-
-		uid, ok := store.Get("LoggedInUserID")
-
-		if !ok {
-			if r.Form == nil {
-				r.ParseForm()
-			}
-
-			store.Set("ReturnUri", r.Form)
-			store.Save()
-
-			w.Header().Set("Location", "/login")
-			w.WriteHeader(http.StatusFound)
-			return
-		}
-
-		userID = uid.(string)
-
-		store.Delete("LoggedInUserID")
-		store.Save()
-		return
-	}
-}
-
-func loginHandler(
-	session SessionApiType,
-	userRepo repositories.UserRepository,
-) gin.HandlerFunc {
-	return func(context *gin.Context) {
-		request := context.Request
-		writer := context.Writer
-
-		store, err := session.Start(context, writer, request)
-
-		if err != nil {
-			context.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-
-		if request.Method == "POST" {
-			if request.Form == nil {
-				if err := request.ParseForm(); err != nil {
-					context.AbortWithError(http.StatusInternalServerError, err)
-					return
-				}
-			}
-
-			email := request.Form.Get("email")
-			password := request.Form.Get("password")
-
-			user, _ := userRepo.GetUser(email)
-
-			if user == nil {
-				context.HTML(http.StatusBadRequest, "login.tmpl", gin.H{
-					"error":    "User not found",
-					"email":    email,
-					"password": password,
-				})
-				return
-			}
-
-			if !CheckPasswordHash(password, user.Password) {
-				context.HTML(http.StatusBadRequest, "login.tmpl", gin.H{
-					"error":    "Incorrect password",
-					"email":    email,
-					"password": password,
-				})
-				return
-			}
-
-			store.Set("LoggedInUserID", email)
-			store.Save()
-
-			context.Redirect(http.StatusFound, "/auth")
-			return
-		}
-
-		context.HTML(http.StatusOK, "login.tmpl", gin.H{
-			"error":    nil,
-			"email":    nil,
-			"password": nil,
-		})
-	}
-}
-
 func authHandler(
-	session SessionApiType,
+	session services.SessionApiType,
 ) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		store, err := session.Start(context, context.Writer, context.Request)
