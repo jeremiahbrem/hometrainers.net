@@ -8,16 +8,9 @@ describe('login page', () => {
   it('logs in', () => {
     const testUser = {
       email: 'test@example.com',
-      name: 'tester',
+      name: 'Test User',
       password: 'test-password',
     }
-
-    cy.request({
-      method: 'POST',
-      url: `http://${Cypress.env('AUTH_URL')}:9096/signup`,
-      body: JSON.stringify({ ...testUser }),
-      failOnStatusCode: false,
-    })
 
     cy.visit('/')
 
