@@ -59,15 +59,13 @@ jobs:
       - ENVIRONMENT=DEV
       - REDIRECT_URL=http://host.docker.internal:3000
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=circle_test
+      - TEST_DB=circle_test
       - POSTGRES_HOST=localhost
       - ENVIRONMENT=DEV
     steps:
       - checkout
       - run:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - run: echo 'export POSTGRES_DB=circle_test'
-      - run: echo 'export POSTGRES_USER=postgres'
       - restore_cache:
           key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
       - run:
