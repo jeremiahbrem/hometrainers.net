@@ -66,6 +66,8 @@ jobs:
       - checkout
       - run:
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run: echo 'export POSTGRES_DB=circle_test'
+      - run: echo 'export POSTGRES_USER=postgres'
       - restore_cache:
           key: dependency-cache-{{ checksum "~/project/auth/go.sum" }}
       - run:
