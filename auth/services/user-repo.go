@@ -23,5 +23,5 @@ func (repo *UserRepository) GetUser(email string) (*models.User, error) {
 }
 
 func (repo *UserRepository) CreateUser(user models.User) {
-	repo.db.Create(user)
+	repo.db.Create(&user)
 }
