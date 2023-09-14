@@ -129,17 +129,13 @@ workflows:
   cd:
     jobs:
       - auth-test:
-          filters:
-            branches:
-              ignore: 
-                - main
-      # - e2e-test  
-      # - frontend-test
+      - e2e-test  
+      - frontend-test
       - deploy:
-          # requires:
-            # - auth-test
-            # - e2e-test
-            # - frontend-test
+          requires:
+            - auth-test
+            - e2e-test
+            - frontend-test
           filters:
             branches:
               only:
