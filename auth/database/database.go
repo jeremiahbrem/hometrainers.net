@@ -49,7 +49,7 @@ func initializeDb(db *gorm.DB, dbErr error) {
 
 func loadTestUser() {
 	userRepo := services.CreateUserRepo(DB.Db)
-	if existing, err := userRepo.GetUser("test@example.com"); err != nil {
+	if _, err := userRepo.GetUser("test@example.com"); err != nil {
 		pwd, _ := users.HashPassword("test-password")
                 user := models.User{
 			Name:     "Test User",
