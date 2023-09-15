@@ -57,7 +57,7 @@ jobs:
           POSTGRES_DB: circle_test
     environment:
       - ENVIRONMENT=DEV
-      - REDIRECT_URL=http://host.docker.internal:3000
+      - NEXTAUTH_URL=http://localhost:3000
       - POSTGRES_USER=postgres
       - TEST_DB=circle_test
       - POSTGRES_HOST=localhost
