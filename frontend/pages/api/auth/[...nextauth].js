@@ -79,6 +79,7 @@ export default NextAuth({
       session.accessToken = token.accessToken
       session.refreshToken = token.refreshToken
       session.error = token.error
+      session.provider = token.provider,
       session.user = { name: token.name, email: token.email }
       return session      
     },
@@ -90,7 +91,7 @@ export default NextAuth({
       }
 
       if (provider === 'auth') {
-        return authJwtCallback(token, account)
+        return await authJwtCallback(token, account)
       }
 
       return token

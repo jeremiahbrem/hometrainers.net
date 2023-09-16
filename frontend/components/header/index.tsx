@@ -8,48 +8,55 @@ import classnames from 'classnames'
 
 type SessionType = Session & { idToken: string; error?: string }
 
-const SignIn: React.FC = () => {
-  const response = useSession()
-  const data = response.data as SessionType | null
-
+const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
   const [open, setOpen] = useState<boolean>(false)
 
   const modalStyle = classnames(styles.signInModal, { [styles.open]: open })
 
-  const isLoggedIn = data && !data.error
+  return (
+    <div className={styles.signIn}>
+      <button className={styles.signInButton} onClick={() => setOpen(true)}>
+        <span className="material-symbols-outlined">person</span>
+      </button>
 
-  const signInFunc = isLoggedIn
-    ? () => signOut()
-    : () => setOpen(true)
+      <div className={modalStyle}>
+        <button className={styles.scrim} onClick={() => setOpen(false)} />
+        <div className={styles.innerModal}>
+          <div className={styles.scrim} />
 
-  const signInText = isLoggedIn ? 'Sign out' : 'Sign in'
+          {isLoggedIn && (
+            <button className={styles.emailButton} onClick={() => signOut()}>
+              Sign out
+            </button>
+          )}
 
-  return (<div className={styles.signIn}>
-    <button className={styles.signInButton} onClick={signInFunc}>
-      <span className="material-symbols-outlined">person</span>
-      <span className={styles.signInText}>{signInText}</span>
-    </button>
-
-    <div className={modalStyle}>
-      <button className={styles.scrim} onClick={() => setOpen(false)} />
-      <div className={styles.innerModal}>
-        <div className={styles.scrim} />
-        <button className={styles.emailSignIn} onClick={() => signIn('auth')}>
-          Sign in with email
-        </button>
-        <button className={styles.googleSignIn} onClick={() => signIn('google')}>
-          <Image src={'/google-signin.png'} alt={'sign in with google'} fill={true} objectFit={'contain'} />
-        </button>
+          {!isLoggedIn && <>
+            <button className={styles.emailButton} onClick={() => signIn('auth')}>
+              Sign in with email
+            </button>
+            <button className={styles.googleSignIn} onClick={() => signIn('google')}>
+              <Image src={'/google-signin.png'} alt={'sign in with google'} fill={true} objectFit={'contain'} />
+            </button>
+          </>}
+          
+        </div>
       </div>
     </div>
-  </div>
   )
 }
 
 export default function Header() {
+  const response = useSession()
+  const data = response.data as SessionType | null
+
+  const isLoggedIn = !!(data && !data.error)
+
+  const checkStyle = classnames("material-symbols-outlined", styles.check)
+
   return <div className={styles.header}>
     <Logo className={styles.logoContainer} />
     <p>HomeTrainers.net</p>
-    <SignIn />
+    {isLoggedIn ? <span className={checkStyle}>check</span> : <span />}
+    <SignIn {...{ isLoggedIn }} />
   </div>
 }
