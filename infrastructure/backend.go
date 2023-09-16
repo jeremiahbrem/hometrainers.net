@@ -13,6 +13,9 @@ func BackendService(
 	ctx *pulumi.Context,
 	repoUrl pulumi.StringOutput,
 	dependsOn []pulumi.Resource,
+	dbUser pulumi.StringOutput,
+	dbPwd pulumi.StringOutput,
+	dbHost pulumi.StringOutput,
 ) *cloudrun.Service {
 	var backendImageName = fmt.Sprintf("backend:%v", gitHash)
 
@@ -40,6 +43,31 @@ func BackendService(
 							SetEnv("GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_SECRET"),
 							SetEnv("AUTH_SERVER_URL", "AUTH_SERVER_URL"),
 							SetEnv("BACKEND_REDIRECT_URL", "BACKEND_REDIRECT_URL"),
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("POSTGRES_USER"),
+								Value:     dbUser,
+								ValueFrom: nil,
+							},
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("POSTGRES_PASSWORD"),
+								Value:     dbPwd,
+								ValueFrom: nil,
+							},
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("POSTGRES_HOST"),
+								Value:     dbHost,
+								ValueFrom: nil,
+							},
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("POSTGRES_DB"),
+								Value:     pulumi.String("hptrainers"),
+								ValueFrom: nil,
+							},
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("ENVIRONMENT"),
+								Value:     pulumi.String("PROD"),
+								ValueFrom: nil,
+							},
 						},
 					},
 				},
