@@ -53,10 +53,8 @@ jobs:
     docker:
       - image: cimg/base:2021.04
     environment:
-      - ENVIRONMENT=DEV
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
     steps:
       - checkout
       - setup_remote_docker
