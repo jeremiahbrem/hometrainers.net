@@ -26,7 +26,7 @@ commands:
           key: dependency-cache-{{ checksum "~/project/<< parameters.directory >>/go.sum" }}
       - run:
           command: go mod download
-          working_directory: ~/project/auth
+          working_directory: ~/project/<< parameters.directory >>
       - save_cache:
           key: dependency-cache-{{ checksum "~/project/<< parameters.directory >>/go.sum" }}
           paths:
