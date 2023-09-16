@@ -6,7 +6,7 @@ import styles from './layout.module.scss'
 
 const inter = Roboto({
   subsets: ['latin'],
-  weight: ['400','500','700','900']
+  weight: ['300', '400','500','700','900']
 })
 
 export default function Layout({

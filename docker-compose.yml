@@ -13,6 +13,11 @@ services:
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - BACKEND_REDIRECT_URL=http://host.docker.internal:3000/api/auth/callback/auth
       - AUTH_SERVER_URL=http://host.docker.internal:9096
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Password123
+      - POSTGRES_DB=hptrainers_test
+      - POSTGRES_HOST=db
+      - ENVIRONMENT=DEV
     extra_hosts:
       - "host.docker.internal:host-gateway"
   auth:

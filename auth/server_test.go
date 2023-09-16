@@ -56,6 +56,8 @@ func Setup() *gorm.DB {
 func Teardown(db *gorm.DB) {
 	sql := `
 		delete from users;
+		delete from oauth2_tokens;
+		delete from oauth2_clients;
 	`
 	db.Exec(sql)
 }
@@ -64,10 +66,12 @@ func SetupRouter(
 	db *gorm.DB,
 	session services.SessionApiType,
 ) *gin.Engine {
+	oauthServer := services.CreateOauthServer(&services.SessionApi{}, "TEST_DB")
 
 	serviceProvider := services.CreateServiceProvider(
 		session,
 		db,
+		oauthServer,
 	)
 	router := setupRouter(serviceProvider)
 
@@ -227,7 +231,6 @@ func TestOauthAuthorize(t *testing.T) {
 		"code=",
 		"state=SMtRWUWwaryeP6sI7CS4ynDMwpdRGRqdFgM0D_k-qtI",
 	}
-
 	for _, val := range expected {
 		assert.Contains(t, w.Header().Get("Location"), val)
 	}

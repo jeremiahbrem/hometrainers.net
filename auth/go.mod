@@ -44,8 +44,10 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgtype v1.14.0 // indirect
 	github.com/jackc/pgx/v5 v5.3.1 // indirect
+	github.com/jackc/puddle v1.3.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jmoiron/sqlx v1.3.4 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
@@ -68,6 +70,10 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/valyala/fasthttp v1.40.0 // indirect
+	github.com/vgarvardt/go-oauth2-pg v1.3.0 // indirect
+	github.com/vgarvardt/go-oauth2-pg/v4 v4.4.3 // indirect
+	github.com/vgarvardt/go-pg-adapter v1.0.0 // indirect
+	github.com/vgarvardt/pgx-helpers/v4 v4.0.0-20200225100150-876aee3d1a22 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/net v0.14.0 // indirect
@@ -80,5 +86,6 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230803162519-f966b187b2e5 // indirect
 	google.golang.org/grpc v1.57.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	gopkg.in/oauth2.v3 v3.10.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

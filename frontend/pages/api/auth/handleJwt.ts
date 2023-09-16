@@ -112,7 +112,7 @@ export function googleJwtCallback(token: Token, account?: Account) {
   return refreshGoogleToken(token)
 }
 
-export function authJwtCallback(token: Token, account?: Account) {
+export async function authJwtCallback(token: Token, account?: Account) {
   if (account) {
     token.accessToken = account.access_token as string
     token.refreshToken = account.refresh_token as string

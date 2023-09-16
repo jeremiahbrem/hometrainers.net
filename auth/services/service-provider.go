@@ -8,8 +8,9 @@ type ServiceProviderType interface {
 }
 
 type ServiceProvider struct {
-	userRepo UserRepository
-	session  SessionApiType
+	userRepo    UserRepository
+	session     SessionApiType
+	oauthServer OauthServerType
 }
 
 func (provider *ServiceProvider) GetSession() SessionApiType {
@@ -18,13 +19,18 @@ func (provider *ServiceProvider) GetSession() SessionApiType {
 func (provider *ServiceProvider) GetUserRepo() UserRepository {
 	return provider.userRepo
 }
+func (provider *ServiceProvider) GetOauthServer() OauthServerType {
+	return provider.oauthServer
+}
 
 func CreateServiceProvider(
 	session SessionApiType,
 	db *gorm.DB,
+	oauthServer OauthServerType,
 ) ServiceProvider {
 	return ServiceProvider{
-		userRepo: UserRepository{db},
-		session:  session,
+		userRepo:    UserRepository{db},
+		session:     session,
+		oauthServer: oauthServer,
 	}
 }

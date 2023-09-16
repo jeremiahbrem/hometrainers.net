@@ -25,7 +25,18 @@ const nextConfig = {
     });
 
     return config;
-  }
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+    unoptimized: true,
+  },
 }
 
 module.exports = nextConfig

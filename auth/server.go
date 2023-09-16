@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"server/database"
 	dbModels "server/models"
 	"server/services"
@@ -21,20 +20,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
-
-var (
-	idvar     string
-	secretvar string
-	domainvar string
-	portvar   int
-)
-
-func init() {
-	flag.StringVar(&idvar, "i", "222222", "The client id being passed in")
-	flag.StringVar(&secretvar, "s", "22222222", "The client secret being passed in")
-	flag.StringVar(&domainvar, "r", os.Getenv("NEXTAUTH_URL"), "The domain of the redirect url")
-	flag.IntVar(&portvar, "p", 9096, "the base port for the server")
-}
 
 //go:embed static/*
 var staticFiles embed.FS
@@ -78,8 +63,7 @@ func setupRouter(
 
 	session := serviceProvider.GetSession()
 	userRepo := serviceProvider.GetUserRepo()
-
-	srv := CreateOauthServer(session)
+	srv := serviceProvider.GetOauthServer()
 
 	CreateLoginHandler(router, &serviceProvider)
 
@@ -172,12 +156,17 @@ func setupRouter(
 			return
 		}
 
+		email := token.GetUserID()
+		user, userErr := userRepo.GetUser(email)
+
+		if userErr != nil {
+			context.AbortWithError(http.StatusBadRequest, userErr)
+			return
+		}
+
 		context.JSON(http.StatusOK, gin.H{
-			"expires_in": int64(time.Until(
-				token.GetAccessCreateAt().Add(token.GetAccessExpiresIn()),
-			).Seconds()),
-			"client_id": token.GetClientID(),
-			"user_id":   token.GetUserID(),
+			"name":  user.Name,
+			"email": email,
 		})
 	})
 
@@ -188,12 +177,20 @@ func setupRouter(
 			return
 		}
 
+		email := token.GetUserID()
+		user, userErr := userRepo.GetUser(email)
+
+		if userErr != nil {
+			context.AbortWithError(http.StatusBadRequest, userErr)
+			return
+		}
+
 		context.JSON(http.StatusOK, gin.H{
 			"expires_in": int64(time.Until(token.GetAccessCreateAt().Add(token.GetAccessExpiresIn())).Seconds()),
 			"client_id":  token.GetClientID(),
-			"id":         token.GetUserID(),
-			"name":       "guy",
-			"email":      token.GetUserID(),
+			"id":         email,
+			"name":       user.Name,
+			"email":      email,
 		})
 	})
 
@@ -203,14 +200,17 @@ func setupRouter(
 func main() {
 	database.ConnectDb()
 
+	oauthServer := services.CreateOauthServer(&services.SessionApi{}, "POSTGRES_DB")
+
 	serviceProvider := services.CreateServiceProvider(
 		&services.SessionApi{},
 		database.DB.Db,
+		oauthServer,
 	)
 
 	router := setupRouter(serviceProvider)
-	router.Run(fmt.Sprintf(":%d", portvar))
-	log.Printf("Server is running at %d port.\n", portvar)
+	router.Run(fmt.Sprintf(":%d", 9096))
+	log.Printf("Server is running at %d port.\n", 9096)
 }
 
 func authHandler(
