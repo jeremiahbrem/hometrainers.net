@@ -39,37 +39,11 @@ commands:
           command: go test -p 1
           working_directory: ~/project/<< parameters.directory >><< parameters.test_dir >>
   backend-test:
-    docker:
-      - image: cimg/go:1.19
-      - image: cimg/postgres:11.18
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: circle_test
-    environment:
-      - ENVIRONMENT=DEV
-      - NEXTAUTH_URL=http://localhost:3000
-      - POSTGRES_USER=postgres
-      - TEST_DB=circle_test
-      - POSTGRES_HOST=localhost
-      - ENVIRONMENT=DEV
     steps:
       - run-go-tests:
           directory: backend
           test_dir: /test
   auth-test:
-    docker:
-      - image: cimg/go:1.19
-      - image: cimg/postgres:11.18
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_DB: circle_test
-    environment:
-      - ENVIRONMENT=DEV
-      - NEXTAUTH_URL=http://localhost:3000
-      - POSTGRES_USER=postgres
-      - TEST_DB=circle_test
-      - POSTGRES_HOST=localhost
-      - ENVIRONMENT=DEV
     steps:
       - run-go-tests:
           directory: auth
