@@ -14,7 +14,7 @@ describe('login page', () => {
 
     cy.visit('/')
 
-    cy.contains('Sign in')
+    cy.get('[id="sign-in-button"]')
       .click()
 
     cy.contains('Sign in with email')

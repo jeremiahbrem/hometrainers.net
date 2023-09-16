@@ -116,7 +116,7 @@ func ConnectDb() {
 
 	dbURI := stdlib.RegisterConnConfig(config)
 
-	sqlDB, err := sql.Open("pgx", dbURI)
+	sqlDB, err := sql.Open("pgx2", dbURI)
 
 	if err != nil {
 		exitWithError(err)

@@ -15,7 +15,7 @@ const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
 
   return (
     <div className={styles.signIn}>
-      <button className={styles.signInButton} onClick={() => setOpen(true)}>
+      <button className={styles.signInButton} id="sign-in-button" onClick={() => setOpen(true)}>
         <span className="material-symbols-outlined">person</span>
       </button>
 
