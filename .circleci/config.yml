@@ -44,7 +44,7 @@ commands:
     steps:
       run-go-tests:
         directory: auth
-        test_dir: ""
+        test_dir:
 jobs:
   test:
     docker:
