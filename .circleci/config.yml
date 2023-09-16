@@ -35,7 +35,16 @@ commands:
       - run:
           command: go test -p 1
           working_directory: ~/project/<< parameters.directory >>/<< parameters.test_dir >>
-
+    backend-test:
+      steps:
+        run-go-tests:
+          directory: backend
+          test_dir: test
+    auth-test:
+      steps:
+        run-go-tests:
+          directory: auth
+          test_dir: ""
 jobs:
   test:
     docker:
@@ -84,12 +93,8 @@ jobs:
       - POSTGRES_HOST=localhost
       - ENVIRONMENT=DEV
     steps:
-      run-go-tests:
-        directory: auth
-        test_dir: ""
-      run-go-tests:
-        directory: backend
-        test_dir: test
+      - auth-test
+      - backend-test
   e2e-test:
     docker:
       - image: cimg/base:2021.04
