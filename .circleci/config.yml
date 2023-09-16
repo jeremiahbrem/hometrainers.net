@@ -34,17 +34,17 @@ commands:
           working_directory: ~/project/<< parameters.directory >>
       - run:
           command: go test -p 1
-          working_directory: ~/project/<< parameters.directory >>/<< parameters.test_dir >>
+          working_directory: ~/project/<< parameters.directory >><< parameters.test_dir >>
   backend-test:
     steps:
       - run-go-tests:
           directory: backend
-          test_dir: test
+          test_dir: /test
   auth-test:
     steps:
       - run-go-tests:
           directory: auth
-          test_dir:
+          test_dir: /
 jobs:
   test:
     docker:
