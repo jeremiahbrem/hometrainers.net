@@ -25,6 +25,7 @@ type Dbinstance struct {
 }
 
 var DB Dbinstance
+var DSN string
 
 func exitWithError(err error) {
 	log.Fatal("Failed to connect to database. \n", err)
@@ -79,6 +80,8 @@ func connectDevDB() {
 
 	initializeDb(db, dbErr)
 
+	DSN = dsn
+
 	loadTestUser()
 }
 
@@ -126,4 +129,6 @@ func ConnectDb() {
 	})
 
 	initializeDb(db, dbErr)
+
+	DSN = dsn
 }

@@ -200,7 +200,7 @@ func setupRouter(
 func main() {
 	database.ConnectDb()
 
-	oauthServer := services.CreateOauthServer(&services.SessionApi{}, "POSTGRES_DB")
+	oauthServer := services.CreateOauthServer(&services.SessionApi{}, database.DSN)
 
 	serviceProvider := services.CreateServiceProvider(
 		&services.SessionApi{},

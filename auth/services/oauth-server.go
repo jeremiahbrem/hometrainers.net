@@ -2,10 +2,8 @@ package services
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/go-oauth2/oauth2/v4"
@@ -42,17 +40,10 @@ func (oauth *OauthServer) ValidationBearerToken(r *http.Request) (oauth2.TokenIn
 	return oauth.server.ValidationBearerToken(r)
 }
 
-func CreateOauthServer(session SessionApiType, db string) OauthServerType {
+func CreateOauthServer(session SessionApiType, dsn string) OauthServerType {
 	idvar := "222222"
 	secretvar := "22222222"
 	domainvar := "r"
-
-	dsn := fmt.Sprintf(
-		"user=%s database=%s password=%s",
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv(db),
-		os.Getenv("POSTGRES_PASSWORD"),
-	)
 
 	pgxConn, _ := pgx.Connect(context.Background(), dsn)
 
