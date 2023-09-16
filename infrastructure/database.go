@@ -56,5 +56,10 @@ func Database(
 		Name:     pulumi.String("hptrainers"),
 	})
 
+	sql.NewDatabase(ctx, "auth", &sql.DatabaseArgs{
+		Instance: instance.Name,
+		Name:     pulumi.String("auth"),
+	})
+
 	return user.Name, password.Result, instance.ConnectionName, err
 }

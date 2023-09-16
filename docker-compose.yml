@@ -29,14 +29,14 @@ services:
     ports:
       - 9096:9096
     depends_on:
-      db:
+      auth_db:
         condition: service_healthy
     environment:
       - REDIRECT_URL=http://host.docker.internal:3000
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=Password123
-      - POSTGRES_DB=hptrainers_test
-      - POSTGRES_HOST=db
+      - POSTGRES_DB=auth_test
+      - POSTGRES_HOST=auth_db
       - ENVIRONMENT=DEV
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -101,7 +101,27 @@ services:
       timeout: 3s
       retries: 10
       start_period: 30s
+  auth_db:
+    image: postgres:14
+    container_name: auth_db
+    ports:
+      - "5433:5433"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Password123
+      - POSTGRES_DB=auth_test
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+      - ./auth-db:/auth-db
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c pg_isready -U postgres -d auth_test"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
 
 volumes:
   postgres-db:
+    external: true
+  auth-db:
     external: true

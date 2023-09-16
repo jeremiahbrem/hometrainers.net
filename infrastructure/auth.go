@@ -64,7 +64,7 @@ func AuthService(
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_DB"),
-								Value:     pulumi.String("hptrainers"),
+								Value:     pulumi.String("auth"),
 								ValueFrom: nil,
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{

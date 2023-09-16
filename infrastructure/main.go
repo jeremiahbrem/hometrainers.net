@@ -91,7 +91,10 @@ func main() {
 			gitHash,
 			ctx,
 			repoUrl,
-			[]pulumi.Resource{enableCloudRun, authService},
+			[]pulumi.Resource{enableCloudRun, authService, enableSqlAdmin},
+			username,
+			password,
+			dbHost,
 		)
 
 		FrontendService(

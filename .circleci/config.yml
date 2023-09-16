@@ -61,6 +61,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: docker volume create --name=postgres-db
+      - run: docker volume create --name=auth-db
       - run: docker-compose build
       - run: docker-compose up cypress --abort-on-container-exit --exit-code-from cypress
   frontend-test:
@@ -103,16 +104,13 @@ jobs:
     docker:
       - image: cimg/base:2021.04
     environment:
-      - ENVIRONMENT=DEV
-      - DB_HOST=db
-      - DB_NAME=hptrainers_test
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
     steps:
       - checkout
       - setup_remote_docker
       - run: docker volume create --name=postgres-db
+      - run: docker volume create --name=auth-db
       - run: docker-compose build
       - run: docker-compose up --abort-on-container-exit --exit-code-from cypress
   deploy:
@@ -151,12 +149,12 @@ workflows:
       - go-test
       - e2e-test  
       - frontend-test
-      - deploy:
-          requires:
-            - go-test
-            - e2e-test
-            - frontend-test
-          filters:
-            branches:
-              only:
-                - main
+      # - deploy:
+      #     requires:
+      #       - go-test
+      #       - e2e-test
+      #       - frontend-test
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
