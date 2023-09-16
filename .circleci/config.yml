@@ -37,14 +37,14 @@ commands:
           working_directory: ~/project/<< parameters.directory >>/<< parameters.test_dir >>
   backend-test:
     steps:
-      run-go-tests:
-        directory: backend
-        test_dir: test
+      - run-go-tests:
+          directory: backend
+          test_dir: test
   auth-test:
     steps:
-      run-go-tests:
-        directory: auth
-        test_dir:
+      - run-go-tests:
+          directory: auth
+          test_dir:
 jobs:
   test:
     docker:
