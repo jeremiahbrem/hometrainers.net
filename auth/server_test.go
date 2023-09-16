@@ -66,7 +66,7 @@ func SetupRouter(
 	db *gorm.DB,
 	session services.SessionApiType,
 ) *gin.Engine {
-	oauthServer := services.CreateOauthServer(&services.SessionApi{}, "TEST_DB")
+	oauthServer := services.CreateOauthServer(session, "TEST_DB")
 
 	serviceProvider := services.CreateServiceProvider(
 		session,
@@ -80,9 +80,9 @@ func SetupRouter(
 
 func TestGetLogin(t *testing.T) {
 	db := Setup()
-	defer Teardown(db)
-
 	router := SetupRouter(db, &services.SessionApi{})
+
+	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
@@ -96,9 +96,9 @@ func TestGetLogin(t *testing.T) {
 
 func TestPostLogin(t *testing.T) {
 	db := Setup()
-	defer Teardown(db)
-
 	router := SetupRouter(db, &services.SessionApi{})
+
+	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
@@ -117,9 +117,9 @@ func TestPostLogin(t *testing.T) {
 
 func TestPostUserNotFound(t *testing.T) {
 	db := Setup()
-	defer Teardown(db)
-
 	router := SetupRouter(db, &services.SessionApi{})
+
+	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
@@ -138,9 +138,9 @@ func TestPostUserNotFound(t *testing.T) {
 
 func TestPostUserIncorrectPassword(t *testing.T) {
 	db := Setup()
-	defer Teardown(db)
-
 	router := SetupRouter(db, &services.SessionApi{})
+
+	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
@@ -159,7 +159,6 @@ func TestPostUserIncorrectPassword(t *testing.T) {
 
 func TestAuthHandlerLoggedIn(t *testing.T) {
 	db := Setup()
-	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
@@ -172,6 +171,8 @@ func TestAuthHandlerLoggedIn(t *testing.T) {
 
 	router := SetupRouter(db, &mockSession)
 
+	defer Teardown(db)
+
 	req, _ := http.NewRequest("GET", "/auth", nil)
 
 	router.ServeHTTP(w, req)
@@ -181,11 +182,12 @@ func TestAuthHandlerLoggedIn(t *testing.T) {
 
 func TestAuthHandlerNotLoggedOut(t *testing.T) {
 	db := Setup()
-	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
 	router := SetupRouter(db, &services.SessionApi{})
+
+	defer Teardown(db)
 
 	req, _ := http.NewRequest("GET", "/auth", nil)
 
@@ -196,7 +198,6 @@ func TestAuthHandlerNotLoggedOut(t *testing.T) {
 
 func TestOauthAuthorize(t *testing.T) {
 	db := Setup()
-	defer Teardown(db)
 
 	var form = func() url.Values {
 		form := url.Values{}
@@ -219,6 +220,8 @@ func TestOauthAuthorize(t *testing.T) {
 	mockSession := mocks.CreateSession(storeFn)
 
 	router := SetupRouter(db, &mockSession)
+
+	defer Teardown(db)
 
 	w := httptest.NewRecorder()
 
