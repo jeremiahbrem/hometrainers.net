@@ -8,7 +8,6 @@ import (
 	"net"
 	"os"
 	"server/models"
-	"server/services"
 	"server/users"
 
 	"cloud.google.com/go/cloudsqlconn"
@@ -26,6 +25,7 @@ type Dbinstance struct {
 
 var DB Dbinstance
 var DSN string
+var Config *pgx.ConnConfig
 
 func exitWithError(err error) {
 	log.Fatal("Failed to connect to database. \n", err)
@@ -49,8 +49,9 @@ func initializeDb(db *gorm.DB, dbErr error) {
 }
 
 func loadTestUser() {
-	userRepo := services.CreateUserRepo(DB.Db)
-	if _, err := userRepo.GetUser("test@example.com"); err != nil {
+	var user models.User
+
+	if err := DB.Db.Where("email = ?", "test-password").First(&user).Error; err != nil {
 		pwd, _ := users.HashPassword("test-password")
 
 		user := models.User{
@@ -59,7 +60,7 @@ func loadTestUser() {
 			Password: pwd,
 		}
 
-		userRepo.CreateUser(user)
+		DB.Db.Create(&user)
 	}
 }
 
@@ -131,4 +132,5 @@ func ConnectDb() {
 	initializeDb(db, dbErr)
 
 	DSN = dbURI
+	Config = config
 }
