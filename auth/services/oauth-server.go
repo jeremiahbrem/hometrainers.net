@@ -50,6 +50,7 @@ func CreateOauthServer(session SessionApiType, dsn string) OauthServerType {
 	manager := manage.NewDefaultManager()
 
 	adapter := pgx4adapter.NewConn(pgxConn)
+
 	tokenStore, _ := pg.NewTokenStore(adapter, pg.WithTokenStoreGCInterval(time.Minute))
 	defer tokenStore.Close()
 

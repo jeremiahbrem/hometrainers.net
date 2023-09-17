@@ -130,5 +130,5 @@ func ConnectDb() {
 
 	initializeDb(db, dbErr)
 
-	DSN = dsn
+	DSN = dbURI
 }
