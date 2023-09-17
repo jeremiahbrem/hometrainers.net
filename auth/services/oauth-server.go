@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
+	"server/database"
 	"time"
 
 	"github.com/go-oauth2/oauth2/v4"
@@ -45,7 +47,13 @@ func CreateOauthServer(session SessionApiType, dsn string) OauthServerType {
 	secretvar := "22222222"
 	domainvar := "r"
 
-	pgxConn, _ := pgx.Connect(context.Background(), dsn)
+	var pgxConn *pgx.Conn
+
+	if os.Getenv("ENVIRONMENT") == "PROD" {
+		pgxConn, _ = pgx.ConnectConfig(context.Background(), database.Config)
+	} else {
+		pgxConn, _ = pgx.Connect(context.Background(), dsn)
+	}
 
 	manager := manage.NewDefaultManager()
 
