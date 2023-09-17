@@ -12,8 +12,8 @@ import (
 	"server/users"
 
 	"cloud.google.com/go/cloudsqlconn"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v4/stdlib"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
