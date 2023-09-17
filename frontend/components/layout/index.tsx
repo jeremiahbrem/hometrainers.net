@@ -3,6 +3,7 @@ import ErrorBoundary from '../errorBoundary'
 import { Roboto } from 'next/font/google'
 import Header from '../header'
 import styles from './layout.module.scss'
+import { Footer } from '../footer'
 
 const inter = Roboto({
   subsets: ['latin'],
@@ -24,9 +25,10 @@ export default function Layout({
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <Header />
-          <main className={styles.main}>
-            {children}
-          </main>
+        <main className={styles.main}>
+          {children}
+        </main>
+        <Footer />
       </div>
     </ErrorBoundary>
   )

@@ -1,0 +1,22 @@
+@import '@/styles/global.scss';
+
+.footer {
+  background-color: $fontColor;
+  color: white;
+  display: grid;
+  padding:  1rem 2rem;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: .8rem;
+  grid-template-columns: 50% 1fr;
+  a {
+    transition: all .25s ease-in-out;
+    &:hover {
+      color: $orange;
+    }
+  }
+
+  a, p {
+    text-align: right;
+  }
+}
