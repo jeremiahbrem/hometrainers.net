@@ -4,7 +4,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -35,6 +34,6 @@ func CreateLoginHandler(router *gin.Engine) {
 }
 
 func genCodeChallengeS256() string {
-	s256 := sha256.Sum256([]byte(fmt.Sprint(rand.Int())))
+	s256 := sha256.Sum256([]byte(os.Getenv("CODE_CHALLENGE")))
 	return base64.URLEncoding.EncodeToString(s256[:])
 }

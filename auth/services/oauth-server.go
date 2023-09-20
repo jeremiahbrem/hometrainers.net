@@ -43,8 +43,8 @@ func (oauth *OauthServer) ValidationBearerToken(r *http.Request) (oauth2.TokenIn
 }
 
 func CreateOauthServer(session SessionApiType, dsn string) OauthServerType {
-	idvar := "222222"
-	secretvar := "22222222"
+	idvar := os.Getenv("CLIENT_ID")
+	secretvar := os.Getenv("CLIENT_SECRET")
 	domainvar := "r"
 
 	var pgxConn *pgx.Conn
