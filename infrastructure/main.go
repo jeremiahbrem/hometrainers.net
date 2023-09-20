@@ -3,9 +3,7 @@ package main
 import (
 	"runtime/debug"
 
-	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/artifactregistry"
 	"github.com/pulumi/pulumi-gcp/sdk/v6/go/gcp/projects"
-	"github.com/pulumi/pulumi-random/sdk/v4/go/random"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -39,34 +37,7 @@ func main() {
 			Service:                  pulumi.String("sqladmin.googleapis.com"),
 		}, pulumi.DependsOn([]pulumi.Resource{enableResourceService}))
 
-		uniqueString, _ := random.NewRandomString(ctx, "unique-string", &random.RandomStringArgs{
-			Length:  pulumi.Int(4),
-			Lower:   pulumi.Bool(true),
-			Upper:   pulumi.Bool(false),
-			Numeric: pulumi.Bool(true),
-			Special: pulumi.Bool(false),
-		})
-
-		repoId := pulumi.Sprintf("repo-%s", uniqueString.Result)
-
-		repository, _ := artifactregistry.NewRepository(ctx, "repository", &artifactregistry.RepositoryArgs{
-			Description:         pulumi.String("Repository for container image"),
-			Format:              pulumi.String("DOCKER"),
-			Location:            pulumi.String(Location),
-			RepositoryId:        repoId,
-			CleanupPolicyDryRun: pulumi.Bool(false),
-			CleanupPolicies: artifactregistry.RepositoryCleanupPolicyArray{
-				&artifactregistry.RepositoryCleanupPolicyArgs{
-					Id:     pulumi.String("keep-minimum-versions"),
-					Action: pulumi.String("KEEP"),
-					MostRecentVersions: &artifactregistry.RepositoryCleanupPolicyMostRecentVersionsArgs{
-						KeepCount: pulumi.Int(5),
-					},
-				},
-			},
-		})
-
-		repoUrl := pulumi.Sprintf("%s-docker.pkg.dev/%s/%s", repository.Location, ProjectId, repository.RepositoryId)
+		repoUrl := pulumi.Sprintf("%s-docker.pkg.dev/%s/%s", Location, ProjectId, "home-trainers")
 
 		var gitHash = func() string {
 			if info, ok := debug.ReadBuildInfo(); ok {
