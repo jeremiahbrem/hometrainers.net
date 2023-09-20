@@ -12,20 +12,19 @@ func CreateLoginHandler(
 	router *gin.Engine,
 	provider services.ServiceProviderType,
 ) {
-	session := provider.GetSession()
-	userRepo := provider.GetUserRepo()
-
-	router.POST("/login", loginHandler(session, userRepo))
-	router.GET("/login", loginHandler(session, userRepo))
+	router.POST("/login", loginHandler(provider))
+	router.GET("/login", loginHandler(provider))
 }
 
 func loginHandler(
-	session services.SessionApiType,
-	userRepo services.UserRepository,
+	provider services.ServiceProviderType,
 ) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		request := context.Request
 		writer := context.Writer
+
+		session := provider.GetSession()
+		userRepo := provider.GetUserRepo()
 
 		store, err := session.Start(context, writer, request)
 
@@ -50,6 +49,15 @@ func loginHandler(
 			if user == nil {
 				context.HTML(http.StatusBadRequest, "login.tmpl", gin.H{
 					"error":    "User not found",
+					"email":    email,
+					"password": password,
+				})
+				return
+			}
+
+			if !user.Validated {
+				context.HTML(http.StatusBadRequest, "login.tmpl", gin.H{
+					"error":    "Email verification required. Please check your email for a verification link.",
 					"email":    email,
 					"password": password,
 				})

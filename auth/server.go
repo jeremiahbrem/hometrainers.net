@@ -10,11 +10,8 @@ import (
 	"net/http"
 	"net/url"
 	"server/database"
-	dbModels "server/models"
 	"server/services"
 	"time"
-
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -27,18 +24,8 @@ var staticFiles embed.FS
 //go:embed templates/*
 var templateFiles embed.FS
 
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	return string(bytes), err
-}
-
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
-}
-
 func setupRouter(
-	serviceProvider services.ServiceProvider,
+	serviceProvider services.ServiceProviderType,
 ) *gin.Engine {
 	flag.Parse()
 
@@ -49,6 +36,7 @@ func setupRouter(
 	templ := template.Must(template.New("").ParseFS(
 		templateFiles, "templates/*.tmpl",
 	))
+
 	router.SetHTMLTemplate(templ)
 	staticFS, _ := fs.Sub(staticFiles, "static")
 	router.StaticFS("/static", http.FS(staticFS))
@@ -65,37 +53,11 @@ func setupRouter(
 	userRepo := serviceProvider.GetUserRepo()
 	srv := serviceProvider.GetOauthServer()
 
-	CreateLoginHandler(router, &serviceProvider)
+	CreateLoginHandler(router, serviceProvider)
+	CreateSignupHandler(router, serviceProvider)
+	CreateValidateEmailHandler(router, serviceProvider)
 
 	router.GET("/auth", authHandler(session))
-
-	router.POST("/signup", func(ctx *gin.Context) {
-		var user dbModels.User
-		if err := ctx.ShouldBindJSON(&user); err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
-			return
-		}
-
-		existing, _ := userRepo.GetUser(user.Email)
-
-		if existing != nil {
-			ctx.JSON(http.StatusBadRequest, fmt.Sprintf("User %s already exists", user.Email))
-			return
-		}
-
-		hash, hashErr := HashPassword(user.Password)
-
-		if hashErr != nil {
-			ctx.AbortWithError(http.StatusInternalServerError, hashErr)
-			return
-		}
-
-		user.Password = hash
-
-		userRepo.CreateUser(user)
-
-		ctx.JSON(http.StatusOK, user)
-	})
 
 	router.GET("/get-user", func(ctx *gin.Context) {
 		email := ctx.Request.URL.Query().Get("email")
@@ -206,9 +168,12 @@ func main() {
 		&services.SessionApi{},
 		database.DB.Db,
 		oauthServer,
+		&services.EmailService{},
+		&services.CodeGenerator{},
+		&services.Clock{},
 	)
 
-	router := setupRouter(serviceProvider)
+	router := setupRouter(&serviceProvider)
 	router.Run(fmt.Sprintf(":%d", 9096))
 	log.Printf("Server is running at %d port.\n", 9096)
 }

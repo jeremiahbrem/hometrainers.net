@@ -50,10 +50,20 @@ func main() {
 		repoId := pulumi.Sprintf("repo-%s", uniqueString.Result)
 
 		repository, _ := artifactregistry.NewRepository(ctx, "repository", &artifactregistry.RepositoryArgs{
-			Description:  pulumi.String("Repository for container image"),
-			Format:       pulumi.String("DOCKER"),
-			Location:     pulumi.String(Location),
-			RepositoryId: repoId,
+			Description:         pulumi.String("Repository for container image"),
+			Format:              pulumi.String("DOCKER"),
+			Location:            pulumi.String(Location),
+			RepositoryId:        repoId,
+			CleanupPolicyDryRun: pulumi.Bool(false),
+			CleanupPolicies: artifactregistry.RepositoryCleanupPolicyArray{
+				&artifactregistry.RepositoryCleanupPolicyArgs{
+					Id:     pulumi.String("keep-minimum-versions"),
+					Action: pulumi.String("KEEP"),
+					MostRecentVersions: &artifactregistry.RepositoryCleanupPolicyMostRecentVersionsArgs{
+						KeepCount: pulumi.Int(5),
+					},
+				},
+			},
 		})
 
 		repoUrl := pulumi.Sprintf("%s-docker.pkg.dev/%s/%s", repository.Location, ProjectId, repository.RepositoryId)
