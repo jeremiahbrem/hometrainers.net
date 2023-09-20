@@ -37,7 +37,7 @@ func main() {
 			Service:                  pulumi.String("sqladmin.googleapis.com"),
 		}, pulumi.DependsOn([]pulumi.Resource{enableResourceService}))
 
-		repoUrl := pulumi.Sprintf("%s-docker.pkg.dev/%s/%s", Location, ProjectId, "home-trainers")
+		repoUrl := pulumi.Sprintf("%s-docker.pkg.dev/%s/%s", Location, ProjectId, "hometrainers-artifacts")
 
 		var gitHash = func() string {
 			if info, ok := debug.ReadBuildInfo(); ok {
