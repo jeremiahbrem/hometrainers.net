@@ -55,9 +55,10 @@ func loadTestUser() {
 		pwd, _ := users.HashPassword("test-password")
 
 		user := models.User{
-			Name:     "Test User",
-			Email:    "test@example.com",
-			Password: pwd,
+			Name:      "Test User",
+			Email:     "test@example.com",
+			Password:  pwd,
+			Validated: true,
 		}
 
 		DB.Db.Create(&user)
