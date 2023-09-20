@@ -4,6 +4,9 @@ import { googleJwtCallback, authJwtCallback } from  './handleJwt'
 
 const authServer = process.env.NEXT_PUBLIC_AUTH_SERVER
 const redirectUri = process.env.NEXTAUTH_URL
+const clientId = process.env.NEXT_PUBLIC_CLIENT_ID
+const clientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET
+const codeChallenge = process.env.NEXT_PUBLIC_CODE_CHALLENGE
 
 export default NextAuth({
   providers: [
@@ -34,7 +37,7 @@ export default NextAuth({
           const details = {
             grant_type: 'authorization_code',
             code: context.params.code,
-            code_verifier: 's256example',
+            code_verifier: codeChallenge,
             redirect_uri: `${redirectUri}/api/auth/callback/auth`
           }
 
@@ -51,7 +54,9 @@ export default NextAuth({
             body: formBody,
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': `Basic ${Buffer.from('222222:22222222').toString('base64')}`
+              'Authorization': `Basic ${Buffer.from(
+                `${clientId}:${clientSecret}`
+              ).toString('base64')}`
             },
           })
           const tokens = await response.json()
@@ -62,8 +67,8 @@ export default NextAuth({
       accessTokenUrl: `${authServer}/oauth/token`,
       requestTokenUrl: `${authServer}/oauth/token`,
       authorizationUrl: `${authServer}/oauth/authorize`,
-      clientId: '222222',
-      clientSecret: '22222222',
+      clientId,
+      clientSecret,
       profileUrl: '',
       userinfo: {
         url: `${authServer}/user-info`

@@ -10,6 +10,9 @@ commands:
       - run: echo 'export GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
       - run: echo 'export NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}'
       - run: echo 'export NEXT_PUBLIC_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}'
+      - run: echo 'export NEXT_PUBLIC_CLIENT_ID=${CLIENT_ID}'
+      - run: echo 'export NEXT_PUBLIC_CLIENT_SECRET=${CLIENT_SECRET}'
+      - run: echo 'export NEXT_PUBLIC_CODE_CHALLENGE=${CODE_CHALLENGE}'
       - run: echo 'export NEXT_PUBLIC_API_URL=${API_URL}'
       - run: echo 'export NEXTAUTH_URL=${NEXTAUTH_URL}'
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
@@ -49,19 +52,6 @@ commands:
           directory: auth
           test_dir: /
 jobs:
-  test:
-    docker:
-      - image: cimg/base:2021.04
-    environment:
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run: docker volume create --name=postgres-db
-      - run: docker volume create --name=auth-db
-      - run: docker-compose build
-      - run: docker-compose up cypress --abort-on-container-exit --exit-code-from cypress
   frontend-test:
     docker:
       - image: node:16
@@ -99,12 +89,10 @@ jobs:
       - auth-test
       - backend-test
   e2e-test:
-    docker:
+    docker:s
       - image: cimg/base:2021.04
-    environment:
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
     steps:
+      - load-env
       - checkout
       - setup_remote_docker
       - run: docker volume create --name=postgres-db
