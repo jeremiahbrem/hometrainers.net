@@ -39,6 +39,8 @@ services:
       - POSTGRES_DB=auth_test
       - POSTGRES_HOST=auth_db
       - ENVIRONMENT=DEV
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
     extra_hosts:
       - "host.docker.internal:host-gateway"
   cypress:
