@@ -89,7 +89,7 @@ jobs:
       - auth-test
       - backend-test
   e2e-test:
-    docker:s
+    docker:
       - image: cimg/base:2021.04
     steps:
       - load-env
