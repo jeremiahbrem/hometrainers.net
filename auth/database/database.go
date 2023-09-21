@@ -51,7 +51,7 @@ func initializeDb(db *gorm.DB, dbErr error) {
 func loadTestUser() {
 	var user models.User
 
-	if err := DB.Db.Where("email = ?", "test-password").First(&user).Error; err != nil {
+	if err := DB.Db.Where("email = ?", "test@example.com").First(&user).Error; err != nil {
 		pwd, _ := users.HashPassword("test-password")
 
 		user := models.User{

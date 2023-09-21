@@ -96,9 +96,9 @@ func (emailService *EmailService) SendVerificationLink(email string, code string
 	var host string
 
 	if os.Getenv("ENVIRONMENT") == "PROD" {
-		host = "http://localhost:3000"
-	} else {
 		host = "https://auth.hometrainers.net"
+	} else {
+		host = "http://localhost:3000"
 	}
 
 	link := fmt.Sprintf("%s/validate-email?code=%s&email=%s", host, code, email)
