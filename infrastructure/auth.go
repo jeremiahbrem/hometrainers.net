@@ -48,6 +48,8 @@ func AuthService(
 						Envs: cloudrun.ServiceTemplateSpecContainerEnvArray{
 							SetEnv("NEXTAUTH_URL", "NEXTAUTH_URL"),
 							SetEnv("MAIL_PASSWORD", "MAIL_PASSWORD"),
+							SetEnv("CLIENT_ID", "CLIENT_ID"),
+							SetEnv("CLIENT_SECRET", "CLIENT_SECRET"),
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_USER"),
 								Value:     dbUser,
