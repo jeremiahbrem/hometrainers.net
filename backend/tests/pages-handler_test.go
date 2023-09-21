@@ -1,36 +1,24 @@
 package tests
 
 import (
-	"fmt"
 	"main/controllers"
 	"main/models"
 	"main/services"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/datatypes"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 func Setup() *gorm.DB {
 	godotenv.Load("../.env")
 
-	dsn := fmt.Sprintf(
-		"host=%s user=%s database=%s password=%s",
-		os.Getenv("POSTGRES_HOST"),
-		os.Getenv("POSTGRES_USER"),
-		os.Getenv("TEST_DB"),
-		os.Getenv("POSTGRES_PASSWORD"),
-	)
-
-	db, _ := gorm.Open(postgres.New(postgres.Config{
-		DSN: dsn,
-	}))
+	db, _ := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 
 	db.AutoMigrate(&models.Page{})
 
