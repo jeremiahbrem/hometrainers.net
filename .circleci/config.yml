@@ -26,8 +26,6 @@ commands:
         type: string
     steps:
       - checkout
-      - run:
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - restore_cache:
           key: dependency-cache-{{ checksum "~/project/<< parameters.directory >>/go.sum" }}
       - run:
