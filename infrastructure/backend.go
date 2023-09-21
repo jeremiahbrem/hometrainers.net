@@ -43,6 +43,7 @@ func BackendService(
 							SetEnv("GOOGLE_CLIENT_SECRET", "GOOGLE_CLIENT_SECRET"),
 							SetEnv("AUTH_SERVER_URL", "AUTH_SERVER_URL"),
 							SetEnv("BACKEND_REDIRECT_URL", "BACKEND_REDIRECT_URL"),
+							SetEnv("CODE_CHALLENGE", "CODE_CHALLENGE"),
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_USER"),
 								Value:     dbUser,
