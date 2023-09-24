@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"main/models"
 
 	"gorm.io/gorm"
@@ -15,11 +16,21 @@ func CreatePageRepo(db *gorm.DB) PageRepository {
 }
 
 func (repo *PageRepository) GetPage(slug string) (*models.Page, error) {
-	var user *models.Page
-	if err := repo.db.Where("slug = ?", slug).First(&user).Error; err != nil {
+	var page *models.Page
+	if err := repo.db.Where("slug = ?", slug).First(&page).Error; err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
-	return user, nil
+	return page, nil
+}
+
+func (repo *PageRepository) GetUserPage(email string) (*models.Page, error) {
+	var page *models.Page
+	if err := repo.db.Where("email = ?", email).First(&page).Error; err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	return page, nil
 }
 
 func (repo *PageRepository) GetActiveSlugs() ([]string, error) {
@@ -33,6 +44,17 @@ func (repo *PageRepository) GetActiveSlugs() ([]string, error) {
 	return slugs, nil
 }
 
-func (repo *PageRepository) CreatePage(page models.Page) {
-	repo.db.Create(&page)
+func (repo *PageRepository) CreatePage(page models.Page) error {
+	return repo.db.Create(&page).Error
+}
+
+func (repo *PageRepository) UpdatePage(existing *models.Page, updated models.Page) error {
+	existing.Active = updated.Active
+	existing.Slug = updated.Slug
+	existing.City = updated.City
+	existing.Blocks = updated.Blocks
+	existing.Active = updated.Active
+	existing.Title = updated.Title
+
+	return repo.db.Save(&existing).Error
 }

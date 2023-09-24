@@ -39,6 +39,8 @@ func initializeDb(db *gorm.DB, dbErr error) {
 
 	log.Println("running migrations")
 	db.AutoMigrate(&models.Page{})
+	db.Migrator().AddColumn(&models.Page{}, "City")
+	db.Migrator().AddColumn(&models.Page{}, "Title")
 
 	DB = Dbinstance{
 		Db: db,

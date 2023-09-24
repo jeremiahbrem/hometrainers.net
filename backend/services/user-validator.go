@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -46,24 +45,50 @@ func (validator *AuthValidator) Validate(token string) (*http.Response, error) {
 }
 
 type UserValidatorType interface {
-	Validate(ctx context.Context)
+	Validate(context *gin.Context) (User, bool)
 }
 
-func GetAuthorizedUser(context *gin.Context) (User, bool) {
-	providerHeader := context.Request.Header["token-provider"]
-	provider := providerHeader[0]
+type UserValidator struct{}
+
+func (validator *UserValidator) Validate(context *gin.Context) (User, bool) {
+	return GetAuthorizedUser(context, &AuthValidator{}, &GoogleValidator{})
+}
+
+func GetAuthorizedUser(
+	context *gin.Context,
+	authVal AuthValidatorType,
+	googleVal GoogleValidatorType,
+) (User, bool) {
+	providerHeader := context.Request.Header["Token-Provider"]
 
 	user := User{}
 	valid := false
 
+	if len(providerHeader) == 0 {
+		context.JSON(http.StatusBadRequest, "invalid token provider header")
+		return user, false
+	}
+
+	if providerHeader[0] != "auth" && providerHeader[0] != "google" {
+		context.JSON(http.StatusBadRequest, "invalid token provider header")
+		return user, false
+	}
+
+	provider := providerHeader[0]
+
 	if provider == "auth" {
-		user, valid = getAuthUser(context, &AuthValidator{})
+		user, valid = getAuthUser(context, authVal)
 	}
 	if provider == "google" {
-		user, valid = getGoogleUser(context, &GoogleValidator{})
+		user, valid = getGoogleUser(context, googleVal)
 	}
 
 	return user, valid
+}
+
+func invalidAuth(context *gin.Context, user User) (User, bool) {
+	context.JSON(http.StatusBadRequest, "invalid authorization header")
+	return user, false
 }
 
 func getAuthUser(
@@ -74,10 +99,14 @@ func getAuthUser(
 
 	token := getToken(context)
 
+	if token == "" {
+		return invalidAuth(context, user)
+	}
+
 	resp, err := validator.Validate(token)
 
 	if err != nil {
-		context.AbortWithError(http.StatusBadRequest, err)
+		context.JSON(http.StatusBadRequest, err.Error())
 		return user, false
 	}
 
@@ -86,14 +115,14 @@ func getAuthUser(
 	body, bodyErr := ioutil.ReadAll(resp.Body)
 
 	if bodyErr != nil {
-		context.AbortWithError(http.StatusBadRequest, bodyErr)
+		context.JSON(http.StatusBadRequest, bodyErr.Error())
 		return user, false
 	}
 
-	jsonErr := json.Unmarshal(body, user)
+	jsonErr := json.Unmarshal(body, &user)
 
 	if jsonErr != nil {
-		context.AbortWithError(http.StatusBadRequest, jsonErr)
+		context.JSON(http.StatusBadRequest, jsonErr.Error())
 		return user, false
 	}
 
@@ -110,17 +139,21 @@ func getGoogleUser(
 
 	token := getToken(context)
 
+	if token == "" {
+		return invalidAuth(context, user)
+	}
+
 	payload, err := validator.Validate(context, token, clientId)
 
 	if err != nil {
-		context.AbortWithError(http.StatusUnauthorized, err)
+		context.JSON(http.StatusUnauthorized, err.Error())
 		return user, false
 	}
 
 	emailVerified := fmt.Sprintf("%v", payload.Claims["email_verified"])
 
 	if emailVerified != "true" {
-		context.AbortWithError(http.StatusBadRequest, errors.New("email not verifed"))
+		context.JSON(http.StatusBadRequest, "email not verifed")
 		return user, false
 	}
 
@@ -132,7 +165,23 @@ func getGoogleUser(
 
 func getToken(context *gin.Context) string {
 	authHeader := context.Request.Header["Authorization"]
-	token := strings.Split(authHeader[0], "Bearer ")[1]
+
+	if len(authHeader) == 0 {
+		return ""
+	}
+
+	if authHeader[0] == "" {
+		return ""
+
+	}
+
+	split := strings.Split(authHeader[0], "Bearer ")
+
+	if len(split) != 2 {
+		return ""
+	}
+
+	token := split[1]
 
 	return token
 }
