@@ -8,5 +8,5 @@ export function useIsEditing() {
   const isLoggedIn = !!(data && !data.error)
 
   const path = usePathname()
-  return path.includes('my-page') && isLoggedIn
+  return path && path.includes('my-page') && isLoggedIn
 }
