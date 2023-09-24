@@ -29,14 +29,14 @@ func loginHandler(
 		store, err := session.Start(context, writer, request)
 
 		if err != nil {
-			context.AbortWithError(http.StatusInternalServerError, err)
+			context.JSON(http.StatusInternalServerError, err.Error())
 			return
 		}
 
 		if request.Method == "POST" {
 			if request.Form == nil {
 				if err := request.ParseForm(); err != nil {
-					context.AbortWithError(http.StatusInternalServerError, err)
+					context.JSON(http.StatusInternalServerError, err.Error())
 					return
 				}
 			}

@@ -31,7 +31,7 @@ func signUpHandler(
 		if request.Method == "POST" {
 			if request.Form == nil {
 				if err := request.ParseForm(); err != nil {
-					context.AbortWithError(http.StatusInternalServerError, err)
+					context.JSON(http.StatusInternalServerError, err)
 					return
 				}
 			}

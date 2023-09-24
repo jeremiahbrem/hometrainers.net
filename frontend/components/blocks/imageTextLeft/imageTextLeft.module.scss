@@ -8,11 +8,12 @@
   min-height: 750px;
   max-width: 1500px;
   margin: auto;
+  position: relative;
 
-  div {
-    .heading {
+  .text, .image {
+    h1,h2,h3,h4,p {
       margin-top: 0;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
     position: relative;
     width: 100%;
@@ -30,6 +31,10 @@
     }
     font-weight: lighter;
     color: $fontColor;
+
+    &.editing {
+      cursor: pointer;
+    }
   }
 
   @media(max-width: 750px) {

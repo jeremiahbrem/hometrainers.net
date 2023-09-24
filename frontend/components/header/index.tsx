@@ -1,12 +1,10 @@
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { Logo } from '../logo'
 import styles from './header.module.scss'
-import { Session } from 'next-auth'
 import { useState } from 'react'
 import Image from 'next/image'
 import classnames from 'classnames'
-
-type SessionType = Session & { idToken: string; error?: string }
+import { SessionType } from './types'
 
 const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
   const [open, setOpen] = useState<boolean>(false)
