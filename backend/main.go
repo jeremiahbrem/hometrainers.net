@@ -14,7 +14,12 @@ func main() {
 
 	database.ConnectDb()
 
-	provider := services.CreateProvider(database.DB.Db)
+	provider := services.CreateProvider(
+		database.DB.Db,
+		&services.EmailService{},
+		&services.UserValidator{},
+	)
+
 	router := controllers.SetupRouter(provider)
 
 	router.Run(":8080")
