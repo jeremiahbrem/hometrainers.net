@@ -28,7 +28,7 @@ describe('token refresh', () => {
         expect(result).toEqual({
           accessToken: account.access_token,
           refreshToken: account.refresh_token,
-          accessTokenExpires: now.getTime() + account.expires_at! * 1000,
+          accessTokenExpires: account.expires_at! * 1000,
           provider: 'auth'
         })
 

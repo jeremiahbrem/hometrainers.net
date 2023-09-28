@@ -290,6 +290,38 @@ func TestCreatePageSlugExists(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "slug testpage1 already exists")
 }
 
+func TestCreatePageSlugMyPage(t *testing.T) {
+	db := Setup()
+	defer Teardown(db)
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: "test@example.com"},
+		Valid: true,
+	}
+
+	page := models.Page{
+		Email:  "test@example.com",
+		Slug:   "my-page",
+		Title:  "Test Page",
+		Active: true,
+		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+		City:   "Chicago",
+	}
+
+	marshalled, _ := json.Marshal(page)
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Contains(t, w.Body.String(), "slug my-page is reserved")
+}
+
 func TestUpdatePageSuccess(t *testing.T) {
 	db := Setup()
 	defer Teardown(db)

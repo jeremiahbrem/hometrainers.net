@@ -1,6 +1,16 @@
+import '@testing-library/jest-dom'
+
 jest.mock('next/navigation', () => ({
   usePathname() {
     return '';
+  },
+}))
+
+jest.mock('next/router', () => ({
+  useRouter() {
+    return {
+      replace() {}
+    };
   },
 }))
 
@@ -16,5 +26,6 @@ global.fetch = jest.fn(() =>
   })
 )
 
+document.elementFromPoint = function() {}
 window.ClipboardEvent = function() {}
 window.DragEvent = function() {}

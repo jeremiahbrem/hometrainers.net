@@ -70,6 +70,7 @@ services:
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - NEXT_PUBLIC_LOGIN_URL=http://host.docker.internal:8080/login
       - NEXT_PUBLIC_AUTH_SERVER=http://host.docker.internal:9096
+      - NEXT_PUBLIC_DOMAIN_URL=http://host.docker.internal:3000
       - ENVIRONMENT=DEV
     build:
       context: ./frontend
@@ -85,6 +86,7 @@ services:
         - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
         - NEXT_PUBLIC_LOGIN_URL=http://host.docker.internal:8080/login
         - NEXT_PUBLIC_AUTH_SERVER=http://host.docker.internal:9096
+        - NEXT_PUBLIC_DOMAIN_URL=http://host.docker.internal:3000
         - ENVIRONMENT=DEV
     volumes:
       - "./frontend:/app"

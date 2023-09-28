@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { allOptions } from './options'
 import { useIsEditing } from '@/utils/useIsEditing'
-
+import { useRefreshKey } from '../refresh'
 
 type MenuBarProps = {
   options?: string[]
@@ -183,7 +183,7 @@ const extensions = [
 
 type EditorProps = {
   content: string
-  onSave: (html: string) => Promise<void>
+  onUpdate: (html: string) => Promise<void>
   width?: string
   top?: string
   right?: string
@@ -195,7 +195,7 @@ type EditorProps = {
 
 export const Editor: React.FC<EditorProps> = ({
   content,
-  onSave,
+  onUpdate,
   width,
   top,
   right,
@@ -204,8 +204,11 @@ export const Editor: React.FC<EditorProps> = ({
   contentRef,
   options
 }) => {
-  const editing = useIsEditing()
+
+  // const editing = useIsEditing()
+  const editing = true
   const [open, setOpen] = useState(false)
+  const { refreshKey } = useRefreshKey()
 
   useEffect(() => {
     if (editing && contentRef.current) {
@@ -221,7 +224,12 @@ export const Editor: React.FC<EditorProps> = ({
   }
 
   return (<>
-    <div role='button' className={cn(styles.scrim, { [styles.open]: open })} onClick={() => setOpen(false) }/>
+    <div
+      role='button'
+      className={cn(styles.scrim, { [styles.open]: open })}
+      onClick={() => setOpen(false) }
+      data-testid='editor-scrim'
+    />
     <div
       className={cn(styles.editor, { [styles.open]: open })}
       style={{
@@ -230,15 +238,17 @@ export const Editor: React.FC<EditorProps> = ({
         bottom: bottom ?? 'unset',
         left: left ?? 'unset',
         right: right ?? 'unset',
+        display: open ? 'block' : 'none'
       }}
     >
-       <EditorProvider
-          slotBefore={<MenuBar options={options} />}
-          extensions={extensions}
-          onUpdate={e => onSave(e.editor.getHTML())}
-          content={content}
-        >
-        </EditorProvider>
+      <EditorProvider
+        key={refreshKey} // editor content does not update on reset, so re-mounting
+        slotBefore={<MenuBar {...{ options }} />}
+        extensions={extensions}
+        onUpdate={e => onUpdate(e.editor.getHTML())}
+        content={content}
+      >
+      </EditorProvider>
     </div>
   </>)
 }

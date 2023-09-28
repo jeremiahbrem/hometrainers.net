@@ -3,9 +3,13 @@ import { render, screen } from '@testing-library/react'
 import { ImageTextLeft } from '.'
 
 const props = {
-  image: 'http://example.com',
-  text: '<h1>test heading</h1><p>test body</p>',
+  block: {
+    image: 'http://example.com',
+    text: '<h1>test heading</h1><p>test body</p>',
+  },
+  onUpdate: () => undefined
 }
+  
 
 describe('ImageTextLeft', () => {
   it("renders", () => {
@@ -17,5 +21,6 @@ describe('ImageTextLeft', () => {
     ]
 
     expected.forEach(x => expect(screen.getByText(x)).toBeDefined())
+    expect(document.querySelector('.text')!.classList).not.toContain('right')
   })
 })
