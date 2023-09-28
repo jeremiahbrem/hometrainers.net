@@ -17,7 +17,7 @@ func SetupRouter(
 
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowAllOrigins = true
-	corsConfig.AllowHeaders = []string{"Authorization"}
+	corsConfig.AllowHeaders = []string{"Authorization", "token-provider"}
 
 	router.Use(cors.New(corsConfig))
 

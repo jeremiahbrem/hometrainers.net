@@ -78,6 +78,10 @@
           filter: blur(0.3px);
           background: white;
         }
+
+        .google-sign-in {
+          object-fit: contain;
+        }
   
         button {
           width: 13rem;
