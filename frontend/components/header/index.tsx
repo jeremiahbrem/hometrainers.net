@@ -1,15 +1,32 @@
-import { signIn, signOut, useSession } from 'next-auth/react'
+import { signIn, signOut } from 'next-auth/react'
 import { Logo } from '../logo'
 import styles from './header.module.scss'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import classnames from 'classnames'
-import { SessionType } from './types'
+import { useIsMyPage } from '@/utils/useIsMyPage'
+import { useIsLoggedIn } from '@/utils/useIsLoggedIn'
 
 const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
   const [open, setOpen] = useState<boolean>(false)
-
   const modalStyle = classnames(styles.signInModal, { [styles.open]: open })
+
+  const isMyPage = useIsMyPage()
+
+  useEffect(() => {
+    if (isMyPage && !isLoggedIn) {
+      setOpen(true)
+    }
+    else (setOpen(false))
+  }, [isMyPage, isLoggedIn])
+
+  const handleScrimClick = () => {
+    if (isMyPage && !isLoggedIn) {
+      return
+    }
+
+    setOpen(false)
+  }
 
   return (
     <div className={styles.signIn}>
@@ -17,8 +34,14 @@ const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
         <span className="material-symbols-outlined">person</span>
       </button>
 
-      <div className={modalStyle}>
-        <button className={styles.scrim} onClick={() => setOpen(false)} />
+      <div
+        className={modalStyle}
+        data-testid='sign-in-modal'
+        style={{
+          left: open ? 0 : '-110vw'
+        }}
+      >
+        <button className={styles.scrim} onClick={handleScrimClick} />
         <div className={styles.innerModal}>
           <div className={styles.scrim} />
 
@@ -48,10 +71,7 @@ const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
 }
 
 export default function Header() {
-  const response = useSession()
-  const data = response.data as SessionType | null
-
-  const isLoggedIn = !!(data && !data.error)
+  const isLoggedIn = useIsLoggedIn()
 
   const checkStyle = classnames("material-symbols-outlined", styles.check)
 

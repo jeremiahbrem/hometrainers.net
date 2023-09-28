@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Page } from '../types'
 import _ from 'lodash'
-import { useSession } from 'next-auth/react'
-import { SessionType } from '../header/types'
 import styles from './pageSaver.module.scss'
 import cn from 'classnames'
 import { useRefresh } from '../refresh'
 import { useAlert } from '../alerts'
 import { Loading } from '../loading'
+import { useFetchWithAuth } from '@/utils/useFetchWithAuth'
 
 type PageSaverProps = {
   pageProps: Page
@@ -19,25 +18,17 @@ export const PageSaver: React.FC<PageSaverProps> = (props) => {
   const { pageProps, pageContext, reset } = props
   const [open, setOpen] = useState(false)
 
-  const session = useSession()
-  const data = session.data as SessionType | null
   const refresh = useRefresh()
   const addAlert = useAlert()
   const [loading, setLoading] = useState(false)
+  const fetchResults = useFetchWithAuth()
 
   const save = async () => {
     setLoading(true)
 
-    const token = data?.provider === 'google'
-      ? data?.idToken
-      : data?.accessToken
-
-    const result = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-page`, {
+    const result = await fetchResults({
+      path: '/my-page',
       method: 'POST',
-      headers: {
-        authorization: `Bearer ${token ?? ''}`,
-        "token-provider": data?.provider ?? ''
-      },
       body: JSON.stringify(pageContext)
     })
 

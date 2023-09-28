@@ -2,11 +2,12 @@ import React from 'react'
 import { Blocks } from '@/components/blocks'
 import { Page } from '@/components/types';
 import { PageComponent } from '@/components/page';
+import { API } from '@/api';
 
 const Page = (props: { page: Page }) => <PageComponent {...{...props, Blocks }}/>
 
 export const getStaticPaths = async () => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/active-pages`)
+  const response = await fetch(`${API}/active-pages`)
   const result = await response.json()
 
   const paths = result
@@ -26,7 +27,7 @@ type StaticProps = {
 }
 
 export const getStaticProps = async ({ params: { slug } }: StaticProps) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/page/${slug}`)
+  const response = await fetch(`${API}/page/${slug}`)
 
   const emptyPage: Page = {
     blocks: { blocks: [] },
