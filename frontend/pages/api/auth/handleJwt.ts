@@ -119,8 +119,7 @@ export async function authJwtCallback(token: Token, account?: Account) {
     token.accessTokenExpires = (account.expires_at as number) * 1000
     token.provider = account.provider
   }
-  console.log(Date.now())
-  console.log(token.accessTokenExpires)
+
   if (Date.now() < token.accessTokenExpires) {
     return token
   }

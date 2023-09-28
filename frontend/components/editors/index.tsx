@@ -205,8 +205,8 @@ export const Editor: React.FC<EditorProps> = ({
   options
 }) => {
 
-  // const editing = useIsEditing()
-  const editing = true
+  const editing = useIsEditing()
+  // const editing = true
   const [open, setOpen] = useState(false)
   const { refreshKey } = useRefreshKey()
 
