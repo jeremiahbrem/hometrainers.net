@@ -100,7 +100,7 @@ func TestGetActivePages(t *testing.T) {
 	assert.Equal(t, expected, w.Body.String())
 }
 
-func TestGetPage(t *testing.T) {
+func TestGetPageBySlug(t *testing.T) {
 	db := Setup()
 	defer Teardown(db)
 
@@ -136,6 +136,115 @@ func TestGetPage(t *testing.T) {
 	for _, val := range expected {
 		assert.Contains(t, w.Body.String(), val)
 	}
+}
+
+func TestGetMyPage(t *testing.T) {
+	db := Setup()
+	defer Teardown(db)
+
+	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
+
+	db.Exec(
+		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
+		"test1@example.com",
+		"testpage1",
+		true,
+		blocks,
+		"New York City",
+		"A page",
+	)
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: "test1@example.com"},
+		Valid: true,
+	}
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("GET", "/my-page", nil)
+
+	router.ServeHTTP(w, req)
+
+	expected := []string{
+		`"email":"test1@example.com"`,
+		`"slug":"testpage1"`,
+		`"blocks":{"blocks":[{"header":"text"}]}`,
+		`"active":true`,
+		`"city":"New York City`,
+		`"title":"A page"`,
+	}
+
+	for _, val := range expected {
+		assert.Contains(t, w.Body.String(), val)
+	}
+}
+
+func TestGetMyPageUnauthorized(t *testing.T) {
+	db := Setup()
+	defer Teardown(db)
+
+	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
+
+	db.Exec(
+		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
+		"test1@example.com",
+		"testpage1",
+		true,
+		blocks,
+		"New York City",
+		"A page",
+	)
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: "other@example.com"},
+		Valid: false,
+	}
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("GET", "/my-page", nil)
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.Contains(t, w.Body.String(), "unauthorized")
+}
+
+func TestGetMyPageNotFound(t *testing.T) {
+	db := Setup()
+	defer Teardown(db)
+
+	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
+
+	db.Exec(
+		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
+		"test1@example.com",
+		"testpage1",
+		true,
+		blocks,
+		"New York City",
+		"A page",
+	)
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: "other@example.com"},
+		Valid: true,
+	}
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("GET", "/my-page", nil)
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+	assert.Contains(t, w.Body.String(), "page not found")
 }
 
 type Block struct {

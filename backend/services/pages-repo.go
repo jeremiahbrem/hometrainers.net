@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"main/models"
 
 	"gorm.io/gorm"
@@ -18,7 +17,6 @@ func CreatePageRepo(db *gorm.DB) PageRepository {
 func (repo *PageRepository) GetPage(slug string) (*models.Page, error) {
 	var page *models.Page
 	if err := repo.db.Where("slug = ?", slug).First(&page).Error; err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return page, nil
@@ -27,7 +25,6 @@ func (repo *PageRepository) GetPage(slug string) (*models.Page, error) {
 func (repo *PageRepository) GetUserPage(email string) (*models.Page, error) {
 	var page *models.Page
 	if err := repo.db.Where("email = ?", email).First(&page).Error; err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return page, nil

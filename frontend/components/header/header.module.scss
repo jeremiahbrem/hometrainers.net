@@ -37,7 +37,6 @@
     .sign-in-modal {
       position: absolute;
       top: 4rem;
-      left: -110vw;
       height: calc(100vh - 4rem);
       width: 100vw;
       .scrim {
@@ -80,7 +79,9 @@
         }
 
         .google-sign-in {
-          object-fit: contain;
+          img {
+            object-fit: contain;
+          }
         }
   
         button {
@@ -95,7 +96,6 @@
         }
       }
       &.open {
-        left: 0;
         .scrim {
           display: block;
         }
