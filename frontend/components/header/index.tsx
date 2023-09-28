@@ -33,7 +33,11 @@ const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
               Sign in with email
             </button>
             <button className={styles.googleSignIn} onClick={() => signIn('google')}>
-              <Image src={'/google-signin.png'} alt={'sign in with google'} fill={true} objectFit={'contain'} />
+              <Image
+                src={'/google-signin.png'}
+                alt={'sign in with google'}
+                fill={true}
+                className={styles.googleIcon} />
             </button>
           </>}
           

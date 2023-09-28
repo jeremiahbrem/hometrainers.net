@@ -105,7 +105,7 @@ func setupRouter(
 
 		err := srv.HandleTokenRequest(context.Writer, context.Request)
 		if err != nil {
-			context.JSON(http.StatusInternalServerError, err)
+			context.JSON(http.StatusInternalServerError, err.Error())
 			return
 		}
 	})
@@ -114,7 +114,7 @@ func setupRouter(
 		token, err := srv.ValidationBearerToken(context.Request)
 
 		if err != nil {
-			context.JSON(http.StatusBadRequest, err)
+			context.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -122,7 +122,7 @@ func setupRouter(
 		user, userErr := userRepo.GetUser(email)
 
 		if userErr != nil {
-			context.JSON(http.StatusBadRequest, userErr)
+			context.JSON(http.StatusBadRequest, userErr.Error())
 			return
 		}
 
@@ -135,7 +135,7 @@ func setupRouter(
 	router.GET("/user-info", func(context *gin.Context) {
 		token, err := srv.ValidationBearerToken(context.Request)
 		if err != nil {
-			context.JSON(http.StatusBadRequest, err)
+			context.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -143,7 +143,7 @@ func setupRouter(
 		user, userErr := userRepo.GetUser(email)
 
 		if userErr != nil {
-			context.JSON(http.StatusBadRequest, userErr)
+			context.JSON(http.StatusBadRequest, userErr.Error())
 			return
 		}
 
@@ -184,7 +184,7 @@ func authHandler(
 	return func(context *gin.Context) {
 		store, err := session.Start(context, context.Writer, context.Request)
 		if err != nil {
-			context.JSON(http.StatusInternalServerError, err)
+			context.JSON(http.StatusInternalServerError, err.Error())
 			return
 		}
 

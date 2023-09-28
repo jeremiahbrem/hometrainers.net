@@ -20,9 +20,7 @@
   box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
   padding: 2rem;
   border-radius: 5px;
-  display: none;
   &.open {
-    display: block;
     z-index: 2;
   }
 

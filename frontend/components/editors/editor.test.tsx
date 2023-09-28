@@ -1,9 +1,11 @@
-import { useRef } from 'react'
-import { render, screen } from '@testing-library/react'
-import parse from 'html-react-parser'
 import '@testing-library/jest-dom'
+import { useRef, useState } from 'react'
+import { act, render, screen } from '@testing-library/react'
+import parse from 'html-react-parser'
 import { Editor } from '@/components/editors'
 import { optionTexts } from './options'
+import { RefreshProvider, useRefreshKey } from '../refresh'
+import { userEvent } from '@testing-library/user-event'
 
 const onSave = jest.fn()
 
@@ -15,7 +17,7 @@ jest.mock('next/navigation', () => ({
   },
 }))
 
-const mockSession = jest.fn()
+const mockSession = jest.fn(() => ({}))
 
 jest.mock('next-auth/react', () => ({
   useSession() {
@@ -53,6 +55,43 @@ describe('Editor', () => {
     expect(document.querySelector('.editor')).not.toBeNull()
   })
   
+  it('renders hidden', () => {
+    mockUsePathname.mockReturnValueOnce("my-page")
+    mockSession.mockReturnValueOnce({ data: true })
+
+    render(<Harness />)
+
+    const editor = document.querySelector('.editor')! as HTMLDivElement
+    expect(editor.style.display).toBe('none')
+  })
+  
+  it('shows editor on component click', async () => {
+    mockSession.mockImplementation(() => ({ data: true }))
+    mockUsePathname.mockImplementation(() => "my-page")
+
+    render(<Harness />)
+
+    const component = document.querySelector('.component')!
+    await act(() => userEvent.click(component))
+
+    const editor = document.querySelector('.editor')! as HTMLDivElement
+    expect(editor.style.display).toBe('block')
+  })
+  
+  it('closes editor on scrim click', async () => {
+    mockSession.mockImplementation(() => ({ data: true }))
+    mockUsePathname.mockImplementation(() => "my-page")
+
+    render(<Harness />)
+
+    await act(() => userEvent.click(document.querySelector('.component')!))
+
+    await act(() => userEvent.click(screen.getByTestId('editor-scrim')))
+
+    const editor = document.querySelector('.editor')! as HTMLDivElement
+    expect(editor.style.display).toBe('none')
+  })
+  
   it('renders all buttons by default', () => {
     mockUsePathname.mockReturnValueOnce("my-page")
     mockSession.mockReturnValueOnce({ data: true })
@@ -74,22 +113,55 @@ describe('Editor', () => {
     displayed.forEach(t => expect(screen.getByText(t)).not.toBeNull())
     hidden.forEach(t => expect(screen.queryByText(t)).toBeNull())
   })
+  
+  it('resets content when refresh key resets', async () => {
+    mockSession.mockImplementation(() => ({ data: true }))
+    mockUsePathname.mockImplementation(() => "my-page")
+
+    const Resetter: React.FC<{ setContent: React.Dispatch<string>}> = ({ setContent }) => {
+      const { reset } = useRefreshKey()
+      return <button onClick={() => {
+        setContent('<p>new</p>')
+        reset()
+      }}>reset</button>
+    }
+
+    const TestHarness: React.FC = () => {
+      const [content, setContent] = useState('<p>initial</p>')
+
+      return (
+        <RefreshProvider>
+          <Harness {...{ content }} />
+          <Resetter {...{ setContent }} />
+        </RefreshProvider>
+      )
+    }
+
+    render(<TestHarness />)
+
+    await act(() => userEvent.click(screen.getByText('reset')))
+    expect(document.querySelector('.tiptap')).toHaveTextContent('new')
+  })
 })
 
-const Harness: React.FC<{ options?: string[] }> = ({ options }) => {
+type HarnessProps = {
+  options?: string[]
+  content?: string
+}
+
+const Harness: React.FC<HarnessProps> = ({ options, content }) => {
   const ref = useRef(null)
 
   return (<>
-    <div ref={ref}>
+    <div ref={ref} className='component'>
       <h1>Component</h1>
       {parse(initialContent)}
     </div>
     <Editor
-      onSave={onSave}
-      content={initialContent}
+      onUpdate={onSave}
+      content={content ?? initialContent}
       contentRef={ref}
       options={options}
     />
-    </>
-  )
+  </>)
 }

@@ -1,0 +1,47 @@
+@import '@/styles/global.scss';
+
+.alert {
+  position: fixed;
+  top: 4rem;
+  left: -110vw;
+  height: calc(100vh - 4rem);
+  width: 100vw;
+  .scrim {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+  }
+  .message {
+    position: absolute;
+    width: 20rem;
+    height: fit-content;
+    opacity: 0;
+    transition: all .25s ease-in-out;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    background: white;
+    box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
+  }
+  &.open {
+    left: 0;
+    z-index: 6;
+    .scrim {
+      display: block;
+    }
+    .message {
+      opacity: 1;
+    }
+  }
+}
