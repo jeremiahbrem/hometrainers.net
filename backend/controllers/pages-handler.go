@@ -61,9 +61,17 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 
 		if page, pageErr = pagesRepo.GetPage(slug.Slug); pageErr != nil {
 			context.JSON(http.StatusNotFound, "page not found")
+			return
 		}
 
-		context.JSON(http.StatusOK, page)
+		context.JSON(http.StatusOK, gin.H{
+			"slug":   page.Slug,
+			"email":  page.Email,
+			"title":  page.Title,
+			"blocks": page.Blocks,
+			"city":   page.City,
+			"active": page.Active,
+		})
 	})
 
 	router.POST("/my-page", func(context *gin.Context) {
@@ -85,6 +93,11 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 
 		if page.Email != user.Email {
 			context.JSON(http.StatusUnauthorized, "unauthorized")
+			return
+		}
+
+		if page.Slug == "my-page" {
+			context.JSON(http.StatusBadRequest, "slug my-page is reserved")
 			return
 		}
 

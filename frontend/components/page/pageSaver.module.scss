@@ -1,0 +1,33 @@
+@import '@/styles/global.scss';
+
+.page-saver {
+  position: fixed;
+  z-index: 5;
+  height: 5rem;
+  left: 0;
+  bottom: -5.5rem;
+  transition: all .25s ease-in-out;
+  width: 100vw;
+  background: white;
+  box-shadow: inset 0rem 0rem 0.8rem $orange;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &.open {
+    bottom: 0;
+  }
+  button {
+    border: 3px solid $orange;
+    padding: .7rem;
+    border-radius: 5px;
+    background: $orange;
+    color: white;
+    transition: all .25s ease-in-out;
+    margin: 0 .4rem;
+    &:hover {
+      color: $orange;
+      background: white;
+    }
+  }
+}

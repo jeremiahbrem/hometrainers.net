@@ -101,7 +101,7 @@ export function googleJwtCallback(token: Token, account?: Account) {
   if (account) {
     token.idToken = account.id_token as string
     token.refreshToken = account.refresh_token as string
-    token.accessTokenExpires = Date.now() + (account.expires_in as number) * 1000
+    token.accessTokenExpires = (account.expires_in as number) * 1000
     token.provider = account.provider
   }
 
@@ -116,7 +116,7 @@ export async function authJwtCallback(token: Token, account?: Account) {
   if (account) {
     token.accessToken = account.access_token as string
     token.refreshToken = account.refresh_token as string
-    token.accessTokenExpires = Date.now() + (account.expires_at as number) * 1000
+    token.accessTokenExpires = (account.expires_at as number) * 1000
     token.provider = account.provider
   }
 

@@ -1,6 +1,6 @@
 @import '@/styles/global.scss';
 
-.image-text-left {
+.image-text {
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -34,6 +34,12 @@
 
     &.editing {
       cursor: pointer;
+    }
+  }
+
+  .text {
+    &.right {
+      order: 2;
     }
   }
 
