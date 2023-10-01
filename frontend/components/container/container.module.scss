@@ -1,0 +1,13 @@
+@import '@/styles/global.scss';
+
+.section {
+  border: .2rem solid transparent;
+  border-radius: .3rem;
+
+  &.editing {
+    &:hover {
+      border-color: $orange;
+      cursor: pointer;
+    }
+  }
+}

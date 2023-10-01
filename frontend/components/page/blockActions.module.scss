@@ -1,0 +1,51 @@
+@import '@/styles/global.scss';
+
+.block-actions {
+  color: $fontColor;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba($fontColor, .3);
+
+  .reorder-form {
+    position: fixed;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 50%;
+    bottom: 0;
+    width: 100%;
+    justify-content: center;
+    z-index: 3;
+    display: none;
+    &.open {
+      display: flex;
+    }
+
+    form {
+      box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
+      padding: 1rem;
+      background: white;
+      height: 3rem;
+      border-radius: 5px;
+      width: 16rem;
+
+      label {
+        display: block;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+
+      input {
+        color: inherit;
+        border: none;
+        padding: .5rem;
+        background-color: rgba(128, 128, 128, .2);
+        width: 3rem;
+      }
+    }
+  }
+}

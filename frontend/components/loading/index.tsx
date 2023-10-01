@@ -4,7 +4,7 @@ import cn from 'classnames'
 
 export const Loading: React.FC<{ open: boolean }> = ({ open }) => {
   return (
-    <div className={cn(styles.loader, { [styles.open]: open })}>
+    <div className={cn(styles.loader, { [styles.open]: open })} data-testid='loading' data-open={open}>
       <span />
     </div>
   )

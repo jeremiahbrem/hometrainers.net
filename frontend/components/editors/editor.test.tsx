@@ -28,9 +28,13 @@ jest.mock('next-auth/react', () => ({
 const initialContent = '<p>test content</p>'
 
 describe('Editor', () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   it('renders hidden if not my page', () => {
-    mockUsePathname.mockReturnValueOnce("other-page")
-    mockSession.mockReturnValueOnce({ data: 'defined' })
+    mockSession.mockImplementation(() => ({ data: true }))
+    mockUsePathname.mockImplementation(() => "other-page")
     
     render(<Harness />)
 
@@ -38,8 +42,8 @@ describe('Editor', () => {
   })
   
   it('renders hidden if not logged in', () => {
-    mockUsePathname.mockReturnValueOnce("my-page")
-    mockSession.mockReturnValueOnce({ data: undefined })
+    mockSession.mockImplementation(() => ({ data: false }))
+    mockUsePathname.mockImplementation(() => "my-page")
 
     render(<Harness />)
 
@@ -47,8 +51,8 @@ describe('Editor', () => {
   })
   
   it('renders editor if my page and logged in', () => {
-    mockUsePathname.mockReturnValueOnce("my-page")
-    mockSession.mockReturnValueOnce({ data: true })
+    mockSession.mockImplementation(() => ({ data: true }))
+    mockUsePathname.mockImplementation(() => "my-page")
 
     render(<Harness />)
 

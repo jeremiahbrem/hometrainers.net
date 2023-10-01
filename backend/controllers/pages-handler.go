@@ -25,6 +25,45 @@ func slugAlreadyExists(
 	return false
 }
 
+type Slug struct {
+	Slug string `uri:"slug" binding:"required"`
+}
+
+func resolvePage(page *models.Page, context *gin.Context) {
+	context.JSON(http.StatusOK, gin.H{
+		"slug":   page.Slug,
+		"email":  page.Email,
+		"title":  page.Title,
+		"blocks": page.Blocks,
+		"city":   page.City,
+		"active": page.Active,
+	})
+}
+
+func getPageBySlug(slug Slug, pagesRepo services.PageRepository, context *gin.Context) {
+	var page *models.Page
+	var pageErr error
+
+	if page, pageErr = pagesRepo.GetPage(slug.Slug); pageErr != nil {
+		context.JSON(http.StatusNotFound, "page not found")
+		return
+	}
+
+	resolvePage(page, context)
+}
+
+func getPageByEmail(email string, pagesRepo services.PageRepository, context *gin.Context) {
+	var page *models.Page
+	var pageErr error
+
+	if page, pageErr = pagesRepo.GetUserPage(email); pageErr != nil {
+		context.JSON(http.StatusNotFound, "page not found")
+		return
+	}
+
+	resolvePage(page, context)
+}
+
 func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderType) {
 	pagesRepo := provider.GetPagesRepo()
 	userValidator := provider.GetUserValidator()
@@ -45,33 +84,15 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 		})
 	})
 
-	type Slug struct {
-		Slug string `uri:"slug" binding:"required"`
-	}
-
 	router.GET("/page/:slug", func(context *gin.Context) {
 		var slug Slug
-		var page *models.Page
-		var pageErr error
 
 		if err := context.ShouldBindUri(&slug); err != nil {
 			context.JSON(http.StatusBadRequest, err.Error())
 			return
 		}
 
-		if page, pageErr = pagesRepo.GetPage(slug.Slug); pageErr != nil {
-			context.JSON(http.StatusNotFound, "page not found")
-			return
-		}
-
-		context.JSON(http.StatusOK, gin.H{
-			"slug":   page.Slug,
-			"email":  page.Email,
-			"title":  page.Title,
-			"blocks": page.Blocks,
-			"city":   page.City,
-			"active": page.Active,
-		})
+		getPageBySlug(slug, pagesRepo, context)
 	})
 
 	router.POST("/my-page", func(context *gin.Context) {
@@ -130,5 +151,16 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 		}
 
 		context.JSON(http.StatusOK, fmt.Sprintf("Page %s", message))
+	})
+
+	router.GET("/my-page", func(context *gin.Context) {
+		user, ok := userValidator.Validate(context)
+
+		if !ok {
+			context.JSON(http.StatusUnauthorized, "unauthorized")
+			return
+		}
+
+		getPageByEmail(user.Email, pagesRepo, context)
 	})
 }

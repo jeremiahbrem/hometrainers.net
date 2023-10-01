@@ -4,8 +4,6 @@ import { policy } from './policy'
 import styles from './privacy.module.css'
 
 export const Privacy: React.FC = () => {
-
-
   return (
     <section className={styles.privacyPolicy}>
       {parse(policy)}

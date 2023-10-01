@@ -1,0 +1,40 @@
+@import '@/styles/global.scss';
+
+.open-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.block-selector {
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 1rem 2rem;
+  gap: 1rem;
+  box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
+  position: fixed;
+  width: 95vw;
+  left: 2.5vw;
+  height: calc(100vh - 8rem);
+  overflow: scroll;
+  top: 5rem;
+  z-index: 5;
+  background: white;
+
+  .cancel {
+    grid-column: 1 / span 3;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  button {
+    text-align: inherit;
+  }
+
+ 
+
+  @media (max-width: 450px) {
+    padding: 2rem 1rem;
+  }
+}
