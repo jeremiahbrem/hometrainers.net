@@ -102,7 +102,6 @@ func setupRouter(
 
 	router.POST("/oauth/token", func(context *gin.Context) {
 		context.Request.ParseForm()
-
 		err := srv.HandleTokenRequest(context.Writer, context.Request)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, err.Error())

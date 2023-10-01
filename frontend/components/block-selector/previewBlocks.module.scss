@@ -1,0 +1,32 @@
+@import '@/styles/global.scss';
+
+.block-container {
+  overflow: hidden;
+  border: .2rem solid transparent;
+  border-radius: .3rem;
+
+  &.image-text {
+    height: 12rem;
+  }
+
+  &:hover {
+    border-color: $orange;
+  }
+
+  .block-button {
+    width: 100vw;
+    transform: scale(.25) translate(-150%, -150%);
+  }
+
+  @media (max-width: 750px) {
+    &.image-text {
+      height: 18rem;
+    }
+  }
+
+  @media (max-width: 350px) {
+    &.image-text {
+      height: 20rem;
+    }
+  }
+}

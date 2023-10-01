@@ -7,6 +7,7 @@ import { useRefresh } from '../refresh'
 import { useAlert } from '../alerts'
 import { Loading } from '../loading'
 import { useFetchWithAuth } from '@/utils/useFetchWithAuth'
+import { Button } from '../button'
 
 type PageSaverProps = {
   pageProps: Page
@@ -65,8 +66,8 @@ export const PageSaver: React.FC<PageSaverProps> = (props) => {
       data-testid='page-saver'
       style={{ bottom: open ? 0 : '-5.5rem'}}
     >
-      <button className={styles.saveButton} onClick={save}>Save Changes</button>
-      <button onClick={reset}>Reset</button>
+      <Button className={styles.saveButton} text={'Save Changes'} onClick={save} />
+      <Button text={'Reset'} onClick={reset} />
 
       <Loading open={loading}/>
     </div>

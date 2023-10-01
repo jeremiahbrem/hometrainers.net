@@ -1,9 +1,8 @@
 @import '@/styles/global.scss';
 
 .scrim {
-  position: absolute;
+  position: fixed;
   display: none;
-  position: absolute;
   top: 0;
   left: 0;
   height: 100vh;
@@ -14,14 +13,23 @@
   }
 }
 .editor {
-  position: absolute;
+  position: fixed;
   width: 20rem;
   background: white;
   box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
   padding: 2rem;
   border-radius: 5px;
+  top: 4rem;
+  height: calc(100vh - 9rem);
+  overflow: scroll;
   &.open {
     z-index: 2;
+  }
+
+  @media (max-width: 750px) {
+    left: 5vw !important;
+    right: unset !important;
+    width: 90vw !important;
   }
 
   div, button {
@@ -33,13 +41,17 @@
 
   .editor-menu {
     margin-bottom: 1rem;
-    
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
     
     button {
       padding: 0.2rem 0.5rem;
       border: 1.5px solid black;
       border-radius: 10px;
       margin: 0.1rem;
+      font-size: 0.6rem;
     }
   
     .isActive {

@@ -1,4 +1,4 @@
-export type Block = {
+export type Block = Record<string, any> & {
   blockName: string
 }
 
@@ -14,9 +14,11 @@ export type Page = {
 export type PageProps = {
   page: Page
   Blocks: Record<string, React.FC<ComponentProps<any>>>
+  setPageContext: React.Dispatch<React.SetStateAction<Page>>
 }
 
 export type ComponentProps<T> = {
   block: T,
-  onUpdate: (args: T) => void
+  onUpdate: (args: T) => void,
+  preview?: boolean
 }
