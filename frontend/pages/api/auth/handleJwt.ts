@@ -1,4 +1,5 @@
 import { Account } from 'next-auth'
+import { clientId, clientSecret } from './clientInfo'
 
 export type Token = {
   refreshToken: string
@@ -51,27 +52,20 @@ async function refreshGoogleToken(token: Token) {
 
 async function refreshAuthToken(token: Token) {
   try {
-    const details: Record<string, string> = {
-      grant_type: 'refresh_token',
-      refresh_token: token.refreshToken,
-      scope: 'all'
-    }
+    const url =
+    `${process.env.NEXT_PUBLIC_AUTH_SERVER}/oauth/token?` +
+      new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'refresh_token',
+        refresh_token: token.refreshToken,
+      } as Record<string, string>)
 
-    var rawBody = [];
-    for (const property in details) {
-      var encodedKey = encodeURIComponent(property)
-      var encodedValue = encodeURIComponent(details[property])
-      rawBody.push(encodedKey + '=' + encodedValue)
-    }
-    const formBody = rawBody.join('&')
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_AUTH_SERVER}/oauth/token`, {
+    const response = await fetch(url, {
       headers: {
-        'Authorization': `Basic ${Buffer.from('222222:22222222').toString('base64')}`,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       method: 'POST',
-      body: formBody
     })
     
     const refreshedTokens = await response.json()
@@ -119,7 +113,7 @@ export async function authJwtCallback(token: Token, account?: Account) {
     token.accessTokenExpires = (account.expires_at as number) * 1000
     token.provider = account.provider
   }
-
+  
   if (Date.now() < token.accessTokenExpires) {
     return token
   }

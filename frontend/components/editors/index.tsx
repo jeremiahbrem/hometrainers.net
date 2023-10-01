@@ -197,27 +197,31 @@ export const Editor: React.FC<EditorProps> = ({
   content,
   onUpdate,
   width,
-  top,
   right,
   left,
-  bottom,
   contentRef,
   options
 }) => {
 
   const editing = useIsEditing()
-  // const editing = true
   const [open, setOpen] = useState(false)
+  const [key, setKey] = useState<string | null>(null)
   const { refreshKey } = useRefreshKey()
 
   useEffect(() => {
     if (editing && contentRef.current) {
-      contentRef.current.style.cursor = 'pointer'
       contentRef.current.addEventListener('click', () => {
         setOpen(true)
       })
     }
   }, [editing, contentRef])
+
+  useEffect(() => {
+    if (key) {
+      setOpen(false)
+    }
+    setKey(refreshKey)
+  }, [refreshKey])
 
   if (!editing) {
     return null
@@ -234,8 +238,6 @@ export const Editor: React.FC<EditorProps> = ({
       className={cn(styles.editor, { [styles.open]: open })}
       style={{
         width: width ?? '45%',
-        top: top ?? 'unset',
-        bottom: bottom ?? 'unset',
         left: left ?? 'unset',
         right: right ?? 'unset',
         display: open ? 'block' : 'none'

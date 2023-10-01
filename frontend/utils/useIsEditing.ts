@@ -1,12 +1,8 @@
-import { SessionType } from "@/components/header/types";
-import { useSession } from "next-auth/react";
-import { usePathname } from 'next/navigation'
+import { useIsLoggedIn } from "./useIsLoggedIn";
+import { useIsMyPage } from "./useIsMyPage";
 
 export function useIsEditing() {
-  const response = useSession()
-  const data = response.data as SessionType | null
-  const isLoggedIn = !!(data && !data.error)
-
-  const path = usePathname()
-  return path && path.includes('my-page') && isLoggedIn
+  const isLoggedIn = useIsLoggedIn()
+  const isMyPage = useIsMyPage()
+  return isLoggedIn && isMyPage
 }

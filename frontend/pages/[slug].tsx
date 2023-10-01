@@ -2,11 +2,16 @@ import React from 'react'
 import { Blocks } from '@/components/blocks'
 import { Page } from '@/components/types';
 import { PageComponent } from '@/components/page';
+import { API } from '@/api';
+import { getPageResult } from '@/utils/getPageResult';
+import Layout from '@/components/layout';
 
-const Page = (props: { page: Page }) => <PageComponent {...{...props, Blocks }}/>
+const Page = (props: { page: Page }) => <Layout>
+  <PageComponent {...{...props, Blocks, setPageContext: () => undefined }}/>
+</Layout>
 
 export const getStaticPaths = async () => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/active-pages`)
+  const response = await fetch(`${API}/active-pages`)
   const result = await response.json()
 
   const paths = result
@@ -26,26 +31,9 @@ type StaticProps = {
 }
 
 export const getStaticProps = async ({ params: { slug } }: StaticProps) => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/page/${slug}`)
+  const response = await fetch(`${API}/page/${slug}`)
 
-  const emptyPage: Page = {
-    blocks: { blocks: [] },
-    slug: '',
-    email: '',
-    title: '',
-    city: '',
-    active: false,
-  }
-
-  let page = emptyPage
-
-  try {
-    const result = await response.json()
-    page = result?.slug && result?.email
-      ? result
-      : emptyPage
-  }
-  catch {}
+  const page = await getPageResult(response)
 
   return {
     props: {
