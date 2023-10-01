@@ -1,5 +1,6 @@
 import { Account } from 'next-auth';
 import { Token, authJwtCallback } from './handleJwt';
+import { clientId, clientSecret } from './clientInfo';
 
 const now = new Date(2023, 4, 1)
 
@@ -54,7 +55,7 @@ describe('token refresh', () => {
     describe('when expired', () => {
       const token = {
         accessToken: 'test-token',
-        refreshToken: 'refresh-token',
+        refreshToken: 'old-refresh-token',
         accessTokenExpires: now.getTime() - 10,
         provider: 'auth'
       } as Token
@@ -80,8 +81,17 @@ describe('token refresh', () => {
         })
 
         expect(global.fetch).toHaveBeenCalledWith(
-          `${process.env.NEXT_PUBLIC_AUTH_SERVER}/oauth/token`,
-          expect.any(Object)
+          `${process.env.NEXT_PUBLIC_AUTH_SERVER}/oauth/token?` +
+          `client_id=${clientId}&` +
+          `client_secret=${clientSecret}&` +
+          `grant_type=refresh_token&` +
+          `refresh_token=old-refresh-token`,
+          {
+            "headers": {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            "method": "POST"
+          }
         )
       })
       
@@ -97,11 +107,6 @@ describe('token refresh', () => {
           ...token,
           error: 'RefreshAccessTokenError'
         })
-
-        expect(global.fetch).toHaveBeenCalledWith(
-          `${process.env.NEXT_PUBLIC_AUTH_SERVER}/oauth/token`,
-          expect.any(Object)
-        )
       })
     })
   })

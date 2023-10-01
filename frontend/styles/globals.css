@@ -14,10 +14,22 @@ button {
 
   transition: all .25s ease-in-out;
   cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
 }
 
 a {
   text-transform: none;
   text-decoration: none;
   color: unset;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }

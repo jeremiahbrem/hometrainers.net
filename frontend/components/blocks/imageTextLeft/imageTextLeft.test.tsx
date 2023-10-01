@@ -6,6 +6,7 @@ const props = {
   block: {
     image: 'http://example.com',
     text: '<h1>test heading</h1><p>test body</p>',
+    imageAlt: ''
   },
   onUpdate: () => undefined
 }

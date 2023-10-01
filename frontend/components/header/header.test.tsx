@@ -20,6 +20,10 @@ jest.mock('next-auth/react', () => ({
 }))
 
 describe('header', () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   it('renders hidden', () => {
     render(<Header />)
 
@@ -36,7 +40,7 @@ describe('header', () => {
   })
   
   it('opens sign in on my-page if logged out', async () => {
-    mockUsePathname.mockReturnValueOnce('my-page')
+    mockUsePathname.mockImplementation(() => 'my-page')
     render(<Header />)
 
     const modal = screen.getByTestId('sign-in-modal')!

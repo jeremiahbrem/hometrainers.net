@@ -1,11 +1,10 @@
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { googleJwtCallback, authJwtCallback } from  './handleJwt'
+import { clientId, clientSecret } from './clientInfo'
 
 const authServer = process.env.NEXT_PUBLIC_AUTH_SERVER
 const redirectUri = process.env.NEXTAUTH_URL
-const clientId = process.env.NEXT_PUBLIC_CLIENT_ID
-const clientSecret = process.env.NEXT_PUBLIC_CLIENT_SECRET
 const codeChallenge = process.env.NEXT_PUBLIC_CODE_CHALLENGE
 
 export default NextAuth({
@@ -34,29 +33,21 @@ export default NextAuth({
       token: {
         url: `${authServer}/oauth/token`,
         async request(context) {
-          const details = {
-            grant_type: 'authorization_code',
-            code: context.params.code,
-            code_verifier: codeChallenge,
-            redirect_uri: `${redirectUri}/api/auth/callback/auth`
-          }
-
-          var rawBody = [];
-          for (const property in details) {
-            var encodedKey = encodeURIComponent(property)
-            var encodedValue = encodeURIComponent(details[property])
-            rawBody.push(encodedKey + '=' + encodedValue)
-          }
-          const formBody = rawBody.join('&')
+          const url =
+          `${process.env.NEXT_PUBLIC_AUTH_SERVER}/oauth/token?` +
+            new URLSearchParams({
+              client_id: clientId,
+              client_secret: clientSecret,
+              grant_type: 'authorization_code',
+              code: context.params.code,
+              code_verifier: codeChallenge,
+              redirect_uri: `${redirectUri}/api/auth/callback/auth`
+            })
           
-          const response = await fetch(`${authServer}/oauth/token`, {
+          const response = await fetch(url, {
             method: 'POST',
-            body: formBody,
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': `Basic ${Buffer.from(
-                `${clientId}:${clientSecret}`
-              ).toString('base64')}`
             },
           })
           const tokens = await response.json()

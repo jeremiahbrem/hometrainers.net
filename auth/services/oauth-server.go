@@ -89,6 +89,8 @@ func CreateOauthServer(session SessionApiType, dsn string) OauthServerType {
 		log.Println("Response Error:", re.Error.Error())
 	})
 
+	srv.SetClientInfoHandler(server.ClientFormHandler)
+
 	return &OauthServer{srv}
 }
 

@@ -1,65 +1,120 @@
 import React from 'react'
-import { useState } from "react";
-import Layout from "../layout";
-import { PageProps, Page, Block } from '../types';
-import { PageSaver } from './pageSaver';
+import { PageProps, Block, Page, ComponentProps } from '../types';
 import _ from 'lodash';
-import { useRefreshKey } from '../refresh';
 import { NotFound } from '../not-found';
+import { BlockActions } from './blockActions';
+import { useIsEditing } from '@/utils/useIsEditing';
+
+export type SetPageContext = React.Dispatch<React.SetStateAction<Page>>
+
+export function onReorder(
+  order: number,
+  ctx: Page,
+  currentIndex: number
+): Page {
+  const blocks = ctx.blocks.blocks
+
+  const filtered = blocks.filter((_, index) => currentIndex !== index)
+
+  const copy = {
+    ...ctx,
+    blocks: {
+      blocks: [
+        ...filtered.slice(0,order),
+        blocks[currentIndex],
+        ...filtered.slice(order)
+      ]
+    }
+  }
+
+  return copy
+}
+
+export function onRemove(
+  index: number,
+  ctx: Page
+): Page {
+  const copy = {
+    ...ctx,
+    blocks: {
+      blocks: [
+        ...ctx.blocks.blocks.slice(0, index),
+        ...ctx.blocks.blocks.slice(index + 1)
+      ]
+    }
+  }
+
+  return copy
+}
+
+export function onUpdate(
+  args: Record<string, any>,
+  index: number,
+  ctx: Page,
+  blockName: string
+): Page {
+  const copy = {
+    ...ctx,
+    blocks: {
+      blocks: [
+        ...ctx.blocks.blocks.slice(0, index),
+        { ...args, blockName },
+        ...ctx.blocks.blocks.slice(index + 1)
+      ]
+    }
+  }
+
+  return copy
+}
 
 export const PageComponent = (props: PageProps) => {
+  const { page, setPageContext } = props
+  const isEditing = useIsEditing()
+
   const components = props.Blocks
-  const { reset: resetKey } = useRefreshKey()
 
-  const copyProps = () => ({
-    ...props.page,
-    blocks: {...props.page.blocks}
-  })
-
-  const [pageContext, setPageContext] = useState<Page>(copyProps)
-  const ctxBlocks = pageContext.blocks?.blocks ?? []
-  
-  const reset = () => {
-    setPageContext(copyProps)
-    resetKey()
-  }
+  const blocks = page?.blocks?.blocks ?? []
 
   if (!props.page?.slug || !props.page?.email) {
     return <NotFound />
   }
 
   return (
-    <Layout>
-      {ctxBlocks.map((block, idx) => {
+    <>
+      {blocks.map((block, idx) => {
         const parsedBlock = block as unknown as Block
         const blockName = parsedBlock.blockName
-        const Component = components[blockName] as React.FC<any>;
+        const Component = components[blockName] as React.FC<ComponentProps<Block>>;
 
         if (!Component) {
           return <div key={idx}>Block {blockName} not found</div>
         }
 
-        return <Component
-          key={idx}
-          block={parsedBlock}
-          onUpdate={(args: Record<string, any>) => setPageContext(ctx => {
-            const copy = {...ctx}
-            const blocks = copy.blocks.blocks.filter(x => x.blockName != blockName)
-            const updatedBlock = {
-              ...args,
-              blockName,
-            }
+        return (
+          <React.Fragment key={idx}>
+            <Component
+              block={parsedBlock}
+              onUpdate={(args: any) => setPageContext(ctx => onUpdate(
+                args,
+                idx,
+                ctx,
+                blockName
+              ))}
+            />
 
-            copy.blocks.blocks = [
-              ...blocks,
-              updatedBlock
-            ]
+            {isEditing && <BlockActions {...{
+              onRemove: () => setPageContext(ctx => onRemove(idx, ctx)),
+              onReorder: (order: number) => setPageContext(ctx => onReorder(
+                order,
+                ctx,
+                idx
+              )),
+              order: idx
+            }} />}
 
-            return copy
-          })}
-        />
+          </React.Fragment>
+        )
       })}
-      <PageSaver {...{ pageProps: props.page, pageContext, reset }} />
-    </Layout>
+    </>
   )
 }

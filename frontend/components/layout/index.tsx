@@ -13,7 +13,7 @@ const inter = Roboto({
 export default function Layout({
   children,
 }: {
-  children: React.ReactNode
+  children?: React.ReactNode
 }) {
   return (
     <ErrorBoundary fallback={<>error</>}>

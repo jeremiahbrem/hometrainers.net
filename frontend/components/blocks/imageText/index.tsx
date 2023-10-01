@@ -5,22 +5,32 @@ import parse from 'html-react-parser'
 import cn from 'classnames'
 import { Editor } from '@/components/editors'
 import { ComponentProps } from '@/components/types'
+import { Container } from '@/components/container'
 
 export type ImageTextProps = ComponentProps<{
   text: string
   image: string
+  imageAlt: string
 }>
 
 export type ImageTextBaseProps = ImageTextProps & {
   textPos: 'left' | 'right'
 }
 
-export const ImageText: React.FC<ImageTextBaseProps> = ({ block, onUpdate, textPos }) => {
+export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
   const textRef = useRef(null)
 
   const {
-    image,
+    block,
+    onUpdate,
+    textPos,
+    preview 
+  } = props
+
+  const {
     text,
+    image,
+    imageAlt,
   } = block
 
   const onTextUpdate = async (text: string) => {
@@ -34,19 +44,27 @@ export const ImageText: React.FC<ImageTextBaseProps> = ({ block, onUpdate, textP
 
   return (
     <section className={styles.imageText}>
-      <div className={cn(styles.text)} ref={textRef}>
-        {parse(text)}
-      </div>
-      <Editor
+      <Container
+        className={cn(styles.text, { [styles.right]: textRight})}
+        ref={textRef}
+        preview={preview}
+      >
+        {parse(text ?? '')}
+        {!text && <>Click to add</>}
+      </Container>
+
+      {!preview && <Editor
         content={text}
         onUpdate={onTextUpdate}
         right={textRight ? 'unset' : '1rem'}
         left={textRight ? '1rem' : 'unset'}
         contentRef={textRef}
-      />
-      <div className={cn(styles.image, { [styles.right]: textRight})}>
-        <Image src={image} alt='' height={0} width={0} />
-      </div>
+      />}
+      
+      <Container className={cn(styles.image)} preview={preview}>
+        {image && <Image src={image} alt={imageAlt ?? ''} height={0} width={0} />}
+        {!image && <>Click to add +</>}
+      </Container>
     </section>
   )
 }
