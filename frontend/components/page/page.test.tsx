@@ -57,7 +57,10 @@ describe('page component', () => {
       )).not.toBeNull()
     })
     
-    it('renders not found with missing email', () => {
+    it('renders not found with missing email when editing', () => {
+      mockUsePathname.mockReturnValueOnce('my-page')
+      mockSession.mockReturnValueOnce({ data: true })
+
       render(<PageComponent {...{
         page: {...page, email: '' },
         Blocks,
@@ -67,6 +70,21 @@ describe('page component', () => {
       expect(screen.getByText(
         'Sorry, the page you were looking for was not found'
       )).not.toBeNull()
+    })
+    
+    it('renders empty page when editing and no blocks', () => {
+      mockUsePathname.mockReturnValueOnce('my-page')
+      mockSession.mockReturnValueOnce({ data: true })
+      
+      render(<PageComponent {...{
+        page: {...page, blocks: { blocks: [] }, email: 'test@example.com', slug: '' },
+        Blocks,
+        setPageContext: jest.fn()
+      }} />)
+
+      expect(screen.queryByText(
+        'Sorry, the page you were looking for was not found'
+      )).toBeNull()
     })
     
     it('renders missing block message', () => {

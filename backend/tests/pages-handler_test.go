@@ -125,7 +125,7 @@ func TestGetPageBySlug(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	expected := []string{
-		`"email":"test1@example.com"`,
+		`"email":""`,
 		`"slug":"testpage1"`,
 		`"blocks":{"blocks":[{"header":"text"}]}`,
 		`"active":true`,
@@ -172,7 +172,7 @@ func TestGetMyPage(t *testing.T) {
 		`"slug":"testpage1"`,
 		`"blocks":{"blocks":[{"header":"text"}]}`,
 		`"active":true`,
-		`"city":"New York City`,
+		`"city":"New York City"`,
 		`"title":"A page"`,
 	}
 
@@ -218,20 +218,8 @@ func TestGetMyPageNotFound(t *testing.T) {
 	db := Setup()
 	defer Teardown(db)
 
-	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
-
-	db.Exec(
-		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
-		"test1@example.com",
-		"testpage1",
-		true,
-		blocks,
-		"New York City",
-		"A page",
-	)
-
 	userValidator := MockUserValidator{
-		User:  services.User{Email: "other@example.com"},
+		User:  services.User{Email: "test1@example.com"},
 		Valid: true,
 	}
 
@@ -243,8 +231,18 @@ func TestGetMyPageNotFound(t *testing.T) {
 
 	router.ServeHTTP(w, req)
 
-	assert.Equal(t, http.StatusNotFound, w.Code)
-	assert.Contains(t, w.Body.String(), "page not found")
+	expected := []string{
+		`"email":"test1@example.com"`,
+		`"slug":""`,
+		`"blocks":{"blocks":[]}`,
+		`"active":false`,
+		`"city":""`,
+		`"title":""`,
+	}
+
+	for _, val := range expected {
+		assert.Contains(t, w.Body.String(), val)
+	}
 }
 
 type Block struct {

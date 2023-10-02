@@ -23,7 +23,7 @@ export default function Layout({
           <meta name="description" content="A networking platform for in-home personal trainers and clients" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta charSet="utf-8" />
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href="/favicon-144x144.png" />
         </Head>
         <Header />
         <main className={styles.main}>
