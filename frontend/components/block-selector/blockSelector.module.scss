@@ -15,11 +15,11 @@
   position: fixed;
   width: 95vw;
   left: 2.5vw;
-  height: calc(100vh - 8rem);
   overflow: scroll;
   top: 5rem;
   z-index: 5;
   background: white;
+  align-items: flex-start;
 
   .cancel {
     grid-column: 1 / span 3;

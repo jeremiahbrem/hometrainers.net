@@ -29,10 +29,10 @@ type Slug struct {
 	Slug string `uri:"slug" binding:"required"`
 }
 
-func resolvePage(page *models.Page, context *gin.Context) {
+func resolvePage(page *models.Page, context *gin.Context, email string) {
 	context.JSON(http.StatusOK, gin.H{
 		"slug":   page.Slug,
-		"email":  page.Email,
+		"email":  email,
 		"title":  page.Title,
 		"blocks": page.Blocks,
 		"city":   page.City,
@@ -49,7 +49,11 @@ func getPageBySlug(slug Slug, pagesRepo services.PageRepository, context *gin.Co
 		return
 	}
 
-	resolvePage(page, context)
+	resolvePage(page, context, "")
+}
+
+type EmptyBlocks struct {
+	Blocks []string `json:"blocks" binding:"required"`
 }
 
 func getPageByEmail(email string, pagesRepo services.PageRepository, context *gin.Context) {
@@ -57,11 +61,21 @@ func getPageByEmail(email string, pagesRepo services.PageRepository, context *gi
 	var pageErr error
 
 	if page, pageErr = pagesRepo.GetUserPage(email); pageErr != nil {
-		context.JSON(http.StatusNotFound, "page not found")
+
+		emptyBlocks := EmptyBlocks{Blocks: []string{}}
+
+		context.JSON(http.StatusOK, gin.H{
+			"slug":   "",
+			"email":  email,
+			"title":  "",
+			"blocks": emptyBlocks,
+			"city":   "",
+			"active": false,
+		})
 		return
 	}
 
-	resolvePage(page, context)
+	resolvePage(page, context, email)
 }
 
 func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderType) {

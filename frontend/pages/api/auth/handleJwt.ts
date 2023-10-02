@@ -37,7 +37,7 @@ async function refreshGoogleToken(token: Token) {
       ...token,
       accessToken: refreshedTokens.access_token,
       idToken: refreshedTokens.idToken,
-      accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
+      accessTokenExpires: refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken
     }
   } catch (error) {
@@ -73,12 +73,12 @@ async function refreshAuthToken(token: Token) {
     if (!response.ok) {
       throw refreshedTokens
     }
-   
+
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
       idToken: '',
-      accessTokenExpires: Date.now() + refreshedTokens.expires_at * 1000,
+      accessTokenExpires: refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken
     }
   } catch (error) {
@@ -113,7 +113,7 @@ export async function authJwtCallback(token: Token, account?: Account) {
     token.accessTokenExpires = (account.expires_at as number) * 1000
     token.provider = account.provider
   }
-  
+
   if (Date.now() < token.accessTokenExpires) {
     return token
   }

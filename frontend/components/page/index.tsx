@@ -75,7 +75,11 @@ export const PageComponent = (props: PageProps) => {
 
   const blocks = page?.blocks?.blocks ?? []
 
-  if (!props.page?.slug || !props.page?.email) {
+  const showNotFound = isEditing
+    ? !props.page?.email
+    : !props.page?.slug
+
+  if (showNotFound) {
     return <NotFound />
   }
 
