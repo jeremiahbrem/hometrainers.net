@@ -65,7 +65,7 @@ describe('token refresh', () => {
           json: () => Promise.resolve({
             access_token: 'new-access-token',
             refresh_token: 'new-refresh-token',
-            expires_at: (now.getTime() + 7200) / 1000
+            expires_in: (now.getTime() + 7200) / 1000
           }),
           ok: true
         } as Response))
@@ -77,7 +77,7 @@ describe('token refresh', () => {
           idToken: '',
           accessToken: 'new-access-token',
           refreshToken: 'new-refresh-token',
-          accessTokenExpires: now.getTime() + (now.getTime() + 7200)
+          accessTokenExpires: now.getTime() + 7200
         })
 
         expect(global.fetch).toHaveBeenCalledWith(

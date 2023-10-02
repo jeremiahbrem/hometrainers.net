@@ -25,11 +25,11 @@
 
     form {
       box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
-      padding: 1rem;
+      padding: 1rem 0 1rem 1rem;
       background: white;
       height: 3rem;
       border-radius: 5px;
-      width: 16rem;
+      width: 13rem;
 
       label {
         display: block;
@@ -44,7 +44,7 @@
         border: none;
         padding: .5rem;
         background-color: rgba(128, 128, 128, .2);
-        width: 3rem;
+        width: 1rem;
       }
     }
   }

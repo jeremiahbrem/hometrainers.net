@@ -10,6 +10,7 @@ import { useRefreshKey } from '../refresh'
 import { BlockSelector } from '../block-selector'
 import { PageSaver } from './pageSaver'
 import { PreviewBlocksType } from '../block-selector/previewBlocks'
+import { PageSettings, SettingsError } from './pageSettings'
 
 type MyPageComponentProps = {
   Blocks:  Record<string, React.FC<ComponentProps<any>>>
@@ -59,7 +60,11 @@ type MyPageDisplayProps = MyPageComponentProps & {
 }
 
 const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
-  const { page, Blocks, PreviewBlocks } = props
+  const {
+    page,
+    Blocks, 
+    PreviewBlocks,
+  } = props
 
   const copyProps = {
     ...page,
@@ -67,6 +72,7 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
   }
 
   const [pageContext, setPageContext] = useState<Page>(copyProps)
+  const [settingsError, setSettingsError] = useState<SettingsError>(null)
 
   const { reset } = useRefreshKey()
   
@@ -91,13 +97,31 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
       blocks: {...page.blocks}
     })
     reset()
+    setSettingsError(null)
   }
 
   return (
     <Layout>
       <PageComponent {...{ page: pageContext, Blocks, setPageContext }} />
       <BlockSelector onClick={onBlockClick} PreviewBlocks={PreviewBlocks}/>
-      <PageSaver {...{ pageProps: page!, pageContext, reset: resetContent }} />
+      <PageSaver {...{
+        pageProps: page!,
+        pageContext,
+        reset: resetContent,
+        setSettingsError
+      }} />
+      <PageSettings {...{
+        update: (settings: PageSettings) => setPageContext(ctx => {
+          const copy = {
+            ...ctx,
+            ...settings
+          } as Page
+
+          return copy
+        }),
+        page: pageContext,
+        settingsError
+      }} />
     </Layout>
   )
 }

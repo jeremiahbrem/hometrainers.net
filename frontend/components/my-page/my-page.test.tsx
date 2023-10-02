@@ -1,5 +1,5 @@
 import React from 'react'
-import { act, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { MyPageComponent } from '.'
 import { ComponentProps } from '../types'
@@ -10,9 +10,9 @@ const page = {
   blocks: { blocks: []},
   slug: 'slug',
   email: 'email',
-  title: '',
-  city: '',
-  active: false,
+  title: 'title',
+  city: 'city',
+  active: true,
 }
 
 describe('my page component', () => {
@@ -58,6 +58,7 @@ describe('my page component', () => {
         json() {
           return {
             ...page,
+            slug: '',
             blocks: { blocks: []},
           }
         }
@@ -120,9 +121,94 @@ describe('my page component', () => {
 
       expect(screen.getByText('test text')).not.toBeNull()
     })
-
-   
   })
+
+  describe('page settings', () => {
+    beforeEach(() => {
+      mockUsePathname.mockImplementation(() => 'my-page')
+      mockSession.mockImplementation(() => ({ data: true }))
+    })
+
+    const response = Promise.resolve({
+      json() { return page }
+    })
+
+    beforeEach(async () => {
+      mockFetch.mockImplementation(() => response)
+
+      render(
+        <RefreshProvider>
+          <MyPageComponent
+            Blocks={{}}
+            PreviewBlocks={[]}
+          />
+        </RefreshProvider>
+      )
+
+      await act(() => response)
+    })
+
+    it('renders with settings closed', async () => {
+      const settings = screen.getByTestId('page-settings') as HTMLDivElement
+      expect(settings.style.left).toBe('-9.5rem')
+    })
+
+    it('opens settings', async () => {
+      await act(() => userEvent.click(document.querySelector('#open-settings')!))
+
+      const settings = screen.getByTestId('page-settings') as HTMLDivElement
+      expect(settings.style.left).toBe('0px')
+    })
+    
+    it('closes settings', async () => {
+      await act(() => userEvent.click(document.querySelector('#open-settings')!))
+      await act(() => userEvent.click(document.querySelector('#open-settings')!))
+
+      const settings = screen.getByTestId('page-settings') as HTMLDivElement
+      expect(settings.style.left).toBe('-9.5rem')
+    })
+
+    it('renders with page values', () => {
+      const slugField = screen.getByRole('textbox', { name: /Slug/ }) as HTMLInputElement
+
+      expect(slugField.value).toBe(page.slug)
+    })
+    
+    it('updates settings', async () => {
+      await act(() => userEvent.click(document.querySelector('#open-settings')!))
+      await act(() => userEvent.click(screen.getByRole('checkbox', { name: /Active/ })))
+      await act(() => userEvent.click(screen.getByRole('button', { name: /Save/ })))
+
+      expect(mockFetch).nthCalledWith(2,
+        'http://localhost:8080/my-page',
+        {
+          body: JSON.stringify({
+            ...page,
+            active: !page.active,
+          }),
+          headers: expect.any(Object),
+          method: 'POST'
+        }
+      )
+    })
+    
+    it('ignores fetch and opens settings if empty required field on save', async () => {
+      await act(() => userEvent.click(document.querySelector('#open-settings')!))
+      await act(() => fireEvent.change(
+        screen.getByRole('textbox', { name: /Title/ }), { target: { value: '' }}
+      ))
+      await act(() => userEvent.click(document.querySelector('#open-settings')!))
+      await act(() => userEvent.click(document.querySelector('#open-settings')!))
+
+      await act(() => userEvent.click(screen.getByRole('button', { name: /Save/ })))
+
+      expect(mockFetch).toBeCalledTimes(1)
+
+      const settings = screen.getByTestId('page-settings') as HTMLDivElement
+      expect(settings.style.left).toBe('0px')
+    })
+  })
+
   describe('adding new block', () => {
     beforeEach(() => {
       mockUsePathname.mockImplementation(() => 'my-page')
@@ -182,9 +268,7 @@ describe('my page component', () => {
       )
 
       await act(() => response)
-
       await act(() => userEvent.click(screen.getByRole('button', { name: /Add Block/ })))
-
       await act(() => userEvent.click(screen.getByTestId('test-preview')))
     })
     
