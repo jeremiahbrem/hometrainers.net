@@ -6,6 +6,7 @@ import cn from 'classnames'
 import { Editor } from '@/components/editors'
 import { ComponentProps } from '@/components/types'
 import { Container } from '@/components/container'
+import { ClickToAdd } from '@/components/click-to-add'
 
 export type ImageTextProps = ComponentProps<{
   text: string
@@ -50,7 +51,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
         preview={preview}
       >
         {parse(text ?? '')}
-        {!text && <>Click to add</>}
+        <ClickToAdd {...{ text: 'text', value: text }} />
       </Container>
 
       {!preview && <Editor
@@ -63,7 +64,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
       
       <Container className={cn(styles.image)} preview={preview}>
         {image && <Image src={image} alt={imageAlt ?? ''} height={0} width={0} />}
-        {!image && <>Click to add +</>}
+        <ClickToAdd {...{ text: 'image', value: image }} />
       </Container>
     </section>
   )

@@ -6,10 +6,12 @@ import Image from 'next/image'
 import classnames from 'classnames'
 import { useIsMyPage } from '@/utils/useIsMyPage'
 import { useIsLoggedIn } from '@/utils/useIsLoggedIn'
+import { useAlert } from '../alerts'
 
 const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
   const [open, setOpen] = useState<boolean>(false)
   const modalStyle = classnames(styles.signInModal, { [styles.open]: open })
+  const addAlert = useAlert()
 
   const isMyPage = useIsMyPage()
 
@@ -28,9 +30,22 @@ const SignIn: React.FC<{ isLoggedIn: boolean }> = ({ isLoggedIn }) => {
     setOpen(false)
   }
 
+  const handleOpen = () => {
+    try {
+      localStorage.setItem('test', 'test')
+      localStorage.removeItem('test')
+    }
+    catch {
+      addAlert('This requires cookies to be enabled')
+      return
+    }
+
+    setOpen(true)
+  }
+
   return (
     <div className={styles.signIn}>
-      <button className={styles.signInButton} id="sign-in-button" onClick={() => setOpen(true)}>
+      <button className={styles.signInButton} id="sign-in-button" onClick={handleOpen}>
         <span className="material-symbols-outlined">person</span>
       </button>
 
