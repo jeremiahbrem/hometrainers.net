@@ -14,7 +14,7 @@ export async function getPageResult(response: Response): Promise<Page> {
 
   try {
     const result = await response.json()
-    page = result?.slug && result?.email
+    page = result?.slug != null && result?.slug != undefined
       ? result
       : emptyPage
   }

@@ -8,15 +8,17 @@ import { useAlert } from '../alerts'
 import { Loading } from '../loading'
 import { useFetchWithAuth } from '@/utils/useFetchWithAuth'
 import { Button } from '../button'
+import { SettingsError } from './pageSettings'
 
 type PageSaverProps = {
   pageProps: Page
   pageContext: Page
   reset: () => void
+  setSettingsError: React.Dispatch<React.SetStateAction<SettingsError>>
 }
 
 export const PageSaver: React.FC<PageSaverProps> = (props) => {
-  const { pageProps, pageContext, reset } = props
+  const { pageProps, pageContext, reset, setSettingsError } = props
   const [open, setOpen] = useState(false)
 
   const refresh = useRefresh()
@@ -25,6 +27,18 @@ export const PageSaver: React.FC<PageSaverProps> = (props) => {
   const fetchResults = useFetchWithAuth()
 
   const save = async () => {
+    if (!pageContext.city || !pageContext.slug || !pageContext.title) {
+      setSettingsError({
+        city: !(!!pageContext.city),
+        title: !(!!pageContext.title),
+        slug: !(!!pageContext.slug),
+      })
+      return
+    }
+    else {
+      setSettingsError(null)
+    }
+
     setLoading(true)
 
     const result = await fetchResults({
