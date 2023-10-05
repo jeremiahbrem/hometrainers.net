@@ -23,6 +23,7 @@ func SetupRouter(
 
 	CreateLoginHandler(router)
 	CreatePagesHandlers(router, serviceProvider)
+	CreateProfilesHandlers(router, serviceProvider)
 
 	return router
 }

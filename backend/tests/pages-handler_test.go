@@ -19,24 +19,40 @@ import (
 	"gorm.io/gorm"
 )
 
-func Setup() *gorm.DB {
+var trainerEmail = "trainer@example.com"
+var trainerID uint
+
+func SetupPagesTests() *gorm.DB {
 	godotenv.Load("../.env")
 
 	db, _ := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 
-	db.AutoMigrate(&models.Page{})
+	db.AutoMigrate(&models.Page{}, &models.Goal{}, &models.Profile{})
+
+	db.Exec(
+		"insert into profiles (email, name, type) values(?,?,?)",
+		trainerEmail,
+		"Tester1",
+		"trainer",
+	)
+
+	var profile models.Profile
+	db.Model(&models.Profile{}).First(&profile)
+
+	trainerID = profile.ID
 
 	return db
 }
 
-func Teardown(db *gorm.DB) {
+func TeardownPagesTests(db *gorm.DB) {
 	sql := `
 		delete from pages;
+		delete from profiles;
 	`
 	db.Exec(sql)
 }
 
-func SetupRouter(
+func SetupPagesRouter(
 	db *gorm.DB,
 	args ...interface{},
 ) *gin.Engine {
@@ -63,34 +79,42 @@ func SetupRouter(
 }
 
 func TestGetActivePages(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
 
 	db.Exec(
-		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
-		"test1@example.com",
+		"insert into profiles (email, name, type) values(?,?,?)",
+		"other@example.com",
+		"Tester2",
+		"trainer",
+	)
+
+	var otherProfile models.Profile
+	db.Model(&models.Profile{}).Where(&models.Profile{Email: "other@example.com"}).First(&otherProfile)
+
+	db.Exec(
+		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		trainerID,
 		"testpage1",
 		true,
 		blocks,
-		"Chicago",
 		"A page",
 	)
 
 	db.Exec(
-		"insert into pages (email, slug, active, blocks) values(?,?,?,?,?,?)",
-		"test2@example.com",
+		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		otherProfile.ID,
 		"testpage2",
 		false,
 		blocks,
-		"New York City",
 		"A page",
 	)
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db)
+	router := SetupPagesRouter(db)
 
 	req, _ := http.NewRequest("GET", "/active-pages", nil)
 
@@ -101,24 +125,23 @@ func TestGetActivePages(t *testing.T) {
 }
 
 func TestGetPageBySlug(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
 
 	db.Exec(
-		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
-		"test1@example.com",
+		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		trainerID,
 		"testpage1",
 		true,
 		blocks,
-		"New York City",
 		"A page",
 	)
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db)
+	router := SetupPagesRouter(db)
 
 	req, _ := http.NewRequest("GET", "/page/testpage1", nil)
 
@@ -129,7 +152,6 @@ func TestGetPageBySlug(t *testing.T) {
 		`"slug":"testpage1"`,
 		`"blocks":{"blocks":[{"header":"text"}]}`,
 		`"active":true`,
-		`"city":"New York City`,
 		`"title":"A page"`,
 	}
 
@@ -139,40 +161,38 @@ func TestGetPageBySlug(t *testing.T) {
 }
 
 func TestGetMyPage(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
 
 	db.Exec(
-		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
-		"test1@example.com",
+		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		trainerID,
 		"testpage1",
 		true,
 		blocks,
-		"New York City",
 		"A page",
 	)
 
 	userValidator := MockUserValidator{
-		User:  services.User{Email: "test1@example.com"},
+		User:  services.User{Email: trainerEmail},
 		Valid: true,
 	}
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db, &userValidator)
+	router := SetupPagesRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/my-page", nil)
 
 	router.ServeHTTP(w, req)
 
 	expected := []string{
-		`"email":"test1@example.com"`,
+		fmt.Sprintf(`"email":"%s"`, trainerEmail),
 		`"slug":"testpage1"`,
 		`"blocks":{"blocks":[{"header":"text"}]}`,
 		`"active":true`,
-		`"city":"New York City"`,
 		`"title":"A page"`,
 	}
 
@@ -181,62 +201,28 @@ func TestGetMyPage(t *testing.T) {
 	}
 }
 
-func TestGetMyPageUnauthorized(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
-
-	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
-
-	db.Exec(
-		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
-		"test1@example.com",
-		"testpage1",
-		true,
-		blocks,
-		"New York City",
-		"A page",
-	)
-
-	userValidator := MockUserValidator{
-		User:  services.User{Email: "other@example.com"},
-		Valid: false,
-	}
-
-	w := httptest.NewRecorder()
-
-	router := SetupRouter(db, &userValidator)
-
-	req, _ := http.NewRequest("GET", "/my-page", nil)
-
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
-	assert.Contains(t, w.Body.String(), "unauthorized")
-}
-
 func TestGetMyPageNotFound(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	userValidator := MockUserValidator{
-		User:  services.User{Email: "test1@example.com"},
+		User:  services.User{Email: trainerEmail},
 		Valid: true,
 	}
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db, &userValidator)
+	router := SetupPagesRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/my-page", nil)
 
 	router.ServeHTTP(w, req)
 
 	expected := []string{
-		`"email":"test1@example.com"`,
+		fmt.Sprintf(`"email":"%s"`, trainerEmail),
 		`"slug":""`,
 		`"blocks":{"blocks":[]}`,
 		`"active":false`,
-		`"city":""`,
 		`"title":""`,
 	}
 
@@ -245,23 +231,52 @@ func TestGetMyPageNotFound(t *testing.T) {
 	}
 }
 
+func TestGetMyPageNotTrainer(t *testing.T) {
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
+
+	db.Exec(
+		"insert into profiles (email, name, type) values(?,?,?)",
+		"other@example.com",
+		"Tester2",
+		"client",
+	)
+
+	var otherProfile models.Profile
+	db.Model(&models.Profile{}).Where(&models.Profile{Email: "other@example.com"}).First(&otherProfile)
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: "other@example.com"},
+		Valid: true,
+	}
+
+	w := httptest.NewRecorder()
+
+	router := SetupPagesRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("GET", "/my-page", nil)
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Contains(t, w.Body.String(), "trainer profile required")
+}
+
 type Block struct {
 	BlockName string `json:"blockName" binding:"required"`
 }
 
 func TestCreatePageMissingField(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	userValidator := MockUserValidator{
-		User:  services.User{Email: "test@example.com"},
+		User:  services.User{Email: trainerEmail},
 		Valid: true,
 	}
 
-	page := models.Page{
-		Email:  "test@example.com",
+	page := models.PageArgs{
 		Slug:   "test-page",
-		Title:  "Test Page",
 		Active: true,
 		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
 	}
@@ -270,71 +285,37 @@ func TestCreatePageMissingField(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db, &userValidator)
+	router := SetupPagesRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Contains(t, w.Body.String(), "invalid page: Key: 'Page.City'")
-}
-
-func TestCreatePageUserNoMatch(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
-
-	userValidator := MockUserValidator{
-		User:  services.User{Email: "test@example.com"},
-		Valid: true,
-	}
-
-	page := models.Page{
-		Email:  "other@example.com",
-		Slug:   "test-page",
-		Title:  "Test Page",
-		Active: true,
-		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
-		City:   "Chicago",
-	}
-
-	marshalled, _ := json.Marshal(page)
-
-	w := httptest.NewRecorder()
-
-	router := SetupRouter(db, &userValidator)
-
-	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
-
-	router.ServeHTTP(w, req)
-
-	assert.Equal(t, http.StatusUnauthorized, w.Code)
-	assert.Contains(t, w.Body.String(), "unauthorized")
+	assert.Contains(t, w.Body.String(), "invalid page: Key: 'PageArgs.Title'")
 }
 
 func TestCreatePageSuccess(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	userValidator := MockUserValidator{
-		User:  services.User{Email: "test@example.com"},
+		User:  services.User{Email: trainerEmail},
 		Valid: true,
 	}
 
-	page := models.Page{
-		Email:  "test@example.com",
+	page := models.PageArgs{
 		Slug:   "test-page",
 		Title:  "Test Page",
 		Active: true,
 		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
-		City:   "Chicago",
 	}
 
 	marshalled, _ := json.Marshal(page)
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db, &userValidator)
+	router := SetupPagesRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
@@ -346,48 +327,54 @@ func TestCreatePageSuccess(t *testing.T) {
 	db.Where("slug = ?", page.Slug).First(&newPage)
 
 	assert.True(t, newPage.Active)
-	assert.Equal(t, newPage.City, page.City)
 	assert.Equal(t, newPage.Blocks, page.Blocks)
 	assert.Equal(t, newPage.Title, page.Title)
 	assert.Equal(t, newPage.Slug, page.Slug)
-	assert.Equal(t, newPage.Email, page.Email)
+	assert.Equal(t, trainerID, newPage.ProfileID)
 }
 
 func TestCreatePageSlugExists(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
 
 	db.Exec(
-		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
-		"test1@example.com",
+		"insert into profiles (email, name, type) values(?,?,?)",
+		"other@example.com",
+		"Tester2",
+		"trainer",
+	)
+
+	var otherProfile models.Profile
+	db.Model(&models.Profile{}).Where(&models.Profile{Email: "other@example.com"}).First(&otherProfile)
+
+	db.Exec(
+		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		otherProfile.ID,
 		"testpage1",
 		true,
 		blocks,
-		"New York City",
 		"A page",
 	)
 
 	userValidator := MockUserValidator{
-		User:  services.User{Email: "test@example.com"},
+		User:  services.User{Email: trainerEmail},
 		Valid: true,
 	}
 
 	page := models.Page{
-		Email:  "test@example.com",
 		Slug:   "testpage1",
 		Title:  "Test Page",
 		Active: true,
 		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
-		City:   "Chicago",
 	}
 
 	marshalled, _ := json.Marshal(page)
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db, &userValidator)
+	router := SetupPagesRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
@@ -398,28 +385,26 @@ func TestCreatePageSlugExists(t *testing.T) {
 }
 
 func TestCreatePageSlugMyPage(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	userValidator := MockUserValidator{
-		User:  services.User{Email: "test@example.com"},
+		User:  services.User{Email: trainerEmail},
 		Valid: true,
 	}
 
 	page := models.Page{
-		Email:  "test@example.com",
 		Slug:   "my-page",
 		Title:  "Test Page",
 		Active: true,
 		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
-		City:   "Chicago",
 	}
 
 	marshalled, _ := json.Marshal(page)
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db, &userValidator)
+	router := SetupPagesRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
@@ -430,40 +415,37 @@ func TestCreatePageSlugMyPage(t *testing.T) {
 }
 
 func TestUpdatePageSuccess(t *testing.T) {
-	db := Setup()
-	defer Teardown(db)
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
 
 	userValidator := MockUserValidator{
-		User:  services.User{Email: "test1@example.com"},
+		User:  services.User{Email: trainerEmail},
 		Valid: true,
 	}
 
 	blocks := datatypes.JSON([]byte(`{"blocks": []}`))
 
 	db.Exec(
-		"insert into pages (email, slug, active, blocks, city, title) values(?,?,?,?,?,?)",
-		"test1@example.com",
+		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		trainerID,
 		"testpage1",
 		true,
 		blocks,
-		"New York City",
 		"A page",
 	)
 
 	page := models.Page{
-		Email:  "test1@example.com",
 		Slug:   "testpage1",
 		Title:  "Test Page",
 		Active: true,
 		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
-		City:   "Chicago",
 	}
 
 	marshalled, _ := json.Marshal(page)
 
 	w := httptest.NewRecorder()
 
-	router := SetupRouter(db, &userValidator)
+	router := SetupPagesRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
@@ -475,5 +457,4 @@ func TestUpdatePageSuccess(t *testing.T) {
 	db.Where("slug = ?", page.Slug).First(&updatedPage)
 
 	assert.Equal(t, updatedPage.Blocks, page.Blocks)
-	fmt.Println(w.Body.String())
 }
