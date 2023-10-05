@@ -55,6 +55,7 @@ describe('my page component', () => {
 
     it('renders block selector button', async () => {
       const response = Promise.resolve({
+        ok: true,
         json() {
           return {
             ...page,
@@ -75,6 +76,7 @@ describe('my page component', () => {
     
     it('renders with block selector closed', async () => {
       const response = Promise.resolve({
+        ok: true,
         json() {
           return {
             ...page,
@@ -95,6 +97,7 @@ describe('my page component', () => {
     
     it('renders existing blocks', async () => {
       const response = Promise.resolve({
+        ok: true,
         json() {
           return {
             ...page,
@@ -120,6 +123,32 @@ describe('my page component', () => {
       await act(() => response)
 
       expect(screen.getByText('test text')).not.toBeNull()
+    })
+    
+    it('shows error alert if fetch error', async () => {
+      const response = Promise.resolve({
+        ok: false,
+        json() {
+          return { error: "Server error"}
+        }
+      })
+
+      mockFetch.mockImplementation(() => response)
+
+      const Component: React.FC<ComponentProps<{ text: string}>> = (props) => {
+        return <>test</>
+      }
+
+      render(<AlertProvider>
+        <MyPageComponent
+          Blocks={{ 'test-block': Component }}
+          PreviewBlocks={[]}
+        />
+      </AlertProvider>)
+
+      await act(() => response)
+
+      expect(screen.getByText('Server error')).not.toBeNull()
     })
   })
 
@@ -354,6 +383,25 @@ describe('my page component', () => {
       
       it('shows success alert', () => {
         expect(screen.getByText('Page updated!')).not.toBeNull()
+      })
+    })
+   
+    describe('when saved with error', () => {
+      const saveResponse = Promise.resolve({
+        ok: false,
+        json() {
+          return { error: "Server error" }
+        }
+      })
+
+      beforeEach(async () => {
+        mockFetch.mockReturnValueOnce(saveResponse)
+
+        await act(() => userEvent.click(screen.getByRole('button', { name: /Save/ })))
+      })
+
+      it('shows error alert', () => {
+        expect(screen.getByText('Server error')).not.toBeNull()
       })
     })
   })

@@ -54,7 +54,7 @@ export const PageSaver: React.FC<PageSaverProps> = (props) => {
       addAlert('Page updated!', true)
     }
     else {
-      let error = 'There was an error with your request'
+      let error = 'There was an error with processing your request'
 
       try {
         error = (await result.json())?.error ?? error
