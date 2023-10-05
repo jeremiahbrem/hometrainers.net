@@ -11,6 +11,7 @@ import { BlockSelector } from '../block-selector'
 import { PageSaver } from './pageSaver'
 import { PreviewBlocksType } from '../block-selector/previewBlocks'
 import { PageSettings, SettingsError } from './pageSettings'
+import { useAlert } from '../alerts'
 
 type MyPageComponentProps = {
   Blocks:  Record<string, React.FC<ComponentProps<any>>>
@@ -21,7 +22,7 @@ export const MyPageComponent: React.FC<MyPageComponentProps> = (props) => {
   const isLoggedIn = useIsLoggedIn()
 
   if (!isLoggedIn) {
-    return <Layout><></></Layout>
+    return <Layout />
   }
 
   return <MyPageLoader {...props} />
@@ -33,12 +34,24 @@ const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
   const { refreshKey } = useRefreshKey()
 
   const fetchResults = useFetchWithAuth()
+  const addAlert = useAlert()
 
   const fetchPage = async () => {
     const response = await fetchResults({
       method: 'GET',
       path: '/my-page'
     })
+  
+    if (!response.ok) {
+      let error = 'There was an error with processing your request'
+
+      try {
+        error = (await response.json())?.error ?? error
+      }
+      catch {}
+
+      addAlert(error)
+    }
 
     const page = await getPageResult(response)
     setPage(page)
@@ -50,6 +63,10 @@ const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
 
   if (!page) {
     return <Loading open={true} />
+  }
+
+  if (!page.email) {
+    return <Layout />
   }
 
   return <MyPageDisplay {...{ ...props,page }} />
