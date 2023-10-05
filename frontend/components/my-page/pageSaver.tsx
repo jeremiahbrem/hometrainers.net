@@ -57,7 +57,7 @@ export const PageSaver: React.FC<PageSaverProps> = (props) => {
       let error = 'There was an error with your request'
 
       try {
-        error = await result.json()
+        error = (await result.json())?.error ?? error
       }
       catch {}
 

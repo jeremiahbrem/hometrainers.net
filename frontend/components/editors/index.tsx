@@ -17,10 +17,11 @@ import { useIsEditing } from '@/utils/useIsEditing'
 import { useRefreshKey } from '../refresh'
 
 type MenuBarProps = {
+  setOpen: React.Dispatch<boolean>
   options?: string[]
 }
 
-const MenuBar: React.FC<MenuBarProps> = ({ options }) => {
+const MenuBar: React.FC<MenuBarProps> = ({ options, setOpen }) => {
   const { editor } = useCurrentEditor()
 
   const opts = options
@@ -162,6 +163,11 @@ const MenuBar: React.FC<MenuBarProps> = ({ options }) => {
       >
         redo
       </button>
+      <button
+        onClick={() => setOpen(false)}
+      >
+        close
+      </button>
     </div>
   )
 }
@@ -245,7 +251,7 @@ export const Editor: React.FC<EditorProps> = ({
     >
       <EditorProvider
         key={refreshKey} // editor content does not update on reset, so re-mounting
-        slotBefore={<MenuBar {...{ options }} />}
+        slotBefore={<MenuBar {...{ options, setOpen }} />}
         extensions={extensions}
         onUpdate={e => onUpdate(e.editor.getHTML())}
         content={content}

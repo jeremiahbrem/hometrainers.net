@@ -65,12 +65,12 @@ func GetAuthorizedUser(
 	valid := false
 
 	if len(providerHeader) == 0 {
-		context.JSON(http.StatusBadRequest, "invalid token provider header")
+		context.JSON(http.StatusBadRequest, gin.H{"error": "invalid token provider header"})
 		return user, false
 	}
 
 	if providerHeader[0] != "auth" && providerHeader[0] != "google" {
-		context.JSON(http.StatusBadRequest, "invalid token provider header")
+		context.JSON(http.StatusBadRequest, gin.H{"error": "invalid token provider header"})
 		return user, false
 	}
 
@@ -87,7 +87,7 @@ func GetAuthorizedUser(
 }
 
 func invalidAuth(context *gin.Context, user User) (User, bool) {
-	context.JSON(http.StatusBadRequest, "invalid authorization header")
+	context.JSON(http.StatusBadRequest, gin.H{"error": "invalid authorization header"})
 	return user, false
 }
 
@@ -106,7 +106,7 @@ func getAuthUser(
 	resp, err := validator.Validate(token)
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, err.Error())
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return user, false
 	}
 
@@ -115,14 +115,14 @@ func getAuthUser(
 	body, bodyErr := ioutil.ReadAll(resp.Body)
 
 	if bodyErr != nil {
-		context.JSON(http.StatusBadRequest, bodyErr.Error())
+		context.JSON(http.StatusBadRequest, gin.H{"error": bodyErr.Error()})
 		return user, false
 	}
 
 	jsonErr := json.Unmarshal(body, &user)
 
 	if jsonErr != nil {
-		context.JSON(http.StatusBadRequest, jsonErr.Error())
+		context.JSON(http.StatusBadRequest, gin.H{"error": jsonErr.Error()})
 		return user, false
 	}
 
@@ -146,14 +146,14 @@ func getGoogleUser(
 	payload, err := validator.Validate(context, token, clientId)
 
 	if err != nil {
-		context.JSON(http.StatusUnauthorized, err.Error())
+		context.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return user, false
 	}
 
 	emailVerified := fmt.Sprintf("%v", payload.Claims["email_verified"])
 
 	if emailVerified != "true" {
-		context.JSON(http.StatusBadRequest, "email not verifed")
+		context.JSON(http.StatusBadRequest, gin.H{"error": "email not verifed"})
 		return user, false
 	}
 

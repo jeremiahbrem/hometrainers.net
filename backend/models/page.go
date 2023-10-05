@@ -7,10 +7,17 @@ import (
 
 type Page struct {
 	gorm.Model
-	Email  string         `gorm:"not null; uniqueIndex" json:"email" binding:"required"`
-	Slug   string         `gorm:"not null' uniqueIndex" json:"slug" binding:"required"`
+	Slug      string         `gorm:"not null; uniqueIndex" json:"slug" binding:"required"`
+	Blocks    datatypes.JSON `json:"blocks" binding:"required"`
+	Active    bool           `json:"active" gorm:"default:true"`
+	Title     string         `json:"title" binding:"required" gorm:"not null"`
+	ProfileID uint           `gorm:"constraint:OnDelete:CASCADE;"`
+	Profile   Profile
+}
+
+type PageArgs struct {
+	Slug   string         `json:"slug" binding:"required"`
 	Blocks datatypes.JSON `json:"blocks" binding:"required"`
 	Active bool           `json:"active" gorm:"default:true"`
-	City   string         `json:"city" binding:"required" gorm:"not null"`
-	Title  string         `json:"title" binding:"required" gorm:"not null"`
+	Title  string         `json:"title" binding:"required"`
 }
