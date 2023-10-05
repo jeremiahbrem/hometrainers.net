@@ -24,7 +24,37 @@ func (repo *PageRepository) GetPage(slug string) (*models.Page, error) {
 
 func (repo *PageRepository) GetUserPage(email string) (*models.Page, error) {
 	var page *models.Page
-	if err := repo.db.Where("email = ?", email).First(&page).Error; err != nil {
+	db := repo.db
+	where := db.Where(&models.Profile{Email: email})
+
+	if err := db.Joins("Profile", where).First(&page).Error; err != nil {
+		return nil, err
+	}
+	return page, nil
+}
+
+func (repo *PageRepository) GetTrainerPages(emails []string) map[string]*models.Page {
+	var pages []*models.Page
+	db := repo.db
+	where := db.Where("email in ?", emails)
+
+	db.Model(&models.Page{}).Where("active = ?", true).Joins("Profile", where).Find(&pages)
+
+	pageMap := map[string]*models.Page{}
+
+	for _, v := range pages {
+		pageMap[v.Profile.Email] = v
+	}
+
+	return pageMap
+}
+
+func (repo *PageRepository) GetProfileSlugs(email string) (*models.Page, error) {
+	var page *models.Page
+	db := repo.db
+	where := db.Where(&models.Profile{Email: email})
+
+	if err := db.Joins("Profile", where).First(&page).Error; err != nil {
 		return nil, err
 	}
 	return page, nil
@@ -41,14 +71,20 @@ func (repo *PageRepository) GetActiveSlugs() ([]string, error) {
 	return slugs, nil
 }
 
-func (repo *PageRepository) CreatePage(page models.Page) error {
+func (repo *PageRepository) CreatePage(pageArgs models.PageArgs, profile *models.Profile) error {
+	page := models.Page{
+		ProfileID: profile.ID,
+		Slug:      pageArgs.Slug,
+		Title:     pageArgs.Title,
+		Blocks:    pageArgs.Blocks,
+		Active:    false,
+	}
 	return repo.db.Create(&page).Error
 }
 
-func (repo *PageRepository) UpdatePage(existing *models.Page, updated models.Page) error {
+func (repo *PageRepository) UpdatePage(existing *models.Page, updated models.PageArgs) error {
 	existing.Active = updated.Active
 	existing.Slug = updated.Slug
-	existing.City = updated.City
 	existing.Blocks = updated.Blocks
 	existing.Active = updated.Active
 	existing.Title = updated.Title

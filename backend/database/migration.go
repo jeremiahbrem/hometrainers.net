@@ -6,7 +6,6 @@ import (
 
 type MigrationType interface {
 	RunMigration()
-	CreateIfNotExists()
 }
 
 type Migration struct {
@@ -21,6 +20,6 @@ func (m *Migration) RunMigration() {
 		DB.Db.Create(&Migration{
 			Name: m.Name,
 		})
-		migration.Exec()
+		m.Exec()
 	}
 }
