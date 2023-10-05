@@ -12,12 +12,13 @@ import (
 func slugAlreadyExists(
 	pagesRepo services.PageRepository,
 	context *gin.Context,
-	page models.Page,
+	profile *models.Profile,
+	slug string,
 ) bool {
-	existingSlug, slugExistErr := pagesRepo.GetPage(page.Slug)
+	existingPage, exitingPageErr := pagesRepo.GetPage(slug)
 
-	if slugExistErr == nil && existingSlug.Email != page.Email {
-		slugExistsErr := fmt.Errorf("slug %s already exists", page.Slug)
+	if exitingPageErr == nil && existingPage.ProfileID != profile.ID {
+		slugExistsErr := fmt.Errorf("slug %s already exists", slug)
 		context.JSON(http.StatusBadRequest, slugExistsErr.Error())
 		return true
 	}
@@ -35,7 +36,6 @@ func resolvePage(page *models.Page, context *gin.Context, email string) {
 		"email":  email,
 		"title":  page.Title,
 		"blocks": page.Blocks,
-		"city":   page.City,
 		"active": page.Active,
 	})
 }
@@ -45,7 +45,7 @@ func getPageBySlug(slug Slug, pagesRepo services.PageRepository, context *gin.Co
 	var pageErr error
 
 	if page, pageErr = pagesRepo.GetPage(slug.Slug); pageErr != nil {
-		context.JSON(http.StatusNotFound, "page not found")
+		context.JSON(http.StatusNotFound, gin.H{"error": "page not found"})
 		return
 	}
 
@@ -69,7 +69,6 @@ func getPageByEmail(email string, pagesRepo services.PageRepository, context *gi
 			"email":  email,
 			"title":  "",
 			"blocks": emptyBlocks,
-			"city":   "",
 			"active": false,
 		})
 		return
@@ -80,6 +79,7 @@ func getPageByEmail(email string, pagesRepo services.PageRepository, context *gi
 
 func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderType) {
 	pagesRepo := provider.GetPagesRepo()
+	profilesRepo := provider.GetProfilesRepo()
 	userValidator := provider.GetUserValidator()
 
 	router.GET("/active-pages", func(context *gin.Context) {
@@ -90,7 +90,7 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 		)
 
 		if pages, err = pagesRepo.GetActiveSlugs(); err != nil {
-			context.JSON(http.StatusInternalServerError, err.Error())
+			context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 
 		context.JSON(http.StatusOK, gin.H{
@@ -102,7 +102,7 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 		var slug Slug
 
 		if err := context.ShouldBindUri(&slug); err != nil {
-			context.JSON(http.StatusBadRequest, err.Error())
+			context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -116,42 +116,49 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 			return
 		}
 
-		page := models.Page{}
+		profile, profileErr := profilesRepo.GetProfile(user.Email)
+
+		if profileErr != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "profile required"})
+			return
+		}
+
+		if profile.Type != "trainer" {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "trainer profile required"})
+			return
+		}
+
+		page := models.PageArgs{}
 
 		parseErr := context.BindJSON(&page)
 
 		if parseErr != nil {
 			errMessage := fmt.Sprintf("invalid page: %s", parseErr)
-			context.JSON(http.StatusBadRequest, errMessage)
-			return
-		}
-
-		if page.Email != user.Email {
-			context.JSON(http.StatusUnauthorized, "unauthorized")
+			context.JSON(http.StatusBadRequest, gin.H{"error": errMessage})
 			return
 		}
 
 		if page.Slug == "my-page" {
-			context.JSON(http.StatusBadRequest, "slug my-page is reserved")
+			context.JSON(http.StatusBadRequest, gin.H{"error": "slug my-page is reserved"})
 			return
 		}
 
-		existing, existsErr := pagesRepo.GetUserPage(page.Email)
+		existing, existsErr := pagesRepo.GetUserPage(profile.Email)
 
 		var dbErr error
 
 		var message string
 
 		if existsErr != nil {
-			if exists := slugAlreadyExists(pagesRepo, context, page); exists {
+			if exists := slugAlreadyExists(pagesRepo, context, profile, page.Slug); exists {
 				return
 			}
 
-			dbErr = pagesRepo.CreatePage(page)
+			dbErr = pagesRepo.CreatePage(page, profile)
 			message = "created"
 
 		} else {
-			if exists := slugAlreadyExists(pagesRepo, context, page); exists {
+			if exists := slugAlreadyExists(pagesRepo, context, profile, page.Slug); exists {
 				return
 			}
 
@@ -160,7 +167,7 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 		}
 
 		if dbErr != nil {
-			context.JSON(http.StatusInternalServerError, dbErr.Error())
+			context.JSON(http.StatusInternalServerError, gin.H{"error": dbErr.Error()})
 			return
 		}
 
@@ -171,7 +178,19 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 		user, ok := userValidator.Validate(context)
 
 		if !ok {
-			context.JSON(http.StatusUnauthorized, "unauthorized")
+			context.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+			return
+		}
+
+		profile, profileErr := profilesRepo.GetProfile(user.Email)
+
+		if profileErr != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "profile required"})
+			return
+		}
+
+		if profile.Type != "trainer" {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "trainer profile required"})
 			return
 		}
 
