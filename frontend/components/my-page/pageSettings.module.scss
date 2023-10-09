@@ -32,6 +32,7 @@
 
     fieldset {
       border: none;
+      padding-right: 0;
       label {
         display: block;
         margin-bottom: .2rem;
@@ -39,10 +40,9 @@
       }
       input {
         color: inherit;
-        border: none;
-        padding: .5rem;
+        padding: .5rem 0 .5rem .5rem;
         background-color: rgba(128, 128, 128, .2);
-        width: 6rem;
+        width: 7rem;
         border: 2px solid transparent;
       }
       display: flex;

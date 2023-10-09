@@ -8,11 +8,16 @@ type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButton
   className?: string
 }
 export const Button: React.FC<ButtonProps> = (props) => {
-  const { onClick, text, className, ...rest } = props;
+  const { onClick, text, className, type, ...rest } = props;
 
   const style = cn(styles.button, className)
 
   return (
-    <button className={style} onClick={onClick} {...rest}>{text}</button>
+    <button
+      type={type ?? 'button'}
+      className={style}
+      onClick={onClick} {...rest}>
+      {text}
+    </button>
   )
 }
