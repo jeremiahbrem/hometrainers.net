@@ -5,7 +5,7 @@ import cn from 'classnames'
 import styles from './alerts.module.scss'
 import { Roboto } from 'next/font/google'
 
-const inter = Roboto({
+const roboto = Roboto({
   subsets: ['latin'],
   weight: ['300', '400','500','700','900']
 })
@@ -38,7 +38,7 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
   return (
     <AlertContext.Provider value={{ addAlert }}>
       {children}
-      <div className={cn(styles.alert, inter.className, { [styles.open]: !!alert })}>
+      <div className={cn(styles.alert, roboto.className, { [styles.open]: !!alert })}>
         <div
           role='button'
           className={cn(styles.scrim)}

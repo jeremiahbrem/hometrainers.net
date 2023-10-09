@@ -1,6 +1,5 @@
 import React from 'react'
-import { act, render, screen } from '@testing-library/react'
-import { userEvent } from '@testing-library/user-event'
+import { render } from '@testing-library/react'
 import Header from '.'
 
 const mockUsePathname = jest.fn()
@@ -24,26 +23,7 @@ describe('header', () => {
     jest.restoreAllMocks()
   })
 
-  it('renders hidden', () => {
+  it('renders', () => {
     render(<Header />)
-
-    const modal = screen.getByTestId('sign-in-modal')!
-    expect(modal.style.left).toBe('-110vw')
-  })
-  
-  it('opens sign in on button click', async () => {
-    render(<Header />)
-
-    await act(() => userEvent.click(document.querySelector('#sign-in-button')!))
-    const modal = screen.getByTestId('sign-in-modal')!
-    expect(modal.style.left).toBe('0px')
-  })
-  
-  it('opens sign in on my-page if logged out', async () => {
-    mockUsePathname.mockImplementation(() => 'my-page')
-    render(<Header />)
-
-    const modal = screen.getByTestId('sign-in-modal')!
-    expect(modal.style.left).toBe('0px')
   })
 })

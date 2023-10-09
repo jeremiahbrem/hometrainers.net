@@ -1,0 +1,16 @@
+@import '@/styles/global.scss';
+
+.selected {
+  background: $orange;
+  color: white;
+  width: fit-content;
+  border-radius: 4px;
+  padding: .2rem .5rem;
+  font-size: .75rem;
+  margin-bottom: .3rem;
+  margin-right: .3rem;
+  button {
+    color: white;
+    margin-left: 1rem;
+  }
+}

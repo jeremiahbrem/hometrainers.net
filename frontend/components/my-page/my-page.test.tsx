@@ -1,10 +1,13 @@
 import React from 'react'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import { MyPageComponent } from '.'
+import { MyPageComponent, MyPageComponentProps } from '.'
 import { ComponentProps } from '../types'
 import { RefreshProvider } from '../refresh'
 import { AlertProvider } from '../alerts'
+import { ProfileContext } from '../profile-provider'
+import { Profile } from '../profile-provider/types'
+import { API } from '@/api'
 
 const page = {
   blocks: { blocks: []},
@@ -22,7 +25,7 @@ describe('my page component', () => {
   })
 
   it('does not fetch page if not logged', () => {
-    render(<MyPageComponent Blocks={{}} PreviewBlocks={[]} />)
+    render(<Harness Blocks={{}} PreviewBlocks={[]} />)
 
     expect(global.fetch).not.toBeCalled()
   })
@@ -35,16 +38,29 @@ describe('my page component', () => {
 
     it('shows loading when fetch pending', () => {
       mockFetch.mockImplementation(() => new Promise(() => undefined))
-      render(<MyPageComponent Blocks={{}} PreviewBlocks={[]} />)
+      render(<Harness Blocks={{}} PreviewBlocks={[]} />)
   
       const loading = screen.getByTestId('loading')
       expect(loading).toHaveAttribute('data-open', 'true')
     })
     
+    it('does not fetch if profile loading', () => {
+      render(<Harness Blocks={{}} PreviewBlocks={[]} profileLoading={true} />)
+  
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+    
+    it('redirects to profiles if empty profile loaded', () => {
+      render(<Harness Blocks={{}} PreviewBlocks={[]} profile={{} as Profile} />)
+  
+      expect(mockFetch).not.toHaveBeenCalled()
+      expect(mockRouter).toHaveBeenCalledWith('/profiles')
+    })
+    
     it('stops loading when fetch resolves', async () => {
       const response = Promise.resolve({ json() {} })
       mockFetch.mockImplementation(() => response)
-      render(<MyPageComponent Blocks={{}} PreviewBlocks={[]} />)
+      render(<Harness Blocks={{}} PreviewBlocks={[]} />)
 
       await act(() => response)
   
@@ -67,7 +83,7 @@ describe('my page component', () => {
 
       mockFetch.mockImplementation(() => response)
 
-      render(<MyPageComponent Blocks={{}} PreviewBlocks={[]} />)
+      render(<Harness Blocks={{}} PreviewBlocks={[]} />)
 
       await act(() => response)
 
@@ -87,7 +103,7 @@ describe('my page component', () => {
 
       mockFetch.mockImplementation(() => response)
 
-      render(<MyPageComponent Blocks={{}} PreviewBlocks={[]} />)
+      render(<Harness Blocks={{}} PreviewBlocks={[]} />)
 
       await act(() => response)
 
@@ -115,7 +131,7 @@ describe('my page component', () => {
         return <>{props.block.text}</>
       }
 
-      render(<MyPageComponent
+      render(<Harness
         Blocks={{ 'test-block': Component }}
         PreviewBlocks={[]}
       />)
@@ -140,7 +156,7 @@ describe('my page component', () => {
       }
 
       render(<AlertProvider>
-        <MyPageComponent
+        <Harness
           Blocks={{ 'test-block': Component }}
           PreviewBlocks={[]}
         />
@@ -167,7 +183,7 @@ describe('my page component', () => {
 
       render(
         <RefreshProvider>
-          <MyPageComponent
+          <Harness
             Blocks={{}}
             PreviewBlocks={[]}
           />
@@ -209,7 +225,7 @@ describe('my page component', () => {
       await act(() => userEvent.click(screen.getByRole('button', { name: /Save/ })))
 
       expect(mockFetch).nthCalledWith(2,
-        'http://localhost:8080/my-page',
+        `${API}/my-page`,
         {
           body: JSON.stringify({
             ...page,
@@ -235,6 +251,8 @@ describe('my page component', () => {
 
       const settings = screen.getByTestId('page-settings') as HTMLDivElement
       expect(settings.style.left).toBe('0px')
+      const titleInput = document.querySelector('#title')! as HTMLElement
+      expect(titleInput.style.borderColor).toBe('red')
     })
   })
 
@@ -273,7 +291,7 @@ describe('my page component', () => {
       render(
         <AlertProvider>
           <RefreshProvider>
-            <MyPageComponent
+            <Harness
               Blocks={{
                 'test-block-1': ExistingComponent,
                 'test-block-2': AddedComponent
@@ -345,7 +363,7 @@ describe('my page component', () => {
 
       it('submits updated data', async () => {
         expect(mockFetch).nthCalledWith(2,
-          'http://localhost:8080/my-page',
+          `${API}/my-page`,
           {
             body: JSON.stringify({
               ...page,
@@ -368,7 +386,7 @@ describe('my page component', () => {
       
       it('refetches', async () => {
         expect(mockFetch).nthCalledWith(3,
-          'http://localhost:8080/my-page',
+          `${API}/my-page`,
           {
             headers: expect.any(Object),
             method: 'GET'
@@ -407,12 +425,38 @@ describe('my page component', () => {
   })
 })
 
+type HarnessProps = MyPageComponentProps & {
+  profile?: Profile
+  profileLoading?: boolean
+}
+
+const Harness: React.FC<HarnessProps> = (props) => {
+  return (
+    <ProfileContext.Provider value={{
+      openAllowClose: () => undefined,
+      openDisallowClose: () => undefined,
+      resetProfile: () => Promise.resolve(),
+      profile: props.profile ?? {
+        email: 'email',
+        cities: [],
+        goals: [],
+        type: 'trainer',
+        name: 'name'
+      },
+      profileLoading: props.profileLoading ?? false,
+    }}>
+      <MyPageComponent {...props} />
+    </ProfileContext.Provider>
+  )
+}
+
 const mockFetch = jest.fn()
 
 global.fetch = mockFetch
 
 const mockUsePathname = jest.fn()
 const mockRedirect = jest.fn()
+const mockRouter = jest.fn()
 
 jest.mock('next/navigation', () => ({
   usePathname() {
@@ -420,6 +464,9 @@ jest.mock('next/navigation', () => ({
   },
   redirect() {
     return mockRedirect()
+  },
+  useRouter() {
+    return { push: mockRouter }
   }
 }))
 

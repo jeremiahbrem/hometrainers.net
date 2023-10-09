@@ -7,12 +7,18 @@ jest.mock('next/navigation', () => ({
   usePathname() {
     return '';
   },
+  useRouter() {
+    return {
+      push() {}
+    }
+  }
 }))
 
 jest.mock('next/router', () => ({
   useRouter() {
     return {
-      replace() {}
+      replace() {},
+      events: { on() {}, off() {} }
     };
   },
 }))
