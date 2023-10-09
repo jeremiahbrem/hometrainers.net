@@ -19,9 +19,7 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
     setBlockOrder(val)
   }
 
-  const onSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
-    evt.preventDefault()
-
+  const onSubmit = () => {
     if (blockOrder) {
       onReorder(parseInt(blockOrder) - 1)
     }
@@ -38,8 +36,14 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
       <div className={cn(styles.reorderForm, { [styles.open]: open })}>
         {open && <form onSubmit={onSubmit}>
           <label htmlFor='order'>Order</label>
-          <input name='order' onChange={onChange} value={blockOrder} type='number' />
-          <Button text='Update' type='submit' />
+          <input
+            name='order'
+            id='order'
+            onChange={onChange}
+            value={blockOrder}
+            type='number'
+          />
+          <Button text='Update' onClick={onSubmit} />
           <Button text='Cancel' onClick={() => setOpen(false)} type='button' />
         </form>}
       </div>

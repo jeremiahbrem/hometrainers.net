@@ -12,14 +12,23 @@ import { PageSaver } from './pageSaver'
 import { PreviewBlocksType } from '../block-selector/previewBlocks'
 import { PageSettings, SettingsError } from './pageSettings'
 import { useAlert } from '../alerts'
+import { useProfile } from '../profile-provider'
+import { useRouter } from 'next/navigation'
 
-type MyPageComponentProps = {
+export type MyPageComponentProps = {
   Blocks:  Record<string, React.FC<ComponentProps<any>>>
   PreviewBlocks: PreviewBlocksType
 }
 
 export const MyPageComponent: React.FC<MyPageComponentProps> = (props) => {
   const isLoggedIn = useIsLoggedIn()
+  const { openDisallowClose, profileLoading } = useProfile()
+
+  useEffect(() => {
+    if (!isLoggedIn && !profileLoading) {
+      openDisallowClose()
+    }
+  }, [isLoggedIn, profileLoading])
 
   if (!isLoggedIn) {
     return <Layout />
@@ -30,6 +39,9 @@ export const MyPageComponent: React.FC<MyPageComponentProps> = (props) => {
 
 const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
   const [page, setPage] = useState<Page  | null>(null)
+  const router = useRouter()
+
+  const { profile , profileLoading } = useProfile()
 
   const { refreshKey } = useRefreshKey()
 
@@ -37,29 +49,35 @@ const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
   const addAlert = useAlert()
 
   const fetchPage = async () => {
-    const response = await fetchResults({
-      method: 'GET',
-      path: '/my-page'
-    })
-  
-    if (!response.ok) {
-      let error = 'There was an error with processing your request'
-
-      try {
-        error = (await response.json())?.error ?? error
-      }
-      catch {}
-
-      addAlert(error)
+    if (!profileLoading && !profile?.email) {
+      router.push('/profiles')
     }
 
-    const page = await getPageResult(response)
-    setPage(page)
+    if (profile?.email && !profileLoading) {
+      const response = await fetchResults({
+        method: 'GET',
+        path: '/my-page'
+      })
+    
+      if (!response.ok) {
+        let error = 'There was an error with processing your request'
+  
+        try {
+          error = (await response.json())?.error ?? error
+        }
+        catch {}
+  
+        addAlert(error)
+      }
+  
+      const page = await getPageResult(response)
+      setPage(page)
+    }
   }
   
   useEffect(() => {
     void fetchPage()
-  }, [refreshKey])
+  }, [refreshKey, profileLoading, profile])
 
   if (!page) {
     return <Loading open={true} />
@@ -87,7 +105,6 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
     ...page,
     blocks: {...page.blocks}
   }
-
   const [pageContext, setPageContext] = useState<Page>(copyProps)
   const [settingsError, setSettingsError] = useState<SettingsError>(null)
 

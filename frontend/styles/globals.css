@@ -3,7 +3,7 @@ body, p {
   padding: 0;
 }
 
-body, div, section {
+body, div, section, a, p {
   box-sizing: border-box;
 }
 

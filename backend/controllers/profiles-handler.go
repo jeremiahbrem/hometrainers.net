@@ -120,6 +120,16 @@ func CreateProfilesHandlers(router *gin.Engine, provider services.ServiceProvide
 			return
 		}
 
+		if len(profile.Cities) == 0 {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "City required"})
+			return
+		}
+
+		if len(profile.Goals) == 0 {
+			context.JSON(http.StatusBadRequest, gin.H{"error": "Goal required"})
+			return
+		}
+
 		existing, existsErr := profilesRepo.GetProfile(user.Email)
 
 		var dbErr error

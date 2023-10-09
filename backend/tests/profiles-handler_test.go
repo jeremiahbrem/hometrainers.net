@@ -510,3 +510,117 @@ func TestUpdateProfile(t *testing.T) {
 
 	assert.ElementsMatch(t, args.Goals, newProfileGoals)
 }
+
+func TestUpdateProfileNoGoals(t *testing.T) {
+	db := SetupProfilesTests()
+	defer TeardownProfilesTests(db)
+
+	userEmail := "client@example.com"
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: userEmail},
+		Valid: true,
+	}
+
+	city := models.City{
+		Name: "Tulsa",
+	}
+	city2 := models.City{
+		Name: "Owasso",
+	}
+
+	goal1 := models.Goal{
+		Name: "Weight Loss",
+	}
+
+	db.Create(&city)
+	db.Create(&city2)
+	db.Create(&goal1)
+
+	clientProfile := models.Profile{
+		Email:  "client@example.com",
+		Name:   "Client",
+		Type:   "client",
+		Cities: []*models.City{&city},
+		Goals:  []*models.Goal{&goal1},
+		Image:  "",
+	}
+
+	db.Omit("Citys.*").Omit("Goals.*").Create(&clientProfile)
+
+	args := models.ProfileArgs{
+		Name:   clientProfile.Email,
+		Type:   "client",
+		Image:  "image.com",
+		Cities: []string{"Owasso"},
+		Goals:  []string{},
+	}
+
+	marshalled, _ := json.Marshal(args)
+
+	w := httptest.NewRecorder()
+
+	router := SetupPagesRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("POST", "/update-profile", bytes.NewReader(marshalled))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Contains(t, w.Body.String(), "Goal required")
+}
+
+func TestUpdateProfileNoCity(t *testing.T) {
+	db := SetupProfilesTests()
+	defer TeardownProfilesTests(db)
+
+	userEmail := "client@example.com"
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: userEmail},
+		Valid: true,
+	}
+
+	city := models.City{
+		Name: "Tulsa",
+	}
+
+	goal1 := models.Goal{
+		Name: "Weight Loss",
+	}
+
+	db.Create(&city)
+	db.Create(&goal1)
+
+	clientProfile := models.Profile{
+		Email:  "client@example.com",
+		Name:   "Client",
+		Type:   "client",
+		Cities: []*models.City{&city},
+		Goals:  []*models.Goal{&goal1},
+		Image:  "",
+	}
+
+	db.Omit("Citys.*").Omit("Goals.*").Create(&clientProfile)
+
+	args := models.ProfileArgs{
+		Name:   clientProfile.Email,
+		Type:   "client",
+		Image:  "image.com",
+		Cities: []string{},
+		Goals:  []string{"Endurance", "Flexibility"},
+	}
+
+	marshalled, _ := json.Marshal(args)
+
+	w := httptest.NewRecorder()
+
+	router := SetupPagesRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("POST", "/update-profile", bytes.NewReader(marshalled))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Contains(t, w.Body.String(), "City required")
+}

@@ -25,10 +25,6 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
   const { update, page, settingsError } = props
   const [open, setOpen ] = useState(false)
 
-  const onSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
-    evt.preventDefault()
-  }
-
   const settings = {
     slug: page.slug,
     title: page.title,
@@ -36,7 +32,8 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
     active: page.active
   }
 
-  const onChange = (evt: React.ChangeEvent<HTMLInputElement>, key: string) => {
+  const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const key = evt.target.name
     update({
       ...settings,
       [key]: key === 'active'
@@ -63,14 +60,14 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
         left: open ? 0 : '-9.5rem'
       }}
     >
-      <form onSubmit={onSubmit}>
+      <form onSubmit={e => e.preventDefault()}>
         <fieldset>
           <label htmlFor='slug'>Slug</label>
           <input
             id='slug'
             name='slug'
             value={settings.slug}
-            onChange={e => onChange(e, 'slug')}
+            onChange={onChange}
             style={inputStyle('slug')}
           />
         </fieldset>
@@ -81,7 +78,7 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
             id='title'
             name='title' 
             value={settings.title}
-            onChange={e => onChange(e, 'title')}
+            onChange={onChange}
             style={inputStyle('title')}
           />
         </fieldset>
@@ -92,7 +89,7 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
             id='city'
             name='city'
             value={settings.city}
-            onChange={e => onChange(e, 'city')}
+            onChange={onChange}
             style={inputStyle('city')}
           />
         </fieldset>
@@ -104,7 +101,7 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
               id='active'
               type="checkbox"
               checked={settings.active}
-              onChange={e => onChange(e, 'active')}
+              onChange={onChange}
               name='active'
             />
             <span className={styles.slider}></span>
