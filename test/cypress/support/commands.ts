@@ -35,3 +35,30 @@
 //     }
 //   }
 // }
+
+declare namespace Cypress {
+  interface Chainable<Subject = any> {
+    login(): Chainable<any>;
+  }
+}
+
+export function registerCommands() {
+  Cypress.Commands.add('login', () => {
+    cy.fixture('user.json').then(user => {
+      cy.visit('/')
+  
+      cy.get('[id="sign-in-button"]')
+        .click()
+    
+      cy.contains('Sign in with email')
+        .click()
+        .get('input[name="email"]')
+        .type(user.email)
+        .get('input[name="password"]')
+        .type(user.password)
+        .get('button')
+        .contains('Login')
+        .click()
+    })
+  })
+}
