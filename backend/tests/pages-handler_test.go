@@ -4,14 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"main/controllers"
 	"main/models"
 	"main/services"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/datatypes"
@@ -52,32 +50,6 @@ func TeardownPagesTests(db *gorm.DB) {
 	db.Exec(sql)
 }
 
-func SetupPagesRouter(
-	db *gorm.DB,
-	args ...interface{},
-) *gin.Engine {
-
-	userValidator := &MockUserValidator{}
-
-	if args != nil {
-		for _, arg := range args {
-			if v, ok := arg.(services.UserValidatorType); ok {
-				userValidator = v.(*MockUserValidator)
-			}
-		}
-	}
-
-	serviceProvider := services.CreateProvider(
-		db,
-		&services.EmailService{},
-		userValidator,
-	)
-
-	router := controllers.SetupRouter(serviceProvider)
-
-	return router
-}
-
 func TestGetActivePages(t *testing.T) {
 	db := SetupPagesTests()
 	defer TeardownPagesTests(db)
@@ -116,7 +88,7 @@ func TestGetActivePages(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db)
+	router := SetupRouter(db)
 
 	req, _ := http.NewRequest("GET", "/active-pages", nil)
 
@@ -144,7 +116,7 @@ func TestGetPageBySlug(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db)
+	router := SetupRouter(db)
 
 	req, _ := http.NewRequest("GET", "/page/testpage1", nil)
 
@@ -187,7 +159,7 @@ func TestGetMyPage(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/my-page", nil)
 
@@ -218,7 +190,7 @@ func TestGetMyPageNotFound(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/my-page", nil)
 
@@ -259,7 +231,7 @@ func TestGetMyPageNotTrainer(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/my-page", nil)
 
@@ -293,7 +265,7 @@ func TestCreatePageMissingField(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
@@ -324,7 +296,7 @@ func TestCreatePageSuccess(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
@@ -386,7 +358,7 @@ func TestCreatePageSlugExists(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
@@ -417,7 +389,7 @@ func TestCreatePageSlugMyPage(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
@@ -460,7 +432,7 @@ func TestUpdatePageSuccess(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
 
