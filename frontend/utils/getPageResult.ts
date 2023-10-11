@@ -6,7 +6,7 @@ export async function getPageResult(response: Response): Promise<Page> {
     slug: '',
     email: '',
     title: '',
-    city: '',
+    description: '',
     active: false,
   }
 
