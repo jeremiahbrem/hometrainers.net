@@ -18,6 +18,7 @@ func main() {
 		database.DB.Db,
 		&services.EmailService{},
 		&services.UserValidator{},
+		&services.BucketService{},
 	)
 
 	router := controllers.SetupRouter(provider)

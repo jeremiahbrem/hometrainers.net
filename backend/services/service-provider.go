@@ -7,6 +7,7 @@ type ServiceProviderType interface {
 	GetProfilesRepo() ProfileRepository
 	GetEmailService() EmailServiceType
 	GetUserValidator() UserValidatorType
+	GetBucketService() BucketServiceType
 }
 
 type ServiceProvider struct {
@@ -14,6 +15,7 @@ type ServiceProvider struct {
 	profilesRepo  ProfileRepository
 	emailService  EmailServiceType
 	userValidator UserValidatorType
+	bucketService BucketServiceType
 }
 
 func (provider *ServiceProvider) GetPagesRepo() PageRepository {
@@ -28,16 +30,21 @@ func (provider *ServiceProvider) GetEmailService() EmailServiceType {
 func (provider *ServiceProvider) GetUserValidator() UserValidatorType {
 	return provider.userValidator
 }
+func (provider *ServiceProvider) GetBucketService() BucketServiceType {
+	return provider.bucketService
+}
 
 func CreateProvider(
 	db *gorm.DB,
 	emailService EmailServiceType,
 	userValidator UserValidatorType,
+	bucketService BucketServiceType,
 ) ServiceProviderType {
 	return &ServiceProvider{
 		pagesRepo:     PageRepository{db},
 		profilesRepo:  ProfileRepository{db},
 		emailService:  emailService,
 		userValidator: userValidator,
+		bucketService: bucketService,
 	}
 }

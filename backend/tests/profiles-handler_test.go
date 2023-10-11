@@ -10,7 +10,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/datatypes"
@@ -36,32 +35,6 @@ func TeardownProfilesTests(db *gorm.DB) {
 		delete from cities;
 	`
 	db.Exec(sql)
-}
-
-func SetupProfilesRouter(
-	db *gorm.DB,
-	args ...interface{},
-) *gin.Engine {
-
-	userValidator := &MockUserValidator{}
-
-	if args != nil {
-		for _, arg := range args {
-			if v, ok := arg.(services.UserValidatorType); ok {
-				userValidator = v.(*MockUserValidator)
-			}
-		}
-	}
-
-	serviceProvider := services.CreateProvider(
-		db,
-		&services.EmailService{},
-		userValidator,
-	)
-
-	router := controllers.SetupRouter(serviceProvider)
-
-	return router
 }
 
 func TestGetProfile(t *testing.T) {
@@ -103,7 +76,7 @@ func TestGetProfile(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/profile", nil)
 
@@ -215,7 +188,7 @@ func TestGetOrderedMatchingProfiles(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupProfilesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/matching-profiles", nil)
 
@@ -275,7 +248,7 @@ func TestGetEmptyMatchingResults(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupProfilesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/matching-profiles", nil)
 
@@ -295,7 +268,7 @@ func TestGetMatchingProfilesNoClientProfile(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupProfilesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/matching-profiles", nil)
 
@@ -332,7 +305,7 @@ func TestGetMatchingProfilesNoClientCity(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupProfilesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/matching-profiles", nil)
 
@@ -369,7 +342,7 @@ func TestGetMatchingProfilesNoClientGoal(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupProfilesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("GET", "/matching-profiles", nil)
 
@@ -402,7 +375,7 @@ func TestCreateProfile(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/update-profile", bytes.NewReader(marshalled))
 
@@ -485,7 +458,7 @@ func TestUpdateProfile(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/update-profile", bytes.NewReader(marshalled))
 
@@ -560,7 +533,7 @@ func TestUpdateProfileNoGoals(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/update-profile", bytes.NewReader(marshalled))
 
@@ -615,7 +588,7 @@ func TestUpdateProfileNoCity(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	router := SetupPagesRouter(db, &userValidator)
+	router := SetupRouter(db, &userValidator)
 
 	req, _ := http.NewRequest("POST", "/update-profile", bytes.NewReader(marshalled))
 
