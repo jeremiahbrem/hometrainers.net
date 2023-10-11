@@ -1,5 +1,5 @@
 describe('profile', () => {
-  it('shows profile navigator', () => {
+  it('creates profile', () => {
     cy.login()
 
     cy.get('[id="sign-in-button"]')

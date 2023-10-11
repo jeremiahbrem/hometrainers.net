@@ -1,0 +1,42 @@
+@import '@/styles/global.scss';
+
+.matching-trainers {
+  padding: 2rem 3rem 3rem 3rem;
+  margin: 2rem auto auto 0;
+  color: $fontColor;
+  width: 100%;
+  .matches {
+    width: 100%;
+    .match {
+      display: grid;
+      width: 100%;
+      align-items: center;
+      grid-template-columns: 4rem 1fr;
+      gap: 1rem;
+      padding: .5rem;
+      font-size: 0.9rem;
+      border-radius: 1rem;
+
+      .image {
+        height: 4rem;
+        width: 100%;
+        object-fit: cover;
+        margin-right: .5rem;
+        border-radius: 100%;
+      }
+      .default-image {
+        font-size: 4rem;
+        color: $orange;
+      }
+      transition: background-color .25s ease-in-out;
+      &:hover {
+        background-color: rgba($orange, .3);
+      }
+    }
+  }
+
+  @media (max-width: 630px) {
+    padding-top: 0;
+    margin-top: 0;
+  }
+}

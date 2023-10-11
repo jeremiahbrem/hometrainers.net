@@ -1,11 +1,11 @@
 import React from 'react'
 import { fireEvent, render, screen, act } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import { ProfileForm } from '.'
 import { AlertProvider } from '../alerts'
 import { ProfileContext } from '../profile-provider'
 import { Profile } from '../profile-provider/types'
 import { API } from '@/api'
+import { ProfileForm } from './ProfileForm'
 
 const resetProfile = jest.fn()
 
@@ -119,6 +119,13 @@ describe('ProfileForm', () => {
     )
   })
 })
+
+jest.mock('next-auth/react', () => ({
+  useSession() {
+    return { data: true }
+  }
+}))
+
 
 type HarnessProps = {
   type: 'client' | 'trainer'

@@ -31,7 +31,7 @@ describe('page component', () => {
       slug: 'slug',
       email: 'email@example.com',
       title: '',
-      city: '',
+      description: '',
       active: false,
     }
 
@@ -148,7 +148,7 @@ describe('page component', () => {
         slug: '',
         email: '',
         title: '',
-        city: '',
+        description: '',
         active: false,
       }
   
@@ -240,7 +240,7 @@ describe('page component', () => {
         slug: '',
         email: '',
         title: '',
-        city: '',
+        description: '',
         active: false,
       }
   
@@ -275,7 +275,7 @@ describe('page component', () => {
         slug: '',
         email: '',
         title: '',
-        city: '',
+        description: '',
         active: false,
       }
   

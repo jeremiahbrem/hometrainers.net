@@ -32,11 +32,12 @@ type Slug struct {
 
 func resolvePage(page *models.Page, context *gin.Context, email string) {
 	context.JSON(http.StatusOK, gin.H{
-		"slug":   page.Slug,
-		"email":  email,
-		"title":  page.Title,
-		"blocks": page.Blocks,
-		"active": page.Active,
+		"slug":        page.Slug,
+		"email":       email,
+		"title":       page.Title,
+		"description": page.Description,
+		"blocks":      page.Blocks,
+		"active":      page.Active,
 	})
 }
 
@@ -65,11 +66,12 @@ func getPageByEmail(email string, pagesRepo services.PageRepository, context *gi
 		emptyBlocks := EmptyBlocks{Blocks: []string{}}
 
 		context.JSON(http.StatusOK, gin.H{
-			"slug":   "",
-			"email":  email,
-			"title":  "",
-			"blocks": emptyBlocks,
-			"active": false,
+			"slug":        "",
+			"email":       email,
+			"title":       "",
+			"description": "",
+			"blocks":      emptyBlocks,
+			"active":      false,
 		})
 		return
 	}

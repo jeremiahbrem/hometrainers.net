@@ -27,10 +27,10 @@ export const PageSaver: React.FC<PageSaverProps> = (props) => {
   const fetchResults = useFetchWithAuth()
 
   const save = async () => {
-    if (!pageContext.city || !pageContext.slug || !pageContext.title) {
+    if (!pageContext.description || !pageContext.slug || !pageContext.title) {
       setSettingsError({
-        city: !(!!pageContext.city),
         title: !(!!pageContext.title),
+        description: !(!!pageContext.description),
         slug: !(!!pageContext.slug),
       })
       return
