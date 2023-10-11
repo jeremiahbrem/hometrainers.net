@@ -73,11 +73,12 @@ func (repo *PageRepository) GetActiveSlugs() ([]string, error) {
 
 func (repo *PageRepository) CreatePage(pageArgs models.PageArgs, profile *models.Profile) error {
 	page := models.Page{
-		ProfileID: profile.ID,
-		Slug:      pageArgs.Slug,
-		Title:     pageArgs.Title,
-		Blocks:    pageArgs.Blocks,
-		Active:    false,
+		ProfileID:   profile.ID,
+		Slug:        pageArgs.Slug,
+		Title:       pageArgs.Title,
+		Description: pageArgs.Description,
+		Blocks:      pageArgs.Blocks,
+		Active:      false,
 	}
 	return repo.db.Create(&page).Error
 }
@@ -88,6 +89,7 @@ func (repo *PageRepository) UpdatePage(existing *models.Page, updated models.Pag
 	existing.Blocks = updated.Blocks
 	existing.Active = updated.Active
 	existing.Title = updated.Title
+	existing.Description = updated.Description
 
 	return repo.db.Save(&existing).Error
 }

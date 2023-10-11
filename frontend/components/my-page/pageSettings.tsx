@@ -5,14 +5,14 @@ import { Page } from '../types'
 export type PageSettings = {
   slug: string
   title: string
-  city: string
   active: boolean
+  description: string
 }
 
 export type SettingsError = {
   slug?: boolean
   title?: boolean
-  city?: boolean
+  description?: boolean
 } | null
 
 export type PageSettingsProps = {
@@ -28,8 +28,8 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
   const settings = {
     slug: page.slug,
     title: page.title,
-    city: page.city,
-    active: page.active
+    active: page.active,
+    description: page.description,
   }
 
   const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,16 +84,16 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
         </fieldset>
         
         <fieldset>
-          <label htmlFor='city'>City</label>
+          <label htmlFor='description'>Description</label>
           <input
-            id='city'
-            name='city'
-            value={settings.city}
+            id='description'
+            name='description' 
+            value={settings.description}
             onChange={onChange}
-            style={inputStyle('city')}
+            style={inputStyle('description')}
           />
         </fieldset>
-
+        
         <fieldset>
           <label className={styles.switch}>
             Active

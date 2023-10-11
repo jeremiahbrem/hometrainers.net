@@ -111,7 +111,6 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
   }, [])
 
   const { open, allowClose } = profileState
-
   const modalStyle = classnames(styles.profileModal, { [styles.open]: open })
   const addAlert = useAlert()
 

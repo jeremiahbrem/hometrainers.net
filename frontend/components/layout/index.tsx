@@ -10,18 +10,26 @@ const roboto = Roboto({
   weight: ['300', '400','500','700','900']
 })
 
-export default function Layout({
-  children,
-}: {
+type LayoutProps = {
+  title: string
+  description: string
   children?: React.ReactNode
-}) {
+}
+
+export default function Layout({
+  title,
+  description,
+  children,
+}: LayoutProps) {
 
   return (
     <ErrorBoundary fallback={<>error</>}>
       <div className={roboto.className}>
         <Head>
-          <title>HomeTrainers.net | In-Home Personal Trainer Networking Platform</title>
-          <meta name="description" content="A networking platform for in-home personal trainers and clients" />
+          <title>{title}</title>
+          <meta name="description" content={description} />
+          <meta name="og:title" content={title} />
+          <meta name="og:description" content={description} />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta charSet="utf-8" />
           <link rel="icon" href="/favicon-144x144.png" />

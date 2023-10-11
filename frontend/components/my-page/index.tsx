@@ -20,6 +20,11 @@ export type MyPageComponentProps = {
   PreviewBlocks: PreviewBlocksType
 }
 
+const layoutProps = {
+  title: 'My Trainer Page',
+  description: 'Page editor for my trainer page'
+}
+
 export const MyPageComponent: React.FC<MyPageComponentProps> = (props) => {
   const isLoggedIn = useIsLoggedIn()
   const { openDisallowClose, profileLoading } = useProfile()
@@ -30,8 +35,12 @@ export const MyPageComponent: React.FC<MyPageComponentProps> = (props) => {
     }
   }, [isLoggedIn, profileLoading])
 
+  if (profileLoading) {
+    return <Layout {...layoutProps}><Loading open={true} /></Layout>
+  }
+
   if (!isLoggedIn) {
-    return <Layout />
+    return <Layout {...layoutProps} />
   }
 
   return <MyPageLoader {...props} />
@@ -49,10 +58,6 @@ const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
   const addAlert = useAlert()
 
   const fetchPage = async () => {
-    if (!profileLoading && !profile?.email) {
-      router.push('/profiles')
-    }
-
     if (profile?.email && !profileLoading) {
       const response = await fetchResults({
         method: 'GET',
@@ -84,7 +89,7 @@ const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
   }
 
   if (!page.email) {
-    return <Layout />
+    return <Layout {...layoutProps} />
   }
 
   return <MyPageDisplay {...{ ...props,page }} />
@@ -135,7 +140,7 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
   }
 
   return (
-    <Layout>
+    <Layout {...layoutProps}>
       <PageComponent {...{ page: pageContext, Blocks, setPageContext }} />
       <BlockSelector onClick={onBlockClick} PreviewBlocks={PreviewBlocks}/>
       <PageSaver {...{

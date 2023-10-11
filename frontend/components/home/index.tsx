@@ -1,5 +1,6 @@
 import styles from './home.module.scss'
 import { Oswald } from 'next/font/google'
+import Image from 'next/image'
 
 const oswald = Oswald({
   weight: '600',
@@ -13,6 +14,11 @@ const IconListItem: React.FC<{ text: string; icon: string; }> = ({ text, icon })
   </li>
 )
 
+const trainerImage = '/jonathan-borba-R0y_bEUjiOM-unsplash.jpg'
+const trainerAlt = 'image by Jonathan Borba from Upsplash'
+const clientImage = '/bruce-mars-gJtDg6WfMlQ-unsplash.jpg'
+const clientAlt = 'image by Bruce Mars from Upsplash'
+
 export function HomeComponent() {
 
   return (
@@ -22,6 +28,14 @@ export function HomeComponent() {
       <div className={styles.headlinesContainer}>
         <div className={styles.headlines}>
           <div className={styles.trainers}>
+            <Image
+              src={trainerImage}
+              alt={trainerAlt}
+              height={0}
+              width={0}
+              className={styles.image}
+            />
+            <div className={styles.overlay} />
             <h2 className={oswald.className}>Trainers</h2>
             <ul>
               <IconListItem {...{
@@ -39,6 +53,14 @@ export function HomeComponent() {
             </ul>
           </div>
           <div className={styles.clients}>
+            <Image
+              src={clientImage}
+              alt={clientAlt}
+              height={0}
+              width={0}
+              className={styles.image}
+            />
+            <div className={styles.overlay} />
             <h2 className={oswald.className}>Clients</h2>
             <ul>
               <IconListItem {...{

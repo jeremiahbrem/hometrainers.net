@@ -22,7 +22,7 @@ export const ProfileNavigator: React.FC = () => {
     if (!isLoggedIn) {
       openDisallowClose()
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn, profileLoading])
 
   useEffect(() => {
     if (profile) {

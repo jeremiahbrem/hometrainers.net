@@ -1,10 +1,13 @@
 import Layout from '@/components/layout'
-import { ProfileForm } from '@/components/profile-form'
+import { ProfilePage } from '@/components/profile-page'
 
-export default function ClientProfile() {
+export default function TrainerProfile() {
   return (
-    <Layout>
-      <ProfileForm type='trainer' />
+    <Layout  {...{
+      title: 'HomeTrainers.net | Create Trainer Profile',
+      description: 'Create a trainer profile'
+    }}>
+      <ProfilePage type='trainer' />
     </Layout>
   )
 }

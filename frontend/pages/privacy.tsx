@@ -3,7 +3,10 @@ import { Privacy } from '@/components/privacy'
 
 export default function PrivacyPage() {
   return (
-    <Layout>
+    <Layout {...{
+      title: 'HomeTrainers.net | Privacy Policy',
+      description: 'Privacy policy'
+    }}>
       <Privacy />
     </Layout>
   )
