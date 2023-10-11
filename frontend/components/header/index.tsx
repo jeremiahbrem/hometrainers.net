@@ -16,18 +16,18 @@ export default function Header() {
     <Logo className={styles.logoContainer} />
     <p>HomeTrainers.net</p>
 
+    {isLoggedIn && profile?.type === 'trainer' ? <Link
+      className={styles.pageLink}
+      href={'/my-page'}>
+      My Page
+    </Link> : <span className={styles.pageLink} />}
+
     {isLoggedIn && profile ?
       <Link
         className={styles.pageLink}
         href={`/profiles/${profile.type}`}>
         My Profile
-    </Link> : <span />}
-
-    {isLoggedIn && profile ? <Link
-      className={styles.pageLink}
-      href={'/my-page'}>
-      My Page
-    </Link> : <span />}
+    </Link> : <span className={styles.pageLink} />}
 
     {isLoggedIn ? <span className={checkStyle}>check</span> : <span />}
 

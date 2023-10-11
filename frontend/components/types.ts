@@ -7,7 +7,7 @@ export type Page = {
   slug: string,
   email: string,
   title: string,
-  city: string,
+  description: string,
   active: boolean,
 }
 

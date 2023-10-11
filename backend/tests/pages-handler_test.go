@@ -95,21 +95,23 @@ func TestGetActivePages(t *testing.T) {
 	db.Model(&models.Profile{}).Where(&models.Profile{Email: "other@example.com"}).First(&otherProfile)
 
 	db.Exec(
-		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		"insert into pages (profile_id, slug, active, blocks, title, description) values(?,?,?,?,?,?)",
 		trainerID,
 		"testpage1",
 		true,
 		blocks,
 		"A page",
+		"page description",
 	)
 
 	db.Exec(
-		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		"insert into pages (profile_id, slug, active, blocks, title, description) values(?,?,?,?,?,?)",
 		otherProfile.ID,
 		"testpage2",
 		false,
 		blocks,
 		"A page",
+		"page description",
 	)
 
 	w := httptest.NewRecorder()
@@ -131,12 +133,13 @@ func TestGetPageBySlug(t *testing.T) {
 	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
 
 	db.Exec(
-		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		"insert into pages (profile_id, slug, active, blocks, title, description) values(?,?,?,?,?,?)",
 		trainerID,
 		"testpage1",
 		true,
 		blocks,
 		"A page",
+		"page description",
 	)
 
 	w := httptest.NewRecorder()
@@ -153,6 +156,7 @@ func TestGetPageBySlug(t *testing.T) {
 		`"blocks":{"blocks":[{"header":"text"}]}`,
 		`"active":true`,
 		`"title":"A page"`,
+		`"description":"page description"`,
 	}
 
 	for _, val := range expected {
@@ -167,12 +171,13 @@ func TestGetMyPage(t *testing.T) {
 	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
 
 	db.Exec(
-		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		"insert into pages (profile_id, slug, active, blocks, title, description) values(?,?,?,?,?,?)",
 		trainerID,
 		"testpage1",
 		true,
 		blocks,
 		"A page",
+		"page description",
 	)
 
 	userValidator := MockUserValidator{
@@ -194,6 +199,7 @@ func TestGetMyPage(t *testing.T) {
 		`"blocks":{"blocks":[{"header":"text"}]}`,
 		`"active":true`,
 		`"title":"A page"`,
+		`"description":"page description"`,
 	}
 
 	for _, val := range expected {
@@ -224,6 +230,7 @@ func TestGetMyPageNotFound(t *testing.T) {
 		`"blocks":{"blocks":[]}`,
 		`"active":false`,
 		`"title":""`,
+		`"description":""`,
 	}
 
 	for _, val := range expected {
@@ -276,9 +283,10 @@ func TestCreatePageMissingField(t *testing.T) {
 	}
 
 	page := models.PageArgs{
-		Slug:   "test-page",
-		Active: true,
-		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+		Slug:        "test-page",
+		Active:      true,
+		Description: "descrip",
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
 	}
 
 	marshalled, _ := json.Marshal(page)
@@ -305,10 +313,11 @@ func TestCreatePageSuccess(t *testing.T) {
 	}
 
 	page := models.PageArgs{
-		Slug:   "test-page",
-		Title:  "Test Page",
-		Active: true,
-		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+		Slug:        "test-page",
+		Title:       "Test Page",
+		Active:      true,
+		Description: "Descrip",
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
 	}
 
 	marshalled, _ := json.Marshal(page)
@@ -331,6 +340,7 @@ func TestCreatePageSuccess(t *testing.T) {
 	assert.Equal(t, newPage.Title, page.Title)
 	assert.Equal(t, newPage.Slug, page.Slug)
 	assert.Equal(t, trainerID, newPage.ProfileID)
+	assert.Equal(t, newPage.Description, page.Description)
 }
 
 func TestCreatePageSlugExists(t *testing.T) {
@@ -350,12 +360,13 @@ func TestCreatePageSlugExists(t *testing.T) {
 	db.Model(&models.Profile{}).Where(&models.Profile{Email: "other@example.com"}).First(&otherProfile)
 
 	db.Exec(
-		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		"insert into pages (profile_id, slug, active, blocks, title, description) values(?,?,?,?,?,?)",
 		otherProfile.ID,
 		"testpage1",
 		true,
 		blocks,
 		"A page",
+		"descrip",
 	)
 
 	userValidator := MockUserValidator{
@@ -364,10 +375,11 @@ func TestCreatePageSlugExists(t *testing.T) {
 	}
 
 	page := models.Page{
-		Slug:   "testpage1",
-		Title:  "Test Page",
-		Active: true,
-		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+		Slug:        "testpage1",
+		Title:       "Test Page",
+		Description: "descrip",
+		Active:      true,
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
 	}
 
 	marshalled, _ := json.Marshal(page)
@@ -394,10 +406,11 @@ func TestCreatePageSlugMyPage(t *testing.T) {
 	}
 
 	page := models.Page{
-		Slug:   "my-page",
-		Title:  "Test Page",
-		Active: true,
-		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+		Slug:        "my-page",
+		Title:       "Test Page",
+		Description: "descrip",
+		Active:      true,
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
 	}
 
 	marshalled, _ := json.Marshal(page)
@@ -426,19 +439,21 @@ func TestUpdatePageSuccess(t *testing.T) {
 	blocks := datatypes.JSON([]byte(`{"blocks": []}`))
 
 	db.Exec(
-		"insert into pages (profile_id, slug, active, blocks, title) values(?,?,?,?,?)",
+		"insert into pages (profile_id, slug, active, blocks, title, description) values(?,?,?,?,?,?)",
 		trainerID,
 		"testpage1",
 		true,
 		blocks,
 		"A page",
+		"descrip",
 	)
 
 	page := models.Page{
-		Slug:   "testpage1",
-		Title:  "Test Page",
-		Active: true,
-		Blocks: datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+		Slug:        "testpage1",
+		Title:       "Test Page",
+		Description: "descrip",
+		Active:      true,
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
 	}
 
 	marshalled, _ := json.Marshal(page)

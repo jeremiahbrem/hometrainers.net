@@ -14,7 +14,7 @@ const page = {
   slug: 'slug',
   email: 'email',
   title: 'title',
-  city: 'city',
+  description: 'descrip',
   active: true,
 }
 
@@ -48,13 +48,6 @@ describe('my page component', () => {
       render(<Harness Blocks={{}} PreviewBlocks={[]} profileLoading={true} />)
   
       expect(mockFetch).not.toHaveBeenCalled()
-    })
-    
-    it('redirects to profiles if empty profile loaded', () => {
-      render(<Harness Blocks={{}} PreviewBlocks={[]} profile={{} as Profile} />)
-  
-      expect(mockFetch).not.toHaveBeenCalled()
-      expect(mockRouter).toHaveBeenCalledWith('/profiles')
     })
     
     it('stops loading when fetch resolves', async () => {
@@ -441,7 +434,8 @@ const Harness: React.FC<HarnessProps> = (props) => {
         cities: [],
         goals: [],
         type: 'trainer',
-        name: 'name'
+        name: 'name',
+        image: '',
       },
       profileLoading: props.profileLoading ?? false,
     }}>

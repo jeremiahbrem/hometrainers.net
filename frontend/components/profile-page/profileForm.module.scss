@@ -1,0 +1,57 @@
+@import '@/styles/global.scss';
+
+.profile-form {
+  padding: 2rem 3rem 3rem 3rem;
+  background: white;
+  color: $fontColor;
+  width: 15rem;
+  margin: 2rem auto 0 auto;
+
+  .error {
+    color: red;
+    font-size: .8rem;
+    margin-top: 1rem;
+  }
+
+  label {
+    display: block;
+    font-size: .8rem;
+    &:not(.name) {
+      margin-top: .4rem;
+    }
+  }
+
+  input {
+    color: inherit;
+    border: none;
+    padding: .5rem;
+    background-color: rgba(128, 128, 128, .2);
+    width: 13.5rem;
+    margin: .3rem 0;
+    border: 2px solid transparent;
+  }
+
+  .selected {
+    background: $orange;
+    color: white;
+    width: fit-content;
+    border-radius: 4px;
+    padding: .2rem .5rem;
+    font-size: .75rem;
+    margin-bottom: .3rem;
+    button {
+      color: white;
+      margin-left: 1rem;
+    }
+  }
+
+  .save-button {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  @media (max-width: 630px) {
+    padding: 0rem 3rem 0rem 3rem;
+  }
+}

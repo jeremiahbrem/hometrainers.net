@@ -57,6 +57,8 @@ func main() {
 			return dbErr
 		}
 
+		Bucket(ctx)
+
 		authService := AuthService(
 			gitHash,
 			ctx,

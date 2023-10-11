@@ -1,10 +1,10 @@
 import Layout from '@/components/layout'
-import { ProfileForm } from '@/components/profile-form'
+import { ProfilePage } from '@/components/profile-page'
 
-export default function PrivacyPage() {
+export default function ProfileFormPage() {
   return (
     <Layout>
-      <ProfileForm type='client' />
+      <ProfilePage type='client' />
     </Layout>
   )
 }

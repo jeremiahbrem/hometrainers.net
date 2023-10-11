@@ -30,6 +30,10 @@ export const MyPageComponent: React.FC<MyPageComponentProps> = (props) => {
     }
   }, [isLoggedIn, profileLoading])
 
+  if (profileLoading) {
+    return <Layout><Loading open={true} /></Layout>
+  }
+
   if (!isLoggedIn) {
     return <Layout />
   }
@@ -49,10 +53,6 @@ const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
   const addAlert = useAlert()
 
   const fetchPage = async () => {
-    if (!profileLoading && !profile?.email) {
-      router.push('/profiles')
-    }
-
     if (profile?.email && !profileLoading) {
       const response = await fetchResults({
         method: 'GET',
