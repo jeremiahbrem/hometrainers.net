@@ -6,7 +6,10 @@ import { API } from '@/api';
 import { getPageResult } from '@/utils/getPageResult';
 import Layout from '@/components/layout';
 
-const Page = (props: { page: Page }) => <Layout>
+const Page = (props: { page: Page }) => <Layout {...{
+  title: props.page.title,
+  description: props.page.description
+}}>
   <PageComponent {...{...props, Blocks, setPageContext: () => undefined }}/>
 </Layout>
 
