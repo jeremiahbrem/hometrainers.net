@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 type FetchWithAuthArgs = {
   path: string
   method: 'POST' | 'GET'
-  body?: string
+  body?: any
 }
 
 export function useFetchWithAuth(): (args: FetchWithAuthArgs) => Promise<Response> {

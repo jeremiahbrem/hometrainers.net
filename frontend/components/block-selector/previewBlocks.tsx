@@ -26,13 +26,14 @@ export const PreviewBlock: React.FC<PreviewBlockProps> = (props) => {
     <div
       className={cn(styles.blockContainer, className)}
     >
-      <button
+      <div
         className={styles.blockButton}
         onClick={() => onBlockClick(newBlock)}
         data-testid={testId}
+        role='button'
       >
       {children}
-      </button>
+      </div>
     </div>
   )
 }

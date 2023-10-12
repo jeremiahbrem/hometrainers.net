@@ -14,6 +14,7 @@ func FrontendService(
 	ctx *pulumi.Context,
 	repoUrl pulumi.StringOutput,
 	dependsOn []pulumi.Resource,
+	bucketName pulumi.StringOutput,
 ) *cloudrun.Service {
 	var frontendImageName = fmt.Sprintf("frontend:%v", gitHash)
 
@@ -59,6 +60,11 @@ func FrontendService(
 							SetEnv("NEXT_PUBLIC_CLIENT_ID", "CLIENT_ID"),
 							SetEnv("NEXT_PUBLIC_CLIENT_SECRET", "CLIENT_SECRET"),
 							SetEnv("NEXT_PUBLIC_CODE_CHALLENGE", "CODE_CHALLENGE"),
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("NEXT_PUBLIC_IMAGES_BUCKET"),
+								Value:     bucketName,
+								ValueFrom: nil,
+							},
 						},
 					},
 				},
