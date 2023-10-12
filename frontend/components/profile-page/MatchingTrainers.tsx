@@ -7,6 +7,7 @@ import { useAlert } from '../alerts'
 import Image from 'next/image'
 import Link from 'next/link'
 import cn from 'classnames'
+import { imagesUrl } from '@/api'
 
 const defaultError = 'There was an error fetching trainer matches'
 
@@ -41,12 +42,12 @@ export const MatchingTrainers: React.FC = () => {
   }
 
   useEffect(() => {
-    if (!profileLoading && profile?.email) {
+    if (!profileLoading && profile?.type === 'client') {
       void getMatching()
     }
   }, [profile, profileLoading])
 
-  if (matches.length === 0) {
+  if (profile?.type === 'trainer' && matches.length === 0) {
     return null
   }
 
@@ -59,8 +60,7 @@ export const MatchingTrainers: React.FC = () => {
           <Link href={`/${m.slug}`} key={i} className={styles.match}>
             {m.image
               ? <Image
-                // src={m.image}
-                src={'/jonathan-borba-R0y_bEUjiOM-unsplash.jpg'}
+                src={`${imagesUrl}/m.image`}
                 alt={m.name}
                 height={0}
                 width={0}
