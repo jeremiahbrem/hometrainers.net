@@ -85,7 +85,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   if (!value) {
     return (
       <div className={uploadStyles.imageUpload}>
-        <label role="button">
+        <label>
           Click to add {text} +
           <input type="file" onChange={onFileChange}/>
         </label>
@@ -94,7 +94,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   }
 
   return (<>
-    <div className={uploadStyles.openRemove} onClick={() => setRemoveOpen(true)} role='button'/>
+    <div className={uploadStyles.openRemove}/>
     <div className={uploadStyles.imageRemoveModal} style={{
       display: removeOpen ? 'block' : 'none'
     }}>
@@ -107,7 +107,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
 
 export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
   const textRef = useRef(null)
-
+  
   const {
     block,
     onUpdate,
@@ -136,6 +136,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
   }
 
   const textRight = textPos === 'right'
+  const imageUrl = preview ? image : `${imagesUrl}/${image}`
 
   return (
     <section className={styles.imageText}>
@@ -156,8 +157,8 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
         contentRef={textRef}
       />}
       
-      <Container className={cn(styles.image)} preview={preview} role="button">
-        {image && <Image src={`${imagesUrl}/${image}`} alt={imageAlt ?? ''} height={0} width={0} />}
+      <Container className={cn(styles.image)} preview={preview}>
+        {image && <Image src={imageUrl} alt={imageAlt ?? ''} height={0} width={0} />}
         <ImageUpload value={image} onChange={onImageChange} text='image' />
       </Container>
     </section>

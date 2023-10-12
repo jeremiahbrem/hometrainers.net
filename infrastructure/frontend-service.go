@@ -61,7 +61,7 @@ func FrontendService(
 							SetEnv("NEXT_PUBLIC_CLIENT_SECRET", "CLIENT_SECRET"),
 							SetEnv("NEXT_PUBLIC_CODE_CHALLENGE", "CODE_CHALLENGE"),
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
-								Name:      pulumi.String("IMAGES_BUCKET"),
+								Name:      pulumi.String("NEXT_PUBLIC_IMAGES_BUCKET"),
 								Value:     bucketName,
 								ValueFrom: nil,
 							},
