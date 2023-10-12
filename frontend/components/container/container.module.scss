@@ -3,6 +3,7 @@
 .section {
   border: .2rem solid transparent;
   border-radius: .3rem;
+  position: relative;
 
   &.editing {
     &:hover {

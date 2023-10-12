@@ -24,6 +24,7 @@ func SetupRouter(
 	CreateLoginHandler(router)
 	CreatePagesHandlers(router, serviceProvider)
 	CreateProfilesHandlers(router, serviceProvider)
+	CreateImageUploadHandler(router, serviceProvider)
 
 	return router
 }
