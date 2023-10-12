@@ -99,7 +99,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
       display: removeOpen ? 'block' : 'none'
     }}>
       <Button text='Remove' onClick={() => onChange('')} />
-      <Button text='Cancle' onClick={() => setRemoveOpen(false)} />
+      <Button text='Cancel' onClick={() => setRemoveOpen(false)} />
     </div>
   </>
   )
