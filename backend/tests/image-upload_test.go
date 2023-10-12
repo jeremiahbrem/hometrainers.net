@@ -10,12 +10,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 func TestImageUpload(t *testing.T) {
+	godotenv.Load("../.env")
+
 	db, _ := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 
 	mockBucketService := MockBucketService{}

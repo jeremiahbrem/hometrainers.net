@@ -35,6 +35,7 @@ func (bucketService *MockBucketService) UploadImage(file multipart.File, name st
 	bucketService.NameArg = name
 	return nil
 }
-func (bucketService *MockBucketService) DeleteImage(name string) {
+func (bucketService *MockBucketService) DeleteImage(name string) error {
 	bucketService.NameArg = name
+	return nil
 }

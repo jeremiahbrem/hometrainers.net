@@ -16,6 +16,7 @@ func BackendService(
 	dbUser pulumi.StringOutput,
 	dbPwd pulumi.StringOutput,
 	dbHost pulumi.StringOutput,
+	bucketName pulumi.StringOutput,
 ) *cloudrun.Service {
 	var backendImageName = fmt.Sprintf("backend:%v", gitHash)
 
@@ -62,6 +63,11 @@ func BackendService(
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_DB"),
 								Value:     pulumi.String("hptrainers"),
+								ValueFrom: nil,
+							},
+							cloudrun.ServiceTemplateSpecContainerEnvArgs{
+								Name:      pulumi.String("IMAGES_BUCKET"),
+								Value:     bucketName,
 								ValueFrom: nil,
 							},
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
