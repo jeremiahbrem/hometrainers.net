@@ -131,18 +131,17 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
       try {
         error = (await response.json())?.error ?? error
       }
-      catch{}
-      
-      addAlert(error)
+      finally {
+        addAlert(error)
 
-      return
+        return
+      }
     }
 
     setErrors([])
     addAlert('Profile updated!')
     void resetProfile()
   }
-
 
   return (
     <form

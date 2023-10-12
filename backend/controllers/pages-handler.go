@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/exp/slices"
 )
 
 func slugAlreadyExists(
@@ -30,7 +31,7 @@ type Slug struct {
 	Slug string `uri:"slug" binding:"required"`
 }
 
-func resolvePage(page *models.Page, context *gin.Context, email string) {
+func resolvePage(page *models.Page, context *gin.Context, email string, images []string) {
 	context.JSON(http.StatusOK, gin.H{
 		"slug":        page.Slug,
 		"email":       email,
@@ -38,6 +39,7 @@ func resolvePage(page *models.Page, context *gin.Context, email string) {
 		"description": page.Description,
 		"blocks":      page.Blocks,
 		"active":      page.Active,
+		"images":      images,
 	})
 }
 
@@ -50,7 +52,7 @@ func getPageBySlug(slug Slug, pagesRepo services.PageRepository, context *gin.Co
 		return
 	}
 
-	resolvePage(page, context, "")
+	resolvePage(page, context, "", []string{})
 }
 
 type EmptyBlocks struct {
@@ -72,17 +74,21 @@ func getPageByEmail(email string, pagesRepo services.PageRepository, context *gi
 			"description": "",
 			"blocks":      emptyBlocks,
 			"active":      false,
+			"images":      []string{},
 		})
 		return
 	}
 
-	resolvePage(page, context, email)
+	images := pagesRepo.GetImages(page.ID)
+
+	resolvePage(page, context, email, images)
 }
 
 func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderType) {
 	pagesRepo := provider.GetPagesRepo()
 	profilesRepo := provider.GetProfilesRepo()
 	userValidator := provider.GetUserValidator()
+	bucketService := provider.GetBucketService()
 
 	router.GET("/active-pages", func(context *gin.Context) {
 		pagesRepo.GetActiveSlugs()
@@ -166,6 +172,23 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 
 			dbErr = pagesRepo.UpdatePage(existing, page)
 			message = "updated"
+
+			images := pagesRepo.GetImages(existing.ID)
+
+			for _, val := range images {
+				if page.Images == nil || !slices.Contains(page.Images, val) {
+					pagesRepo.DeleteImage(val, user.Email)
+					bucketService.DeleteImage(val)
+				}
+			}
+
+			if page.Images != nil {
+				for _, val := range page.Images {
+					if !slices.Contains(images, val) {
+						pagesRepo.AddImage(val, user.Email)
+					}
+				}
+			}
 		}
 
 		if dbErr != nil {

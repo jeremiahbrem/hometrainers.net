@@ -1,9 +1,11 @@
 import React from 'react'
 import {
   PageComponent,
+  addImage,
   onRemove,
   onReorder,
-  onUpdate
+  onUpdate,
+  removeImage
 } from '.'
 import { Block, ComponentProps, Page } from '../types'
 import { BlockActions } from './blockActions'
@@ -33,6 +35,7 @@ describe('page component', () => {
       title: '',
       description: '',
       active: false,
+      images: []
     }
 
     it('renders component with content', () => {
@@ -150,6 +153,7 @@ describe('page component', () => {
         title: '',
         description: '',
         active: false,
+        images: []
       }
   
       const newArgs = {
@@ -174,6 +178,44 @@ describe('page component', () => {
             text: 'initial text3'
           },
         ]}
+      })
+    })
+    
+    it('updates page context with addImage', () => {
+      const initial: Page = {
+        blocks: { blocks: [] },
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: ['image1']
+      }
+  
+      const result = addImage('image2', initial)
+  
+      expect(result).toEqual({
+        ...initial,
+        images: ['image1','image2']
+      })
+    })
+   
+    it('updates page context with removeImage', () => {
+      const initial: Page = {
+        blocks: { blocks: [] },
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: ['image1']
+      }
+  
+      const result = removeImage('image1', initial)
+  
+      expect(result).toEqual({
+        ...initial,
+        images: []
       })
     })
     
@@ -242,6 +284,7 @@ describe('page component', () => {
         title: '',
         description: '',
         active: false,
+        images: []
       }
   
       scenarios.forEach(({ index, expected }) => {
@@ -277,6 +320,7 @@ describe('page component', () => {
         title: '',
         description: '',
         active: false,
+        images: []
       }
   
       const scenarios = [

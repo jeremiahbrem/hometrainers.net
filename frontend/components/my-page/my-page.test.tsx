@@ -16,6 +16,7 @@ const page = {
   title: 'title',
   description: 'descrip',
   active: true,
+  images: []
 }
 
 describe('my page component', () => {

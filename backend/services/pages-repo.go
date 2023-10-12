@@ -83,6 +83,35 @@ func (repo *PageRepository) CreatePage(pageArgs models.PageArgs, profile *models
 	return repo.db.Create(&page).Error
 }
 
+func (repo *PageRepository) AddImage(imagePath string, email string) error {
+	page, pageErr := repo.GetUserPage(email)
+
+	if pageErr != nil {
+		return pageErr
+	}
+
+	image := models.Image{
+		PageID: page.ID,
+		Path:   imagePath,
+	}
+
+	return repo.db.Create(&image).Error
+}
+
+func (repo *PageRepository) DeleteImage(imagePath string, email string) error {
+	var image *models.Image
+	db := repo.db
+	db.Model(&models.Image{}).Where(&models.Image{Path: imagePath}).First(&image)
+	return db.Delete(&image).Error
+}
+
+func (repo *PageRepository) GetImages(pageID uint) []string {
+	var images []string
+	repo.db.Model(&models.Image{}).Where(&models.Image{PageID: pageID}).Pluck("path", &images)
+
+	return images
+}
+
 func (repo *PageRepository) UpdatePage(existing *models.Page, updated models.PageArgs) error {
 	existing.Active = updated.Active
 	existing.Slug = updated.Slug

@@ -9,6 +9,7 @@ export type Page = {
   title: string,
   description: string,
   active: boolean,
+  images: string[]
 }
 
 export type PageProps = {
@@ -20,5 +21,7 @@ export type PageProps = {
 export type ComponentProps<T> = {
   block: T,
   onUpdate: (args: T) => void,
+  addImage: (img: string) => void,
+  removeImage: (img: string) => void,
   preview?: boolean
 }

@@ -25,7 +25,7 @@ func SetupPagesTests() *gorm.DB {
 
 	db, _ := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 
-	db.AutoMigrate(&models.Page{}, &models.Goal{}, &models.Profile{})
+	db.AutoMigrate(&models.Page{}, &models.Goal{}, &models.Profile{}, &models.Image{})
 
 	db.Exec(
 		"insert into profiles (email, name, type) values(?,?,?)",
@@ -142,15 +142,23 @@ func TestGetMyPage(t *testing.T) {
 
 	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
 
-	db.Exec(
-		"insert into pages (profile_id, slug, active, blocks, title, description) values(?,?,?,?,?,?)",
-		trainerID,
-		"testpage1",
-		true,
-		blocks,
-		"A page",
-		"page description",
-	)
+	page := models.Page{
+		ProfileID:   trainerID,
+		Slug:        "testpage1",
+		Active:      true,
+		Blocks:      blocks,
+		Title:       "A page",
+		Description: "page description",
+	}
+
+	db.Create(&page)
+
+	image := models.Image{
+		PageID: page.ID,
+		Path:   "test-image",
+	}
+
+	db.Create(&image)
 
 	userValidator := MockUserValidator{
 		User:  services.User{Email: trainerEmail},
@@ -172,6 +180,7 @@ func TestGetMyPage(t *testing.T) {
 		`"active":true`,
 		`"title":"A page"`,
 		`"description":"page description"`,
+		`"images":["test-image"]`,
 	}
 
 	for _, val := range expected {
@@ -444,4 +453,115 @@ func TestUpdatePageSuccess(t *testing.T) {
 	db.Where("slug = ?", page.Slug).First(&updatedPage)
 
 	assert.Equal(t, updatedPage.Blocks, page.Blocks)
+}
+
+func TestImageAdded(t *testing.T) {
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: trainerEmail},
+		Valid: true,
+	}
+
+	blocks := datatypes.JSON([]byte(`{"blocks": []}`))
+
+	db.Exec(
+		"insert into pages (profile_id, slug, active, blocks, title, description) values(?,?,?,?,?,?)",
+		trainerID,
+		"testpage1",
+		true,
+		blocks,
+		"A page",
+		"descrip",
+	)
+
+	page := models.PageArgs{
+		Slug:        "testpage1",
+		Title:       "Test Page",
+		Description: "descrip",
+		Active:      true,
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+		Images:      []string{"test-page"},
+	}
+
+	marshalled, _ := json.Marshal(page)
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var updatedPage *models.Page
+	db.Where("slug = ?", page.Slug).First(&updatedPage)
+
+	var newImage *models.Image
+	db.Where("page_id = ?", updatedPage.ID).First(&newImage)
+
+	assert.Equal(t, "test-page", newImage.Path)
+}
+
+func TestImageDeleted(t *testing.T) {
+	db := SetupPagesTests()
+	defer TeardownPagesTests(db)
+
+	bucketService := MockBucketService{}
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: trainerEmail},
+		Valid: true,
+	}
+
+	page := models.Page{
+		ProfileID:   trainerID,
+		Slug:        "testpage1",
+		Title:       "Test Page",
+		Description: "descrip",
+		Active:      true,
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+	}
+
+	db.Create(&page)
+
+	image := models.Image{
+		PageID: page.ID,
+		Path:   "test-path",
+	}
+
+	db.Create(&image)
+
+	pageArgs := models.PageArgs{
+		Slug:        "testpage1",
+		Title:       "Test Page",
+		Description: "descrip",
+		Active:      true,
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+		Images:      []string{},
+	}
+
+	marshalled, _ := json.Marshal(pageArgs)
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db, &userValidator, &bucketService)
+
+	req, _ := http.NewRequest("POST", "/my-page", bytes.NewReader(marshalled))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var updatedPage *models.Page
+	db.Where("slug = ?", page.Slug).First(&updatedPage)
+
+	var newImage *models.Image
+	err := db.Where("page_id = ?", updatedPage.ID).First(&newImage).Error
+
+	assert.NotNil(t, err)
+	assert.Equal(t, "test-path", bucketService.NameArg)
 }

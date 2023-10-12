@@ -8,6 +8,7 @@ export async function getPageResult(response: Response): Promise<Page> {
     title: '',
     description: '',
     active: false,
+    images: []
   }
 
   let page = emptyPage

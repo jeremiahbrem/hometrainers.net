@@ -51,7 +51,7 @@ export function onUpdate(
   args: Record<string, any>,
   index: number,
   ctx: Page,
-  blockName: string
+  blockName: string,
 ): Page {
   const copy = {
     ...ctx,
@@ -65,6 +65,20 @@ export function onUpdate(
   }
 
   return copy
+}
+
+export function addImage(img: string, ctx: Page): Page {
+  return {
+    ...ctx,
+    images: [...ctx.images, img]
+  }
+}
+
+export function removeImage(img: string, ctx: Page): Page {
+  return {
+    ...ctx,
+    images: ctx.images.filter(i => i !== img)
+  }
 }
 
 export const PageComponent = (props: PageProps) => {
@@ -104,6 +118,8 @@ export const PageComponent = (props: PageProps) => {
                 ctx,
                 blockName
               ))}
+              addImage={(img: string) => setPageContext(ctx => addImage(img, ctx))}
+              removeImage={(img: string) => setPageContext(ctx => removeImage(img, ctx))}
             />
 
             {isEditing && <BlockActions {...{

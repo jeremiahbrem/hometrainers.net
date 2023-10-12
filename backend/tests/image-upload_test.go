@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/png"
 	"io"
+	"main/models"
 	"main/services"
 	"mime/multipart"
 	"net/http/httptest"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/datatypes"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -20,13 +22,38 @@ func TestImageUpload(t *testing.T) {
 	godotenv.Load("../.env")
 
 	db, _ := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	db.AutoMigrate(&models.Page{}, &models.Image{})
 
 	mockBucketService := MockBucketService{}
 
+	email := "test@example.com"
+
 	userValidator := MockUserValidator{
-		User:  services.User{Email: trainerEmail},
+		User:  services.User{Email: email},
 		Valid: true,
 	}
+
+	trainerProfile := models.Profile{
+		Email:  email,
+		Name:   "Tester",
+		Type:   "trainer",
+		Cities: []*models.City{},
+		Goals:  []*models.Goal{},
+		Image:  "image.com",
+	}
+
+	db.Create(&trainerProfile)
+
+	page := models.Page{
+		ProfileID:   trainerProfile.ID,
+		Slug:        "testpage1",
+		Title:       "Test Page",
+		Description: "descrip",
+		Active:      true,
+		Blocks:      datatypes.JSON(`{"blocks":[{"blockName":"image-text-left","header":"text"}]}`),
+	}
+
+	db.Create(&page)
 
 	router := SetupRouter(db, &userValidator, &mockBucketService)
 
@@ -38,7 +65,7 @@ func TestImageUpload(t *testing.T) {
 	go func() {
 		defer pw.Close()
 
-		form.WriteField("image-path", "/abc123")
+		form.WriteField("image-path", "abc123")
 
 		img = CreateImage()
 
@@ -66,7 +93,12 @@ func TestImageUpload(t *testing.T) {
 
 	assert.NotZero(t, expected.Len())
 	assert.Equal(t, expected, actual)
-	assert.Equal(t, mockBucketService.NameArg, "/abc123")
+	assert.Equal(t, mockBucketService.NameArg, "abc123")
+
+	var dbImage *models.Image
+	db.Where("path = ?", "abc123").First(&dbImage)
+
+	assert.Equal(t, dbImage.PageID, page.ID)
 }
 
 func CreateImage() *image.RGBA {

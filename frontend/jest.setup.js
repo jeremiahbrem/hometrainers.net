@@ -2,6 +2,7 @@ import '@testing-library/jest-dom'
 
 process.env.NEXT_PUBLIC_DOMAIN_URL='http://localhost:3000'
 process.env.NEXT_PUBLIC_API_URL='http://localhost:8080'
+process.env.NEXT_PUBLIC_IMAGES_BUCKET='test-bucket'
 
 jest.mock('next/navigation', () => ({
   usePathname() {

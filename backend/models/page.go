@@ -22,4 +22,5 @@ type PageArgs struct {
 	Active      bool           `json:"active" gorm:"default:true"`
 	Title       string         `json:"title" binding:"required"`
 	Description string         `json:"description" binding:"required"`
+	Images      []string       `json:"images"`
 }
