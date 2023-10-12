@@ -57,7 +57,7 @@ func main() {
 			return dbErr
 		}
 
-		Bucket(ctx)
+		bucketName := Bucket(ctx)
 
 		authService := AuthService(
 			gitHash,
@@ -78,6 +78,7 @@ func main() {
 			username,
 			password,
 			dbHost,
+			bucketName,
 		)
 
 		FrontendService(
@@ -85,6 +86,7 @@ func main() {
 			ctx,
 			repoUrl,
 			[]pulumi.Resource{enableCloudRun, authService, backendService},
+			bucketName,
 		)
 
 		return nil
