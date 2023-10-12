@@ -24,6 +24,7 @@ func FrontendService(
 	frontendArgs["NEXT_PUBLIC_GOOGLE_CLIENT_SECRET"] = pulumi.String(os.Getenv("GOOGLE_CLIENT_SECRET"))
 	frontendArgs["NEXT_PUBLIC_GOOGLE_CLIENT_ID"] = pulumi.String(os.Getenv("GOOGLE_CLIENT_ID"))
 	frontendArgs["NEXT_PUBLIC_API_URL"] = pulumi.String(os.Getenv("API_URL"))
+	frontendArgs["NEXT_PUBLIC_IMAGES_BUCKET"] = bucketName
 	frontendArgs["ENVIRONMENT"] = pulumi.String("PROD")
 
 	frontend, _ := docker.NewImage(ctx, "frontend", &docker.ImageArgs{
