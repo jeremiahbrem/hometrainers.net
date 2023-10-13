@@ -44,6 +44,7 @@ func SetupPagesTests() *gorm.DB {
 
 func TeardownPagesTests(db *gorm.DB) {
 	sql := `
+		delete from images;
 		delete from pages;
 		delete from profiles;
 	`
