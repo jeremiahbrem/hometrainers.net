@@ -3,7 +3,7 @@
 .profile-provider {
   font-family: 'Roboto';
   .profile-modal {
-    position: absolute;
+    position: fixed;
     top: 4rem;
     height: calc(100vh - 4rem);
     width: 100vw;

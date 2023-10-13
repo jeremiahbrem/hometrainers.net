@@ -7,6 +7,11 @@ body, div, section, a, p {
   box-sizing: border-box;
 }
 
+section {
+  max-width: 1500px;
+  margin: auto;
+}
+
 button {
   padding: 0;
   border: none;

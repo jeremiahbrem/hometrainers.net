@@ -6,9 +6,9 @@ export const Footer: React.FC = () => {
 
 
   return (
-    <section className={styles.footer}>
+    <div className={styles.footer}>
       <div />
       <Link href='/privacy'>privacy</Link>
-    </section>
+    </div>
   )
 }

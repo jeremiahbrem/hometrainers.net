@@ -1,0 +1,71 @@
+@import '@/styles/global.scss';
+
+.section {
+  height: calc(100vh - 6.8rem);
+  min-height: 600px;
+  overflow: scroll;
+  position: relative;
+  width: 100%;
+  .image {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    img {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      object-position: 80%;
+    }
+  }
+  .overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,.2);
+  }
+  .text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    align-items: center;
+    padding-left: 5rem;
+    z-index: 2;
+    display: flex;
+    color: white;
+    width: 50%;
+    font-weight: bold;
+
+    h1 {
+      font-size: 3rem;
+    }
+    h2 {
+      font-size: 2.7rem;
+    }
+    h3{
+      font-size: 2.4rem;
+    }
+    h4 {
+      font-size: 2.1rem;
+    }
+    h4 {
+      font-size: 1.8rem;
+    }
+    h5 {
+      font-size: 1.5rem;
+    }
+    h5 {
+      font-size: 1.1rem;
+    }
+
+    @media (max-width: 750px) {
+      width: 75%
+    }
+    @media (max-width: 600px) {
+      width: 100%;
+      padding: 0 2rem;
+    }
+  }
+}

@@ -1,0 +1,71 @@
+@import '@/styles/global.scss';
+
+.section {
+  padding-bottom: 4rem;
+  color: $fontColor;
+  width: 100%;
+  h2 {
+    text-align: center;
+    padding: 0 4rem 0rem 4rem;
+    font-size: 2rem;
+  }
+  .container {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    .text {
+      padding-right: 3rem;
+      font-weight: lighter;
+      max-width: 35rem;
+      text-align: left;
+      margin-bottom: 3rem;
+  
+      h3, p {
+        margin-bottom: 2rem;
+      }
+    }
+    .images {
+      padding: 0rem 2rem 2rem 2rem;
+      max-width: 37rem;
+      .image {
+        height: 10rem;
+        width: 35rem;
+        object-fit: contain;
+      }
+    }
+
+    @media (max-width: 880px) {
+      grid-template-columns: 1fr;
+      .text {
+        margin: 0 auto 3rem auto;
+      }
+      .images {
+        margin: 0 auto 0rem auto;
+        padding: 0;
+      }
+    }
+    @media (max-width: 770px) {
+      grid-template-columns: 1fr;
+      padding: 0 4rem 4rem 4rem;
+    }
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+      padding: 0 2rem 4rem 2rem;
+      .text {
+        padding: 0;
+      }
+      .images {
+        padding-right: 0;
+        .image {
+          height: auto;
+          width: 100%;
+          object-fit: contain;
+        }
+      }
+    }
+  }
+  @media (max-width: 600px) {
+    h2 {
+      padding: 0 2rem 0rem 2rem;
+    }
+  }
+}

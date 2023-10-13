@@ -1,6 +1,8 @@
 import styles from './home.module.scss'
 import { Oswald } from 'next/font/google'
 import Image from 'next/image'
+import { BuildPage } from './build-page'
+import { ClientMatching } from './client-matching'
 
 const oswald = Oswald({
   weight: '600',
@@ -21,8 +23,8 @@ const clientAlt = 'image by Bruce Mars from Upsplash'
 
 export function HomeComponent() {
 
-  return (
-    <div className={styles.home}>
+  return (<>
+    <section className={styles.home}>
       <h1>A Networking Platform for<br></br>In-Home Personal Trainers and Clients</h1>
 
       <div className={styles.headlinesContainer}>
@@ -79,8 +81,9 @@ export function HomeComponent() {
           </div>
         </div>
       </div>
+    </section>
 
-      <p className={styles.coming}>Coming soon...</p>
-    </div>
-  )
+    <BuildPage />
+    <ClientMatching />
+  </>)
 }

@@ -73,16 +73,6 @@ func CreateProfilesHandlers(router *gin.Engine, provider services.ServiceProvide
 			return
 		}
 
-		if len(profile.Cities) == 0 {
-			context.JSON(http.StatusBadRequest, gin.H{"error": "city required"})
-			return
-		}
-
-		if len(profile.Goals) == 0 {
-			context.JSON(http.StatusBadRequest, gin.H{"error": "at least one goal required"})
-			return
-		}
-
 		goals := make([]string, 0)
 		for _, v := range profile.Goals {
 			goals = append(goals, v.Name)

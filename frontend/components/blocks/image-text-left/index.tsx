@@ -1,5 +1,5 @@
 import React from 'react'
-import { ImageText, ImageTextProps } from '../imageText'
+import { ImageText, ImageTextProps } from '../image-text'
 
 export const ImageTextLeft: React.FC<ImageTextProps> = (props) => {
   return (

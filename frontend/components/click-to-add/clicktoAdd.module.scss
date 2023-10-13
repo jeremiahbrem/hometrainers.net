@@ -1,3 +1,5 @@
+@import '@/styles/global.scss';
+
 .click-to-add {
   position: absolute;
   top: 0;
@@ -7,4 +9,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: $fontColor;
 }

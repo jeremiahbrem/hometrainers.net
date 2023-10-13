@@ -2,8 +2,9 @@ import React from 'react'
 import styles from './previewBlocks.module.scss'
 import cn from 'classnames'
 import { Block } from '../types'
-import { ImageTextLeft } from '../blocks/imageTextLeft'
-import { ImageTextRight } from '../blocks/imageTextRight'
+import { ImageTextLeft } from '../blocks/image-text-left'
+import { ImageTextRight } from '../blocks/image-rext-right'
+import { FullPageImageTextLeft } from '../blocks/full-page-image-text-left'
 
 type PreviewBlockProps = {
   onBlockClick: (block: Record<string, any>) => void
@@ -89,5 +90,24 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'image-text-right'
     },
     Component: ImageTextRight
+  },
+  {
+    newBlock: {
+      blockName: 'full-page-image-text-left',
+      text: '',
+      image: '',
+      imageAlt: ''
+    },
+    className: styles.imageText,
+    testId: 'full-page-image-text-left-preview',
+    componentProps: {
+      ...defaultProps,
+      block: {
+        image: '/carl-barcelo-hHzzdVQnkn0-unsplash.jpg',
+        text: '<h4>Reach Your Personal Goals</h4>' 
+      },
+      blockName: 'full-page-image-text-left'
+    },
+    Component: FullPageImageTextLeft
   }
 ]

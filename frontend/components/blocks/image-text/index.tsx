@@ -7,7 +7,7 @@ import { Editor } from '@/components/editors'
 import { ComponentProps } from '@/components/types'
 import { Container } from '@/components/container'
 import { ClickToAdd } from '@/components/click-to-add'
-import { imagesUrl } from '@/api'
+import { IMAGES_URL } from '@/api'
 import { ImageUpload } from '@/components/image-upload'
 
 export type ImageTextProps = ComponentProps<{
@@ -66,7 +66,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
   }
 
   const textRight = textPos === 'right'
-  const imageUrl = preview ? image : `${imagesUrl}/${image}`
+  const imageUrl = preview ? image : `${IMAGES_URL}/${image}`
 
   return (
     <section className={styles.imageText}>

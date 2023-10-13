@@ -7,7 +7,7 @@ import { useAlert } from '../alerts'
 import Image from 'next/image'
 import Link from 'next/link'
 import cn from 'classnames'
-import { imagesUrl } from '@/api'
+import { IMAGES_URL } from '@/api'
 
 const defaultError = 'There was an error fetching trainer matches'
 
@@ -60,7 +60,7 @@ export const MatchingTrainers: React.FC = () => {
           <Link href={`/${m.slug}`} key={i} className={styles.match}>
             {m.image
               ? <Image
-                src={`${imagesUrl}/m.image`}
+                src={`${IMAGES_URL}/m.image`}
                 alt={m.name}
                 height={0}
                 width={0}

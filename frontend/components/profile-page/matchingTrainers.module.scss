@@ -16,6 +16,7 @@
       padding: .5rem;
       font-size: 0.9rem;
       border-radius: 1rem;
+      max-width: 30rem;
 
       .image {
         height: 4rem;
@@ -29,6 +30,12 @@
         color: $orange;
       }
       transition: background-color .25s ease-in-out;
+
+      &:first-of-type {
+      background-color: rgba($orange, .3);
+
+      }
+
       &:hover {
         background-color: rgba($orange, .3);
       }
