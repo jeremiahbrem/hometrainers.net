@@ -79,7 +79,7 @@ func getPageByEmail(email string, pagesRepo services.PageRepository, context *gi
 		return
 	}
 
-	images := pagesRepo.GetImages(page.ID)
+	images := pagesRepo.GetImages(email)
 
 	resolvePage(page, context, email, images)
 }
@@ -173,11 +173,11 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 			dbErr = pagesRepo.UpdatePage(existing, page)
 			message = "updated"
 
-			images := pagesRepo.GetImages(existing.ID)
+			images := pagesRepo.GetImages(user.Email)
 
 			for _, val := range images {
 				if page.Images == nil || !slices.Contains(page.Images, val) {
-					pagesRepo.DeleteImage(val, user.Email)
+					pagesRepo.DeleteImage(val)
 					bucketService.DeleteImage(val)
 				}
 			}

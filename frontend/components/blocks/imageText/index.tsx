@@ -89,12 +89,12 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
       
       <Container className={cn(styles.image)} preview={preview}>
         {image && <Image src={imageUrl} alt={imageAlt ?? ''} height={0} width={0} />}
-        <ImageUpload 
+        {!preview && <ImageUpload 
           value={image}
           onChange={onImageChange}
           text='image'
           onRemove={onRemoveImage}
-        />
+        />}
       </Container>
     </section>
   )

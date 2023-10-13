@@ -1,5 +1,6 @@
 import { useIsEditing } from '@/utils/useIsEditing'
 import React from 'react'
+import styles from './clicktoAdd.module.scss'
 
 type ClickToAddProps = {
   value: any
@@ -15,6 +16,6 @@ export const ClickToAdd: React.FC<ClickToAddProps> = (props) => {
   }
 
   return (
-    <div>Click to add {text} +</div>
+    <div className={styles.clickToAdd}>Click to add {text} +</div>
   )
 }

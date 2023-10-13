@@ -1,4 +1,4 @@
-module homepersonaltrainers.net
+module hometrainers.net
 
 go 1.18
 

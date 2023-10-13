@@ -6,7 +6,6 @@ import (
 
 type Image struct {
 	gorm.Model
-	Path   string `gorm:"not null; uniqueIndex"`
-	PageID uint
-	Page   Page
+	Path  string `gorm:"not null; uniqueIndex"`
+	Email string
 }

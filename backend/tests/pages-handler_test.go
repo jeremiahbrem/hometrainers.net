@@ -155,8 +155,8 @@ func TestGetMyPage(t *testing.T) {
 	db.Create(&page)
 
 	image := models.Image{
-		PageID: page.ID,
-		Path:   "test-image",
+		Email: trainerEmail,
+		Path:  "test-image",
 	}
 
 	db.Create(&image)
@@ -502,7 +502,7 @@ func TestImageAdded(t *testing.T) {
 	db.Where("slug = ?", page.Slug).First(&updatedPage)
 
 	var newImage *models.Image
-	db.Where("page_id = ?", updatedPage.ID).First(&newImage)
+	db.Where("email = ?", trainerEmail).First(&newImage)
 
 	assert.Equal(t, "test-page", newImage.Path)
 }
@@ -530,8 +530,8 @@ func TestImageDeleted(t *testing.T) {
 	db.Create(&page)
 
 	image := models.Image{
-		PageID: page.ID,
-		Path:   "test-path",
+		Email: trainerEmail,
+		Path:  "test-path",
 	}
 
 	db.Create(&image)

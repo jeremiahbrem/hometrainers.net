@@ -18,11 +18,22 @@ import (
 	"gorm.io/gorm"
 )
 
+func TeardownImagesTests(db *gorm.DB) {
+	sql := `
+		delete from images;
+		delete from pages;
+		delete from profiles;
+	`
+	db.Exec(sql)
+}
+
 func TestImageUpload(t *testing.T) {
 	godotenv.Load("../.env")
 
 	db, _ := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 	db.AutoMigrate(&models.Page{}, &models.Image{})
+
+	defer TeardownImagesTests(db)
 
 	mockBucketService := MockBucketService{}
 
@@ -98,7 +109,7 @@ func TestImageUpload(t *testing.T) {
 	var dbImage *models.Image
 	db.Where("path = ?", "abc123").First(&dbImage)
 
-	assert.Equal(t, dbImage.PageID, page.ID)
+	assert.Equal(t, dbImage.Email, email)
 }
 
 func CreateImage() *image.RGBA {

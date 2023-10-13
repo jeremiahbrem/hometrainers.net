@@ -8,8 +8,14 @@ func RunMigrations() {
 		{
 			Name: "PageDropEmailCity",
 			Exec: func() {
-				DB.Db.Migrator().DropColumn(&models.Page{}, "Email")
-				DB.Db.Migrator().DropColumn(&models.Page{}, "City")
+				DB.Db.Migrator().DropColumn(&models.Page{}, "email")
+				DB.Db.Migrator().DropColumn(&models.Page{}, "city")
+			},
+		},
+		{
+			Name: "DropImagePageId",
+			Exec: func() {
+				DB.Db.Migrator().DropColumn(&models.Image{}, "page_id")
 			},
 		},
 	}
