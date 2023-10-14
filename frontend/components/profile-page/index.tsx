@@ -6,7 +6,7 @@ import { Loading } from '../loading'
 import { useIsLoggedIn } from '@/utils/useIsLoggedIn'
 import { ProfileForm } from './ProfileForm'
 import { MatchingTrainers } from './MatchingTrainers'
-import { createOverlayText } from '../contact-form'
+import { createOverlayText } from '@/utils/createOverlayText'
 
 type ProfileFormProps = {
   type: 'client' | 'trainer'
