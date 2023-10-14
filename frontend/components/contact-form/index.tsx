@@ -6,6 +6,8 @@ import styles from './contactForm.module.scss'
 import cn from 'classnames'
 import { Roboto } from 'next/font/google'
 import { Loading } from '../loading'
+import Image from 'next/image'
+import { createOverlayText } from '@/utils/createOverlayText'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -109,55 +111,69 @@ export const ContactForm: React.FC = () => {
   }
 
   return (
-    <form
-      onSubmit={e => e.preventDefault()}
-      className={cn(styles.contactForm, roboto.className)}
-    >
-      <h3>Contact Us</h3>
+    <div className={styles.contactFormPage}>
+      <form
+        onSubmit={e => e.preventDefault()}
+        className={cn(styles.contactForm, roboto.className)}
+      >
+        <h3>Contact Us</h3>
 
-      <label className={styles.name} htmlFor='name'>Name</label>
-      <input
-        name='name'
-        id='name'
-        onChange={onChange}
-        value={formState.name}
-        placeholder='Enter your name'
-        style={{ borderColor:
-          errors.some(x => x.key === 'name') ? 'red' : 'transparent'
-        }}
-      />
-      
-      <label className={styles.name} htmlFor='email'>Email</label>
-      <input
-        name='email'
-        id='email'
-        onChange={onChange}
-        value={formState.email}
-        placeholder='Enter your email'
-        style={{ borderColor:
-          errors.some(x => x.key === 'email') ? 'red' : 'transparent'
-        }}
-      />
-      
-      <label className={styles.name} htmlFor='message'>Message</label>
-      <textarea
-        name='message'
-        id='message'
-        onChange={onChange}
-        value={formState.message}
-        placeholder='Enter your message'
-        style={{ borderColor:
-          errors.some(x => x.key === 'message') ? 'red' : 'transparent'
-        }}
-      />
+        <label className={styles.name} htmlFor='name'>Name</label>
+        <input
+          name='name'
+          id='name'
+          onChange={onChange}
+          value={formState.name}
+          placeholder='Enter your name'
+          style={{ borderColor:
+            errors.some(x => x.key === 'name') ? 'red' : 'transparent'
+          }}
+        />
+        
+        <label className={styles.name} htmlFor='email'>Email</label>
+        <input
+          name='email'
+          id='email'
+          onChange={onChange}
+          value={formState.email}
+          placeholder='Enter your email'
+          style={{ borderColor:
+            errors.some(x => x.key === 'email') ? 'red' : 'transparent'
+          }}
+        />
+        
+        <label className={styles.name} htmlFor='message'>Message</label>
+        <textarea
+          name='message'
+          id='message'
+          onChange={onChange}
+          value={formState.message}
+          placeholder='Enter your message'
+          style={{ borderColor:
+            errors.some(x => x.key === 'message') ? 'red' : 'transparent'
+          }}
+        />
 
-      <div className={styles.saveButton}>
-        <Button text={'Save'} onClick={onSubmit} type='button' />
+        <div className={styles.saveButton}>
+          <Button text={'Save'} onClick={onSubmit} type='button' />
+        </div>
+
+        <p className={styles.error}>{errors[0] ? errors[0].error : ''}</p>
+
+        <Loading open={loading} />
+      </form>
+      <div className={styles.imageContainer}>
+        <Image
+          src={'/luna-active-fitness-iEpsg6OzyXw-unsplash.jpg'}
+          alt={'Image by Luna Active Fitness from Upsplash'}
+          height={0}
+          width={0}
+          className={styles.image}
+        />
+        <div className={styles.overlay}>
+          <h1>{createOverlayText('ContactUs')}</h1>
+        </div>
       </div>
-
-      <p className={styles.error}>{errors[0] ? errors[0].error : ''}</p>
-
-      <Loading open={loading} />
-    </form>
+    </div>
   )
 }

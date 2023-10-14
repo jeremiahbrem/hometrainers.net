@@ -71,6 +71,7 @@ export const MatchingTrainers: React.FC = () => {
             <span>{m.name}</span>
           </Link>
         ))}
+        {matches.length === 0 && <p className={styles.noneFound}>No matching trainers found. We just launched, and we&#39;re continually growing our network. Check back often!</p>}
       </div>
     </div>
   )

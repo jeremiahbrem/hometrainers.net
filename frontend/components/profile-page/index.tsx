@@ -2,11 +2,11 @@ import React, { useEffect } from 'react'
 import styles from './profilePage.module.scss'
 import { useProfile } from '../profile-provider'
 import Image from 'next/image'
-import { clientOverlayText, trainerOverlayText } from './overlayText'
 import { Loading } from '../loading'
 import { useIsLoggedIn } from '@/utils/useIsLoggedIn'
 import { ProfileForm } from './ProfileForm'
 import { MatchingTrainers } from './MatchingTrainers'
+import { createOverlayText } from '../contact-form'
 
 type ProfileFormProps = {
   type: 'client' | 'trainer'
@@ -57,7 +57,7 @@ export const ProfilePage: React.FC<ProfileFormProps> = (props) => {
           className={styles.image}
         />
         <div className={styles.overlay}>
-          <h1>{isTrainer ? trainerOverlayText : clientOverlayText}</h1>
+          <h1>{createOverlayText(`${isTrainer ? 'Trainer' : 'Client'} Profile`)}</h1>
         </div>
       </div>
     </div>

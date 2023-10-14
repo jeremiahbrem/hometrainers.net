@@ -40,8 +40,13 @@
         background-color: rgba($orange, .3);
       }
     }
-  }
 
+    .none-found {
+      font-size: .8rem;
+    }
+  
+  }
+ 
   @media (max-width: 630px) {
     padding-top: 0;
     margin-top: 0;

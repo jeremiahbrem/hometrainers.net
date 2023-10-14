@@ -201,7 +201,7 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
               >
                 Sign in with email
               </button>
-              <button
+              {/* <button
                 className={styles.googleSignIn}
                 onClick={onButtonClick(() => signIn('google'))}
               >
@@ -211,7 +211,7 @@ export const ProfileProvider: React.FC<ProfileProviderProps> = ({ children }) =>
                   fill={true}
                   className={styles.googleIcon}
                 />
-              </button>
+              </button> */}
             </>}
           </div>
         </div>

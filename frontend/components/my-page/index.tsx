@@ -112,6 +112,11 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
   }
   const [pageContext, setPageContext] = useState<Page>(copyProps)
   const [settingsError, setSettingsError] = useState<SettingsError>(null)
+  const addAlert = useAlert()
+
+  useEffect(() => {
+    addAlert(`Hi! We just launched, and we're continually working on new page components and features. Check back often!`)
+  }, [])
 
   const { reset } = useRefreshKey()
   
