@@ -19,6 +19,7 @@ commands:
       - run: echo 'export NEXTAUTH_SECRET=${NEXTAUTH_SECRET}'
       - run: echo 'export LOGIN_URL=${LOGIN_URL}'
       - run: echo 'export AUTH_SERVER_URL=${AUTH_SERVER_URL}'
+      - run: echo 'export MAIL_PASSWORD=${MAIL_PASSWORD}'
   run-go-tests:
     parameters:
       directory:

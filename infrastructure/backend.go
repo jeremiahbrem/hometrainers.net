@@ -45,6 +45,7 @@ func BackendService(
 							SetEnv("AUTH_SERVER_URL", "AUTH_SERVER_URL"),
 							SetEnv("BACKEND_REDIRECT_URL", "BACKEND_REDIRECT_URL"),
 							SetEnv("CODE_CHALLENGE", "CODE_CHALLENGE"),
+							SetEnv("MAIL_PASSWORD", "MAIL_PASSWORD"),
 							cloudrun.ServiceTemplateSpecContainerEnvArgs{
 								Name:      pulumi.String("POSTGRES_USER"),
 								Value:     dbUser,
