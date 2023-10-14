@@ -8,6 +8,7 @@ import { Roboto } from 'next/font/google'
 import { Loading } from '../loading'
 import Image from 'next/image'
 import { createOverlayText } from '@/utils/createOverlayText'
+import { API } from '@/api'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -62,7 +63,6 @@ export const ContactForm: React.FC = () => {
         field: 'email',
         error: 'Email required'
       },
-   
       {
         field: 'message',
         error: 'Message required'
@@ -83,11 +83,10 @@ export const ContactForm: React.FC = () => {
     }
 
     setLoading(true)
-
-    const response = await fetchWithAuth({
+    console.log(JSON.stringify(formState))
+    const response = await fetch(`${API}/contact`, {
       method: 'POST',
-      path: '/contact',
-      body: JSON.stringify(formState)
+      body: JSON.stringify({...formState})
     })
 
     setLoading(false)
@@ -155,7 +154,7 @@ export const ContactForm: React.FC = () => {
         />
 
         <div className={styles.saveButton}>
-          <Button text={'Save'} onClick={onSubmit} type='button' />
+          <Button text={'Send'} onClick={onSubmit} type='button' />
         </div>
 
         <p className={styles.error}>{errors[0] ? errors[0].error : ''}</p>

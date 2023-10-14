@@ -1,11 +1,12 @@
 package tests
 
 import (
+	"bytes"
+	"encoding/json"
+	"main/controllers"
 	"main/services"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
-	"strings"
 	"testing"
 
 	"github.com/joho/godotenv"
@@ -25,13 +26,15 @@ func TestPostContact(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	form := url.Values{}
-	form.Add("email", "test@example.com")
-	form.Add("name", "Tester")
-	form.Add("message", "This is a contact form message")
+	args := controllers.ContactArgs{
+		Name:    "Tester",
+		Email:   "test@example.com",
+		Message: "This is a contact form message",
+	}
 
-	req, _ := http.NewRequest("POST", "/contact", strings.NewReader(form.Encode()))
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	marshalled, _ := json.Marshal(args)
+
+	req, _ := http.NewRequest("POST", "/contact", bytes.NewReader(marshalled))
 
 	router.ServeHTTP(w, req)
 

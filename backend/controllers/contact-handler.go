@@ -8,26 +8,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type ContactArgs struct {
+	Name    string `json:"name" binding:"required"`
+	Email   string `json:"email" binding:"required"`
+	Message string `json:"message" binding:"required"`
+}
+
 func CreateContactHandler(router *gin.Engine, provider services.ServiceProviderType) {
 	emailService := provider.GetEmailService()
 
 	router.POST("/contact", func(context *gin.Context) {
-		request := context.Request
+		args := ContactArgs{}
 
-		if request.Form == nil {
-			if err := request.ParseForm(); err != nil {
-				context.JSON(http.StatusInternalServerError, err.Error())
-				return
-			}
+		parseErr := context.BindJSON(&args)
+
+		if parseErr != nil {
+			errMessage := fmt.Sprintf("invalid fields: %s", parseErr)
+			context.JSON(http.StatusBadRequest, gin.H{"error": errMessage})
+			return
 		}
-
-		name := request.Form.Get("name")
-		email := request.Form.Get("email")
-		message := request.Form.Get("message")
 
 		emailService.SendEmail(services.EmailArgs{
 			To:      "support@hometrainers.net",
-			Body:    fmt.Sprintf("%s\nSent from %s %s", message, name, email),
+			Body:    fmt.Sprintf("%s\nSent from %s %s", args.Message, args.Name, args.Email),
 			Subject: "Contact Form",
 		})
 
