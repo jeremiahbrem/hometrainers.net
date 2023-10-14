@@ -7,7 +7,7 @@ export const Footer: React.FC = () => {
 
   return (
     <div className={styles.footer}>
-      <div />
+      <Link href='/contact'>contact</Link>
       <Link href='/privacy'>privacy</Link>
     </div>
   )

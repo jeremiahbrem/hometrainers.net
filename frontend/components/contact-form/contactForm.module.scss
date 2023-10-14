@@ -21,7 +21,7 @@
     }
   }
 
-  input {
+  input, textarea {
     color: inherit;
     border: none;
     padding: .5rem;
@@ -29,6 +29,8 @@
     width: 13.5rem;
     margin: .3rem 0;
     border: 2px solid transparent;
+    resize: none;
+    font-family: inherit;
   }
 
   .save-button {
@@ -39,5 +41,13 @@
 
   @media (max-width: 630px) {
     padding: 0rem 3rem 0rem 3rem;
+  }
+  @media (max-width: 350px) {
+    padding: 0 2rem;
+    width: 13rem;
+
+    input, textarea {
+      width: 11rem
+    }
   }
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAlert } from '../alerts'
 import { useFetchWithAuth } from '@/utils/useFetchWithAuth'
 import { Button } from '../button'
-import styles from './profileForm.module.scss'
+import styles from './contactForm.module.scss'
 import cn from 'classnames'
 import { Roboto } from 'next/font/google'
 import { Loading } from '../loading'
@@ -23,7 +23,7 @@ type FormError = {
   error: string
 }
 
-export const ProfileForm: React.FC = () => {
+export const ContactForm: React.FC = () => {
   const [loading, setLoading] = useState(false)
  
   const addAlert = useAlert()
@@ -82,7 +82,11 @@ export const ProfileForm: React.FC = () => {
 
     setLoading(true)
 
-    const response = await (() => Promise.resolve({ ok: true, json() { return { error: null }} }))()
+    const response = await fetchWithAuth({
+      method: 'POST',
+      path: '/contact',
+      body: JSON.stringify(formState)
+    })
 
     setLoading(false)
 
@@ -128,7 +132,7 @@ export const ProfileForm: React.FC = () => {
         name='email'
         id='email'
         onChange={onChange}
-        value={formState.name}
+        value={formState.email}
         placeholder='Enter your email'
         style={{ borderColor:
           errors.some(x => x.key === 'email') ? 'red' : 'transparent'
@@ -139,8 +143,8 @@ export const ProfileForm: React.FC = () => {
       <textarea
         name='message'
         id='message'
-        onChange={x => {}}
-        value={formState.name}
+        onChange={onChange}
+        value={formState.message}
         placeholder='Enter your message'
         style={{ borderColor:
           errors.some(x => x.key === 'message') ? 'red' : 'transparent'

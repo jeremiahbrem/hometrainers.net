@@ -15,6 +15,7 @@ func SetupRouter(
 
 	userValidator := &MockUserValidator{}
 	bucketService := &MockBucketService{}
+	emailService := &MockEmailService{}
 
 	if args != nil {
 		for _, arg := range args {
@@ -24,12 +25,15 @@ func SetupRouter(
 			if v, ok := arg.(services.BucketServiceType); ok {
 				bucketService = v.(*MockBucketService)
 			}
+			if v, ok := arg.(services.EmailServiceType); ok {
+				emailService = v.(*MockEmailService)
+			}
 		}
 	}
 
 	serviceProvider := services.CreateProvider(
 		db,
-		&MockEmailService{},
+		emailService,
 		userValidator,
 		bucketService,
 	)
