@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useAlert } from '../alerts'
-import { useFetchWithAuth } from '@/utils/useFetchWithAuth'
 import { Button } from '../button'
 import styles from './contactForm.module.scss'
 import cn from 'classnames'
@@ -32,8 +31,6 @@ export const ContactForm: React.FC = () => {
   const addAlert = useAlert()
 
   const [errors, setErrors] = useState<FormError[]>([])
-
-  const fetchWithAuth = useFetchWithAuth()
 
   const initializeValues = () => ({
     name: '',
@@ -83,7 +80,7 @@ export const ContactForm: React.FC = () => {
     }
 
     setLoading(true)
-    console.log(JSON.stringify(formState))
+
     const response = await fetch(`${API}/contact`, {
       method: 'POST',
       body: JSON.stringify({...formState})

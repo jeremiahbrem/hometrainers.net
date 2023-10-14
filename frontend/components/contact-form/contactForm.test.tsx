@@ -11,7 +11,7 @@ global.fetch = jest.fn(() => Promise.resolve({
 } as Response))
 
 const submit = async () => {
-  await act(() => userEvent.click(screen.getByRole('button', { name: /Save/ })))
+  await act(() => userEvent.click(screen.getByRole('button', { name: /Send/ })))
 }
 
 const getInput = (name: RegExp)  => {
@@ -73,7 +73,6 @@ describe('ContactForm', () => {
     expect(global.fetch).toHaveBeenCalledWith(
       `${API}/contact`,
       {
-        headers: expect.any(Object),
         method: 'POST',
         body: JSON.stringify({
           name: 'My Name',
