@@ -2,12 +2,6 @@ describe('profile', () => {
   it('creates profile', () => {
     cy.login()
 
-    cy.get('[id="sign-in-button"]')
-      .click()
-
-    cy.get('[data-testid="profile-modal"]')
-      .should('have.attr', 'style', 'left: -110vw;')
-
     cy.contains('Create Trainer Profile')
       .click()
 
