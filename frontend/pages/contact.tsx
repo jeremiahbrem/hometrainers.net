@@ -7,7 +7,7 @@ export default function Contact() {
       title: 'HomeTrainers.net | Contact',
       description: 'Contact us'
     }}>
-      <ContactForm to="support@hometrainers.net" />
+      <ContactForm />
     </Layout>
   )
 }

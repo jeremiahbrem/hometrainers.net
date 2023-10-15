@@ -19,8 +19,8 @@ func slugAlreadyExists(
 	existingPage, exitingPageErr := pagesRepo.GetPage(slug)
 
 	if exitingPageErr == nil && existingPage.ProfileID != profile.ID {
-		slugExistsErr := fmt.Errorf("slug %s already exists", slug)
-		context.JSON(http.StatusBadRequest, slugExistsErr.Error())
+		slugExistsErr := fmt.Sprintf("slug %s already exists", slug)
+		context.JSON(http.StatusBadRequest, gin.H{"error": slugExistsErr})
 		return true
 	}
 

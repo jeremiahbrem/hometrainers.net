@@ -75,6 +75,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
         className={cn(styles.text, richTextStyles.richText, { [styles.right]: textRight})}
         ref={textRef}
         preview={preview}
+        data-testid='image-text-content'
       >
         {parse(text ?? '')}
         <ClickToAdd {...{ text: 'text', value: text }} />

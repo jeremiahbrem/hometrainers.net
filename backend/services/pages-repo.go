@@ -27,7 +27,7 @@ func (repo *PageRepository) GetUserPage(email string) (*models.Page, error) {
 	db := repo.db
 	where := db.Where(&models.Profile{Email: email})
 
-	if err := db.Joins("Profile", where).First(&page).Error; err != nil {
+	if err := db.InnerJoins("Profile", where).First(&page).Error; err != nil {
 		return nil, err
 	}
 	return page, nil
@@ -38,7 +38,7 @@ func (repo *PageRepository) GetTrainerPages(emails []string) map[string]*models.
 	db := repo.db
 	where := db.Where("email in ?", emails)
 
-	db.Model(&models.Page{}).Where("active = ?", true).Joins("Profile", where).Find(&pages)
+	db.Model(&models.Page{}).Where("active = ?", true).InnerJoins("Profile", where).Find(&pages)
 
 	pageMap := map[string]*models.Page{}
 
@@ -54,7 +54,7 @@ func (repo *PageRepository) GetProfileSlugs(email string) (*models.Page, error) 
 	db := repo.db
 	where := db.Where(&models.Profile{Email: email})
 
-	if err := db.Joins("Profile", where).First(&page).Error; err != nil {
+	if err := db.InnerJoins("Profile", where).First(&page).Error; err != nil {
 		return nil, err
 	}
 	return page, nil

@@ -25,16 +25,16 @@ export const ProfileNavigator: React.FC = () => {
   }, [isLoggedIn, profileLoading])
 
   useEffect(() => {
-    if (profile) {
+    if (profile?.type && !profileLoading) {
       router.push(`/profiles/${profile.type}`)
     }
-  }, [profile])
+  }, [profile, profileLoading])
 
   if (isLoggedIn && profileLoading) {
     return <Loading open={true} />
   }
 
-  if (!isLoggedIn || profile) {
+  if (!isLoggedIn || profile?.type) {
     return null
   }
 

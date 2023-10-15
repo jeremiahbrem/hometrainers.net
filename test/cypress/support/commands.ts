@@ -61,28 +61,37 @@ export function registerCommands() {
         .click()
     })
   })
-  Cypress.Commands.add('createTrainerProfile', () => {
-    cy.fixture('user.json').then(user => {
-      cy.contains('Create Trainer Profile')
-      .click()
-
+  Cypress.Commands.add('trainerProfile', () => {
     cy.fixture('profile.json', ).then(profile => {
-      profile.cities = [...profile.cities, "Broken Arrow"]
+      profile.cities = [...profile.cities, 'Broken Arrow']
 
-      cy.get('input[name="name"]')
-        .type(profile.name)
-        .get('input[name="cities"]')
-        .type(`${profile.cities[0]}{enter}`)
-        .get('input[name="cities"]')
-        .type(`${profile.cities[1]}{enter}`)
-        .get('input[name="goals"]')
-        .type(`${profile.goals[0]}{enter}`)
-        .get('input[name="goals"]')
-        .type(`${profile.goals[1]}{enter}`)
-        .get('button')
-        .contains('Save')
-        .click()
-      })
+      cy.visit('/profiles')
+
+      cy.get('[id="login-checked"]')
+        .get('[data-testid="loading"]')
+        .should('have.attr', 'data-open', 'false')
+        .get('[data-testid="profile-modal"]')
+        .should('have.attr', 'style', 'left: -110vw;')
+        .get('body').then($body => {
+          if ($body.text().includes('Create Trainer Profile')) {
+            cy.contains('Create Trainer Profile')
+            .click()
+
+            cy.get('input[name="name"]')
+              .type(profile.name)
+              .get('input[name="cities"]')
+              .type(`${profile.cities[0]}{enter}`)
+              .get('input[name="cities"]')
+              .type(`${profile.cities[1]}{enter}`)
+              .get('input[name="goals"]')
+              .type(`${profile.goals[0]}{enter}`)
+              .get('input[name="goals"]')
+              .type(`${profile.goals[1]}{enter}`)
+              .get('button')
+              .contains('Save')
+              .click()
+          }
+        })
     })
   })
 }

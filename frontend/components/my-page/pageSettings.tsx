@@ -95,7 +95,7 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
         </fieldset>
         
         <fieldset>
-          <label className={styles.switch}>
+          <label className={styles.switch} data-testid='active-switch'>
             Active
             <input
               id='active'

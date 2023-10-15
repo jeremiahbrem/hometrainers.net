@@ -143,6 +143,26 @@ func TestGetMyPage(t *testing.T) {
 
 	blocks := datatypes.JSON([]byte(`{"blocks": [{"header": "text"}]}`))
 
+	otherProfile := models.Profile{
+		Name:   "Other",
+		Email:  "x" + trainerEmail,
+		Cities: []*models.City{},
+		Goals:  []*models.Goal{},
+	}
+
+	db.Create(&otherProfile)
+
+	otherPage := models.Page{
+		ProfileID:   otherProfile.ID,
+		Slug:        "testpage2",
+		Active:      true,
+		Blocks:      blocks,
+		Title:       "Other page",
+		Description: "Other description",
+	}
+
+	db.Create(&otherPage)
+
 	page := models.Page{
 		ProfileID:   trainerID,
 		Slug:        "testpage1",

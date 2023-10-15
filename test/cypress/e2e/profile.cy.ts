@@ -2,13 +2,10 @@ describe('profile', () => {
   it('creates profile', () => {
     cy.loginTrainer()
 
-    cy.contains('Create Trainer Profile')
-      .click()
-
     cy.fixture('profile.json', ).then(profile => {
       profile.cities = [...profile.cities, "Broken Arrow"]
 
-      cy.createTrainerProfile()
+      cy.trainerProfile()
       
       cy.visit('/')
       
