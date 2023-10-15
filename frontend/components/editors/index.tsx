@@ -15,6 +15,7 @@ import cn from 'classnames'
 import { allOptions } from './options'
 import { useIsEditing } from '@/utils/useIsEditing'
 import { useRefreshKey } from '../refresh'
+import { getFonts } from '../fonts'
 
 type MenuBarProps = {
   setOpen: React.Dispatch<boolean>
@@ -256,6 +257,13 @@ export const Editor: React.FC<EditorProps> = ({
         onUpdate={e => onUpdate(e.editor.getHTML())}
         content={content}
       >
+        {/* <select>
+          {fonts.map(f => (
+            <option>
+
+            </option>
+          ))}
+        </select> */}
       </EditorProvider>
     </div>
   </>)

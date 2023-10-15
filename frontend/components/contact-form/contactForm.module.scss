@@ -9,11 +9,17 @@
     color: $fontColor;
     width: 15rem;
     margin: 2rem auto 0 auto;
-  
+
     .error {
       color: red;
       font-size: .8rem;
       margin-top: 1rem;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
     }
   
     label {
@@ -92,7 +98,7 @@
       margin-bottom: 3rem;
     }
     .image-container {
-      min-height: 40rem;
+      min-height: 35rem;
     }
   }
 }

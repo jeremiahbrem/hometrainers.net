@@ -9,6 +9,10 @@
     height: 12rem;
   }
 
+  &.full-page-image-text, &.contact-form {
+    height: 11rem;
+  }
+
   &:hover {
     border-color: $orange;
     cursor: pointer;
@@ -23,11 +27,23 @@
     &.image-text {
       height: 18rem;
     }
+    &.full-page-image-text, &.contact-form {
+      height: 11rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    &.contact-form {
+      height: 18rem;
+    }
   }
 
   @media (max-width: 350px) {
     &.image-text {
       height: 20rem;
+    }
+    &.full-page-image-text {
+      height: 13rem;
     }
   }
 }

@@ -5,6 +5,8 @@ import { Block } from '../types'
 import { ImageTextLeft } from '../blocks/image-text-left'
 import { ImageTextRight } from '../blocks/image-rext-right'
 import { FullPageImageTextLeft } from '../blocks/full-page-image-text-left'
+import { FullPageImageTextRight } from '../blocks/full-page-image-text-right'
+import { ContactForm } from '../blocks/contact-form'
 
 type PreviewBlockProps = {
   onBlockClick: (block: Record<string, any>) => void
@@ -109,5 +111,43 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'full-page-image-text-left'
     },
     Component: FullPageImageTextLeft
+  },
+  {
+    newBlock: {
+      blockName: 'full-page-image-text-right',
+      text: '',
+      image: '',
+      imageAlt: ''
+    },
+    className: styles.fullPageImageText,
+    testId: 'full-page-image-text-right-preview',
+    componentProps: {
+      ...defaultProps,
+      block: {
+        image: '/carl-barcelo-hHzzdVQnkn0-unsplash.jpg',
+        text: '<h4>Reach Your Personal Goals</h4>' 
+      },
+      blockName: 'full-page-image-text-right'
+    },
+    Component: FullPageImageTextRight
+  },
+  {
+    newBlock: {
+      blockName: 'contact-form',
+      text: '',
+      image: '',
+      imageAlt: ''
+    },
+    className: styles.contactForm,
+    testId: 'contact-form-preview',
+    componentProps: {
+      ...defaultProps,
+      block: {
+        image: '/luna-active-fitness-iEpsg6OzyXw-unsplash.jpg',
+        title: '<h3>Contact Us</h3>' 
+      },
+      blockName: 'contact-form'
+    },
+    Component: ContactForm
   }
 ]

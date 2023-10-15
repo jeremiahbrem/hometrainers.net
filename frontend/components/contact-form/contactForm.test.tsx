@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, render, screen, act } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { AlertProvider } from '../alerts'
 import { API } from '@/api'
@@ -77,7 +77,8 @@ describe('ContactForm', () => {
         body: JSON.stringify({
           name: 'My Name',
           email: 'test@example.com',
-          message: 'my message'
+          message: 'my message',
+          to: 'support@hometrainers.net',
         })
       }
     )

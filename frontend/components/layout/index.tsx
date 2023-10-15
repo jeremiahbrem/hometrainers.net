@@ -7,7 +7,7 @@ import { Footer } from '../footer'
 
 const roboto = Roboto({
   subsets: ['latin'],
-  weight: ['300', '400','500','700','900']
+  weight: ['300','400','500','700','900']
 })
 
 type LayoutProps = {

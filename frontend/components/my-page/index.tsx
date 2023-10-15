@@ -13,7 +13,6 @@ import { PreviewBlocksType } from '../block-selector/previewBlocks'
 import { PageSettings, SettingsError } from './pageSettings'
 import { useAlert } from '../alerts'
 import { useProfile } from '../profile-provider'
-import { useRouter } from 'next/navigation'
 
 export type MyPageComponentProps = {
   Blocks:  Record<string, React.FC<ComponentProps<any>>>
@@ -48,7 +47,6 @@ export const MyPageComponent: React.FC<MyPageComponentProps> = (props) => {
 
 const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
   const [page, setPage] = useState<Page  | null>(null)
-  const router = useRouter()
 
   const { profile , profileLoading } = useProfile()
 
@@ -92,7 +90,7 @@ const MyPageLoader: React.FC<MyPageComponentProps> = (props) => {
     return <Layout {...layoutProps} />
   }
 
-  return <MyPageDisplay {...{ ...props,page }} />
+  return <MyPageDisplay {...{ ...props, page }} />
 }
 
 type MyPageDisplayProps = MyPageComponentProps & {

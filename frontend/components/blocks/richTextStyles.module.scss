@@ -1,0 +1,27 @@
+.rich-text {
+  h1,h2,h3,h4,h5,h6,p,a {
+    margin: 0 0 1rem 0;
+  }
+  ul, ol {
+    margin: 0 0 1rem 0;
+    li {
+      margin-bottom: 0rem;
+      p {
+        margin: 0;
+      }
+    }
+  }
+  
+  blockquote {
+    margin: 0 0 1rem 0;
+    p {
+      margin: 0;
+      &:before {
+        content: open-quote;
+      }
+      &:after {
+        content: close-quote;
+      }
+    }
+  }
+}

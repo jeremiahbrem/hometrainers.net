@@ -12,6 +12,7 @@ type ContactArgs struct {
 	Name    string `json:"name" binding:"required"`
 	Email   string `json:"email" binding:"required"`
 	Message string `json:"message" binding:"required"`
+	To      string `json:"to" binding:"required"`
 }
 
 func CreateContactHandler(router *gin.Engine, provider services.ServiceProviderType) {
@@ -29,8 +30,8 @@ func CreateContactHandler(router *gin.Engine, provider services.ServiceProviderT
 		}
 
 		emailService.SendEmail(services.EmailArgs{
-			To:      "support@hometrainers.net",
-			Body:    fmt.Sprintf("%s\nSent from %s %s", args.Message, args.Name, args.Email),
+			To:      args.To,
+			Body:    fmt.Sprintf("Message: %s\n\nName: %s\n\nEmail: %s", args.Message, args.Name, args.Email),
 			Subject: "Contact Form",
 		})
 

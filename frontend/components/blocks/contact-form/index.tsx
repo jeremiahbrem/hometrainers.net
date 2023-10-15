@@ -1,13 +1,20 @@
-import React, { useState } from 'react'
-import { useAlert } from '../alerts'
-import { Button } from '../button'
-import styles from './contactForm.module.scss'
+import React, { useRef, useState } from 'react'
+import { useAlert } from '../../alerts'
+import { Button } from '../../button'
+import styles from '../../contact-form/contactForm.module.scss'
 import cn from 'classnames'
 import { Roboto } from 'next/font/google'
-import { Loading } from '../loading'
+import { Loading } from '../../loading'
 import Image from 'next/image'
-import { createOverlayText } from '@/utils/createOverlayText'
 import { API } from '@/api'
+import { ComponentProps } from '@/components/types'
+import { useProfile } from '@/components/profile-provider'
+import { Container } from '@/components/container'
+import parse from 'html-react-parser'
+import { ImageUpload } from '@/components/image-upload'
+import { Editor } from '@/components/editors'
+import { useIsEditing } from '@/utils/useIsEditing'
+import { ClickToAdd } from '@/components/click-to-add'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -25,8 +32,30 @@ type FormError = {
   error: string
 }
 
-export const ContactForm: React.FC = () => {
+export type ContactFormProps = ComponentProps<{
+  title: string
+  image: string
+  imageAlt: string
+}>
+
+export const ContactForm: React.FC<ContactFormProps> = (props) => {
   const [loading, setLoading] = useState(false)
+
+  const textRef = useRef(null)
+
+  const isEditing = useIsEditing()
+
+  const {
+    block,
+    onUpdate,
+    addImage,
+    removeImage,
+    preview,
+  } = props
+
+  const { title, image, imageAlt } = block
+
+  const { profile } = useProfile()
  
   const addAlert = useAlert()
 
@@ -83,7 +112,7 @@ export const ContactForm: React.FC = () => {
 
     const response = await fetch(`${API}/contact`, {
       method: 'POST',
-      body: JSON.stringify({...formState, to: "support@hometrainers.net" })
+      body: JSON.stringify({...formState, to: profile?.email })
     })
 
     setLoading(false)
@@ -106,13 +135,51 @@ export const ContactForm: React.FC = () => {
     setFormState(initializeValues())
   }
 
+  const onImageChange = (img: string) => {
+    if (img) {
+      addImage(img)
+    }
+
+    onUpdate({
+      ...block,
+      image: img
+    })
+  }
+
+  const onRemoveImage = () => {
+    removeImage(image)
+
+    onUpdate({
+      ...block,
+      image: ''
+    })
+  }
+
+  const onTextUpdate = async (title: string) => {
+    onUpdate({
+      ...block,
+      title
+    })
+  }
+
   return (
     <div className={styles.contactFormPage}>
       <form
         onSubmit={e => e.preventDefault()}
         className={cn(styles.contactForm, roboto.className)}
       >
-        <h3 className={styles.title}>Contact Us</h3>
+        <Container preview={preview} ref={textRef} className={styles.title}>
+          {parse(title || '<h3></h3>')}
+          <ClickToAdd {...{ text: 'title', value: title }} />
+        </Container>
+
+        {!preview && <Editor
+          content={title}
+          onUpdate={onTextUpdate}
+          right={'1rem'}
+          contentRef={textRef}
+          options={[]}
+        />}
 
         <label className={styles.name} htmlFor='name'>Name</label>
         <input
@@ -151,25 +218,34 @@ export const ContactForm: React.FC = () => {
         />
 
         <div className={styles.saveButton}>
-          <Button text={'Send'} onClick={onSubmit} type='button' />
+          <Button
+            text={'Send'}
+            onClick={onSubmit}
+            type='button'
+            disabled={preview || isEditing || false}
+          />
         </div>
 
         <p className={styles.error}>{errors[0] ? errors[0].error : ''}</p>
 
         <Loading open={loading} />
       </form>
-      <div className={styles.imageContainer}>
-        <Image
-          src={'/luna-active-fitness-iEpsg6OzyXw-unsplash.jpg'}
-          alt={'Image by Luna Active Fitness from Upsplash'}
+      <Container className={styles.imageContainer} preview={preview}>
+        {image && <Image
+          src={image}
+          alt={imageAlt ?? ''}
           height={0}
           width={0}
           className={styles.image}
-        />
-        <div className={styles.overlay}>
-          <h1>{createOverlayText('ContactUs')}</h1>
-        </div>
-      </div>
+        />}
+
+        {!preview && <ImageUpload 
+          value={image}
+          onChange={onImageChange}
+          text='image'
+          onRemove={onRemoveImage}
+        />}
+      </Container>
     </div>
   )
 }

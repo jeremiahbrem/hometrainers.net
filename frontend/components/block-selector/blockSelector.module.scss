@@ -16,6 +16,7 @@
   width: 95vw;
   left: 2.5vw;
   overflow: scroll;
+  max-height: calc(100vh - 9.8rem);
   top: 5rem;
   z-index: 5;
   background: white;

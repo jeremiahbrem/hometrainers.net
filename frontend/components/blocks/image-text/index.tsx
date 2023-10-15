@@ -1,5 +1,6 @@
 import React, { useRef } from 'react'
 import styles from './imageText.module.scss'
+import richTextStyles from '../richTextStyles.module.scss'
 import Image from 'next/image'
 import parse from 'html-react-parser'
 import cn from 'classnames'
@@ -69,9 +70,9 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
   const imageUrl = preview ? image : `${IMAGES_URL}/${image}`
 
   return (
-    <section className={styles.imageText}>
+    <section className={cn(styles.imageText)}>
       <Container
-        className={cn(styles.text, { [styles.right]: textRight})}
+        className={cn(styles.text, richTextStyles.richText, { [styles.right]: textRight})}
         ref={textRef}
         preview={preview}
       >

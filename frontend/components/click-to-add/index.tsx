@@ -11,7 +11,7 @@ export const ClickToAdd: React.FC<ClickToAddProps> = (props) => {
   const isEditing = useIsEditing()
   const { value, text } = props
 
-  if (!isEditing || value) {
+  if (!isEditing || (value && value !== '<p></p>')) {
     return null
   }
 

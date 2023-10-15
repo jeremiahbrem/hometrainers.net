@@ -30,6 +30,7 @@ func TestPostContact(t *testing.T) {
 		Name:    "Tester",
 		Email:   "test@example.com",
 		Message: "This is a contact form message",
+		To:      "support@hometrainers.net",
 	}
 
 	marshalled, _ := json.Marshal(args)
@@ -43,7 +44,7 @@ func TestPostContact(t *testing.T) {
 	expectedArgs := services.EmailArgs{
 		To:      "support@hometrainers.net",
 		Subject: "Contact Form",
-		Body:    "This is a contact form message\nSent from Tester test@example.com",
+		Body:    "Message: This is a contact form message\n\nName: Tester\n\nEmail: test@example.com",
 	}
 
 	assert.Equal(t, expectedArgs, mockEmailService.Args)
