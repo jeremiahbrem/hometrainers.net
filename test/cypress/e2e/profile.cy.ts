@@ -1,6 +1,6 @@
 describe('profile', () => {
   it('creates profile', () => {
-    cy.login()
+    cy.loginTrainer()
 
     cy.contains('Create Trainer Profile')
       .click()
@@ -8,19 +8,7 @@ describe('profile', () => {
     cy.fixture('profile.json', ).then(profile => {
       profile.cities = [...profile.cities, "Broken Arrow"]
 
-      cy.get('input[name="name"]')
-        .type(profile.name)
-        .get('input[name="cities"]')
-        .type(`${profile.cities[0]}{enter}`)
-        .get('input[name="cities"]')
-        .type(`${profile.cities[1]}{enter}`)
-        .get('input[name="goals"]')
-        .type(`${profile.goals[0]}{enter}`)
-        .get('input[name="goals"]')
-        .type(`${profile.goals[1]}{enter}`)
-        .get('button')
-        .contains('Save')
-        .click()
+      cy.createTrainerProfile()
       
       cy.visit('/')
       

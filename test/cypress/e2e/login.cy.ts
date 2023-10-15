@@ -6,7 +6,7 @@ describe('login page', () => {
   })
 
   it('logs in', () => {
-    cy.login()
+    cy.loginTrainer()
 
     cy.contains('Sign out')
   })
