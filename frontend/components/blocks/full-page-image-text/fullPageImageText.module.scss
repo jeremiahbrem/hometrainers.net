@@ -17,6 +17,7 @@
       object-position: 80% 50%;
     }
   }
+ 
   .overlay {
     position: absolute;
     width: 100%;
@@ -29,7 +30,10 @@
     position: absolute;
     top: 0;
     left: 0;
-    height: 100%;
+    bottom: 0;
+    margin: auto;
+    height: fit-content;
+    min-height: 10rem;
     align-items: center;
     padding-left: 5rem;
     z-index: 2;
