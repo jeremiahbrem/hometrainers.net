@@ -1,7 +1,7 @@
 @import '@/styles/global.scss';
 
 .profile-form {
-  padding: 2rem 3rem 3rem 3rem;
+  padding: 0rem 3rem 3rem 3rem;
   background: white;
   color: $fontColor;
   width: 15rem;
@@ -29,6 +29,27 @@
     width: 13.5rem;
     margin: .3rem 0;
     border: 2px solid transparent;
+  }
+
+  .image-upload {
+    position: relative;
+    border: none;
+    margin: 1rem 0 0 0;
+    &:hover {
+      cursor: pointer;
+    }
+
+    img {
+      height: 4rem;
+      width: 4rem;
+      object-fit: cover;
+      margin-right: .5rem;
+      border-radius: 100%;
+    }
+
+    label {
+      min-height: unset !important;
+    }
   }
 
   .save-button {

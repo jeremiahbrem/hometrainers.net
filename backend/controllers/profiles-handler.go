@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/exp/slices"
 )
 
 type TrainerResult struct {
@@ -30,6 +31,7 @@ func CreateProfilesHandlers(router *gin.Engine, provider services.ServiceProvide
 	pagesRepo := provider.GetPagesRepo()
 	profilesRepo := provider.GetProfilesRepo()
 	userValidator := provider.GetUserValidator()
+	bucketService := provider.GetBucketService()
 
 	router.GET("/profile", func(context *gin.Context) {
 		user, ok := userValidator.Validate(context)
@@ -143,6 +145,21 @@ func CreateProfilesHandlers(router *gin.Engine, provider services.ServiceProvide
 		} else {
 			dbErr = profilesRepo.UpdateProfile(existing, profile)
 			message = "updated"
+
+			images := profilesRepo.GetProfileImages(user.Email)
+
+			for _, val := range images {
+				if profile.Image == "" || profile.Image != val {
+					profilesRepo.DeleteProfileImage(val)
+					bucketService.DeleteImage(val)
+				}
+			}
+			fmt.Sprintf("profile image: %s", profile.Image)
+			if profile.Image != "" {
+				if !slices.Contains(images, profile.Image) {
+					profilesRepo.AddProfileImage(profile.Image, user.Email)
+				}
+			}
 		}
 
 		if dbErr != nil {

@@ -60,7 +60,7 @@ export const MatchingTrainers: React.FC = () => {
           <Link href={`/${m.slug}`} key={i} className={styles.match}>
             {m.image
               ? <Image
-                src={`${IMAGES_URL}/m.image`}
+                src={`${IMAGES_URL}/${m.image}`}
                 alt={m.name}
                 height={0}
                 width={0}

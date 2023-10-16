@@ -11,18 +11,20 @@ type ImageUploadProps = {
   text: string
   onChange: (file: any) => void
   onRemove: () => void
+  show?: boolean
+  path?: string
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   const isEditing = useIsEditing()
-  const { value, text, onChange, onRemove } = props
+  const { value, text, onChange, onRemove, path, show } = props
   const [removeOpen, setRemoveOpen] = useState(false)
 
   const fetchWithAuth = useFetchWithAuth()
 
   const addAlert = useAlert()
 
-  if (!isEditing) {
+  if (!isEditing && !show) {
     return null
   }
 
@@ -45,7 +47,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
       const response = await fetchWithAuth({
         method: 'POST',
         body: formData,
-        path: '/image'
+        path: path ?? '/image'
       })
 
       if (!response.ok) {

@@ -43,6 +43,7 @@ func initializeDb(db *gorm.DB, dbErr error) {
 		&models.Page{},
 		&Migration{},
 		&models.Image{},
+		&models.ProfileImage{},
 	)
 
 	DB = Dbinstance{

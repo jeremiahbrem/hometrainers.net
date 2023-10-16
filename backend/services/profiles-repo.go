@@ -52,6 +52,29 @@ func (repo *ProfileRepository) GetProfile(email string) (*models.Profile, error)
 	return profile, nil
 }
 
+func (repo *ProfileRepository) AddProfileImage(imagePath string, email string) error {
+	image := models.ProfileImage{
+		Email: email,
+		Path:  imagePath,
+	}
+
+	return repo.db.Create(&image).Error
+}
+
+func (repo *ProfileRepository) DeleteProfileImage(imagePath string) error {
+	var image *models.ProfileImage
+	db := repo.db
+	db.Model(&models.ProfileImage{}).Where(&models.ProfileImage{Path: imagePath}).First(&image)
+	return db.Delete(&image).Error
+}
+
+func (repo *ProfileRepository) GetProfileImages(email string) []string {
+	var images []string
+	repo.db.Model(&models.ProfileImage{}).Where(&models.ProfileImage{Email: email}).Pluck("path", &images)
+
+	return images
+}
+
 func (repo *ProfileRepository) GetMatchingProfiles(goals []string, city string) []*models.Profile {
 	db := repo.db
 

@@ -8,6 +8,9 @@ import styles from './profileForm.module.scss'
 import cn from 'classnames'
 import { Roboto } from 'next/font/google'
 import { Loading } from '../loading'
+import { ImageUpload } from '../image-upload'
+import Image from 'next/image'
+import { IMAGES_URL } from '@/api'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -143,12 +146,23 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
     void resetProfile()
   }
 
+  const onImageChange = (img: string) => {
+    if (img) {
+      setFormState(st => ({...st, image: img }))
+    }
+  }
+
+  const onRemoveImage = () => {
+    setFormState(st => ({...st, image: '' }))
+  }
+
   return (
     <form
       onSubmit={e => e.preventDefault()}
       className={cn(styles.profileForm, roboto.className)}
     >
       <h3>My {isTrainer ? 'Trainer' : 'Client'} Profile</h3>
+
       <label className={styles.name} htmlFor='name'>Name</label>
       <input
         name='name'
@@ -200,6 +214,24 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
         error: errors.some(x => x.key === 'goals'),
         allowAdd: true,
       }} />
+
+      <fieldset className={styles.imageUpload}>
+        {formState.image && <Image
+          src={`${IMAGES_URL}/${formState.image}`}
+          alt={formState.name}
+          height={0}
+          width={0}
+        />}
+        <ImageUpload {...{
+          onChange: onImageChange,
+          onRemove: onRemoveImage,
+          value: formState.image,
+          text: 'profile image',
+          path: '/profile-image',
+          show: true
+        }} />
+      </fieldset>
+      
 
       <div className={styles.saveButton}>
         <Button text={'Save'} onClick={onSubmit} type='button' />

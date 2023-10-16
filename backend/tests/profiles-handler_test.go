@@ -22,7 +22,13 @@ func SetupProfilesTests() *gorm.DB {
 
 	db, _ := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 
-	db.AutoMigrate(&models.Page{}, &models.City{}, &models.Goal{}, &models.Profile{})
+	db.AutoMigrate(
+		&models.Page{},
+		&models.City{},
+		&models.Goal{},
+		&models.Profile{},
+		&models.ProfileImage{},
+	)
 
 	return db
 }
@@ -31,6 +37,7 @@ func TeardownProfilesTests(db *gorm.DB) {
 	sql := `
 		delete from pages;
 		delete from profiles;
+		delete from profile_images;
 		delete from goals;
 		delete from cities;
 	`
@@ -596,4 +603,128 @@ func TestUpdateProfileNoCity(t *testing.T) {
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Contains(t, w.Body.String(), "City required")
+}
+
+func TestProfileImageAdded(t *testing.T) {
+	db := SetupProfilesTests()
+	defer TeardownProfilesTests(db)
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: trainerEmail},
+		Valid: true,
+	}
+
+	city := models.City{
+		Name: "Tulsa",
+	}
+
+	goal1 := models.Goal{
+		Name: "Weight Loss",
+	}
+
+	db.Create(&city)
+	db.Create(&goal1)
+
+	trainerProfile := models.Profile{
+		Email:  trainerEmail,
+		Name:   "Trainer",
+		Type:   "trainer",
+		Cities: []*models.City{&city},
+		Goals:  []*models.Goal{&goal1},
+		Image:  "",
+	}
+
+	db.Omit("Citys.*").Omit("Goals.*").Create(&trainerProfile)
+
+	args := models.ProfileArgs{
+		Name:   "Sarah Connor",
+		Type:   "trainer",
+		Image:  "image.com",
+		Cities: []string{"Round Rock"},
+		Goals:  []string{"Senior Fitness", "Flexibility"},
+	}
+
+	marshalled, _ := json.Marshal(args)
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db, &userValidator)
+
+	req, _ := http.NewRequest("POST", "/update-profile", bytes.NewReader(marshalled))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var newImage *models.ProfileImage
+	db.Where("email = ?", trainerEmail).First(&newImage)
+
+	assert.Equal(t, "image.com", newImage.Path)
+}
+
+func TestProfileImageDelete(t *testing.T) {
+	db := SetupProfilesTests()
+	defer TeardownProfilesTests(db)
+
+	userValidator := MockUserValidator{
+		User:  services.User{Email: trainerEmail},
+		Valid: true,
+	}
+
+	bucketService := MockBucketService{}
+
+	city := models.City{
+		Name: "Tulsa",
+	}
+
+	goal1 := models.Goal{
+		Name: "Weight Loss",
+	}
+
+	db.Create(&city)
+	db.Create(&goal1)
+
+	trainerProfile := models.Profile{
+		Email:  trainerEmail,
+		Name:   "Trainer",
+		Type:   "trainer",
+		Cities: []*models.City{&city},
+		Goals:  []*models.Goal{&goal1},
+		Image:  "image.com",
+	}
+
+	db.Omit("Citys.*").Omit("Goals.*").Create(&trainerProfile)
+
+	profileImage := models.ProfileImage{
+		Email: trainerEmail,
+		Path:  "image.com",
+	}
+
+	db.Create(&profileImage)
+
+	args := models.ProfileArgs{
+		Name:   "Sarah Connor",
+		Type:   "trainer",
+		Image:  "",
+		Cities: []string{"Round Rock"},
+		Goals:  []string{"Senior Fitness", "Flexibility"},
+	}
+
+	marshalled, _ := json.Marshal(args)
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db, &userValidator, &bucketService)
+
+	req, _ := http.NewRequest("POST", "/update-profile", bytes.NewReader(marshalled))
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var newImage *models.Image
+	err := db.Where("email = ?", trainerEmail).First(&newImage).Error
+
+	assert.NotNil(t, err)
+	assert.Equal(t, "image.com", bucketService.NameArg)
 }
