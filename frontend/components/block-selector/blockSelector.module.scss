@@ -33,7 +33,9 @@
     text-align: inherit;
   }
 
- 
+  @media (max-width: 600px) {
+    gap: 0.25rem;
+  }
 
   @media (max-width: 450px) {
     padding: 2rem 1rem;

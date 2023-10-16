@@ -33,6 +33,7 @@
     bottom: 0;
     margin: auto;
     height: fit-content;
+    text-align: left;
     min-height: 10rem;
     align-items: center;
     padding-left: 5rem;
@@ -79,6 +80,11 @@
       right: 0;
       padding-left: unset;
       padding-right: 5rem;
+      text-align: right;
+      @media (max-width: 600px) {
+        width: 100%;
+        padding: 0 2rem;
+      }
     }
     .image {
       img {
