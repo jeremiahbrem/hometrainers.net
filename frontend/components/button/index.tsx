@@ -3,7 +3,7 @@ import styles from './button.module.scss'
 import cn from 'classnames'
 
 type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & {
-  onClick?: () => any
+  onClick?: (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => any
   text: string
   className?: string
 }

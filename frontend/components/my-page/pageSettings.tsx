@@ -57,7 +57,7 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
       data-testid='page-settings'
       className={styles.pageSettings}
       style={{
-        left: open ? 0 : '-9.5rem'
+        left: open ? 0 : '-10.5rem'
       }}
     >
       <form onSubmit={e => e.preventDefault()}>

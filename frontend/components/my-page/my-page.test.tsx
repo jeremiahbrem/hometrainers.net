@@ -189,7 +189,7 @@ describe('my page component', () => {
 
     it('renders with settings closed', async () => {
       const settings = screen.getByTestId('page-settings') as HTMLDivElement
-      expect(settings.style.left).toBe('-9.5rem')
+      expect(settings.style.left).toBe('-10.5rem')
     })
 
     it('opens settings', async () => {
@@ -204,7 +204,7 @@ describe('my page component', () => {
       await act(() => userEvent.click(document.querySelector('#open-settings')!))
 
       const settings = screen.getByTestId('page-settings') as HTMLDivElement
-      expect(settings.style.left).toBe('-9.5rem')
+      expect(settings.style.left).toBe('-10.5rem')
     })
 
     it('renders with page values', () => {

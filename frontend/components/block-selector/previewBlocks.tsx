@@ -7,6 +7,7 @@ import { ImageTextRight } from '../blocks/image-rext-right'
 import { FullPageImageTextLeft } from '../blocks/full-page-image-text-left'
 import { FullPageImageTextRight } from '../blocks/full-page-image-text-right'
 import { ContactForm } from '../blocks/contact-form'
+import { IconTextList } from '../blocks/icon-text-list'
 
 type PreviewBlockProps = {
   onBlockClick: (block: Record<string, any>) => void
@@ -100,7 +101,7 @@ export const PreviewBlocks: PreviewBlocksType = [
       image: '',
       imageAlt: ''
     },
-    className: styles.imageText,
+    className: styles.fullPageImageText,
     testId: 'full-page-image-text-left-preview',
     componentProps: {
       ...defaultProps,
@@ -134,7 +135,7 @@ export const PreviewBlocks: PreviewBlocksType = [
   {
     newBlock: {
       blockName: 'contact-form',
-      text: '',
+      title: '',
       image: '',
       imageAlt: ''
     },
@@ -149,5 +150,36 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'contact-form'
     },
     Component: ContactForm
-  }
+  },
+  {
+    newBlock: {
+      blockName: 'icon-text-list',
+      title: '',
+      items: []
+    },
+    className: styles.iconTextList,
+    testId: 'icon-text-list-preview',
+    componentProps: {
+      ...defaultProps,
+      block: {
+        title: '<h2>Benefits of Personal Training</h2>',
+        items: [
+          {
+            icon: 'Exercise',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+          },
+          {
+            icon: 'Health Metrics',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+          },
+          {
+            icon: 'Body System',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+          },
+        ]
+      },
+      blockName: 'icon-text-list'
+    },
+    Component: IconTextList
+  },
 ]
