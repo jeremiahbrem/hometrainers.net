@@ -3,7 +3,7 @@ export function createOverlayText(text: string): string {
   let result = base
 
   for (let i = 0, j = 3; i < 15; i++, j += 3) {
-    result += ` ${base.slice(j)}${base.slice(0,j)}`
+    result += ` ${base.slice(j + 1)}${base.slice(0,j)}`
   }
 
   return result;

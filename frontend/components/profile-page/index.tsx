@@ -57,7 +57,7 @@ export const ProfilePage: React.FC<ProfileFormProps> = (props) => {
           className={styles.image}
         />
         <div className={styles.overlay}>
-          <h1>{createOverlayText(`${isTrainer ? 'Trainer' : 'Client'} Profile`)}</h1>
+          <h1>{createOverlayText(`${isTrainer ? 'Trainer' : 'Client'}Profile`)}</h1>
         </div>
       </div>
     </div>
