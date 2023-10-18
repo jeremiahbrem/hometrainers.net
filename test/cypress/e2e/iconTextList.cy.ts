@@ -26,7 +26,7 @@ describe('IconTextList', () => {
     cy.contains('Click to add item +')
       .click()
 
-    cy.get('[data-testid="image-text-content"]').eq(0)
+    cy.get('[data-testid="icon-text-content"]').eq(0)
       .click()
       .get('.ProseMirror').eq(1)
       .type('Icon test text content')
