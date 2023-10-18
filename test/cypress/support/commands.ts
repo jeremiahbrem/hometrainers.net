@@ -97,7 +97,8 @@ export function registerCommands() {
   Cypress.Commands.add('setPageSettings', () => {
     cy.get('[data-testid="alert-scrim"]')
       .click()
-      .get('[id="open-settings"]')
+    
+    cy.get('[id="open-settings"]')
       .click()
 
     cy.get('input[name="active"]').then($active => {

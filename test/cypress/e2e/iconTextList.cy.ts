@@ -50,7 +50,9 @@ describe('IconTextList', () => {
     cy.contains('Page updated')
 
     cy.visit('/test-page-1')
-      .contains('Icons Text Title')
+      .reload()
+
+    cy.contains('Icons Text Title')
 
     cy.contains('Icon test text content')
 

@@ -29,7 +29,9 @@ describe('TextImageLeft', () => {
     cy.contains('Page updated')
 
     cy.visit('/test-page-1')
-      .contains('My test content')
+      .reload()
+      
+    cy.contains('My test content')
 
     cy.visit('/my-page')
 
