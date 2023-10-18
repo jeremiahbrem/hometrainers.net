@@ -24,7 +24,6 @@ type IconTextListProps = ComponentProps<{
 
 type ItemProps = {
   preview?: boolean
-  index: number
   item: IconText
   onTextUpdate: (text: string, color: string) => Promise<void>
   onRemove: () => void
@@ -34,7 +33,6 @@ type ItemProps = {
 const Item: React.FC<ItemProps> = (props) => {
   const {
     preview,
-    index,
     item,
     onTextUpdate,
     onRemove,
@@ -139,7 +137,6 @@ export const IconTextList: React.FC<IconTextListProps> = (props) => {
           <Item key={i} {...{
             item: x,
             preview,
-            index: i,
             onTextUpdate: async (text: string, color: string) => {
               onUpdate({
                 ...block,

@@ -6,27 +6,8 @@ describe('TextImageLeft', () => {
 
     cy.contains('My Page')
       .click()
-
-    cy.get('[data-testid="alert-scrim"]')
-      .click()
-      .get('[id="open-settings"]')
-      .click()
-
-    cy.get('input[name="active"]').then($active => {
-      if(!$active.is(':checked')) {
-        cy.get('input[name="slug"]')
-        .type('test-page-1')
-        .get('input[name="title"]')
-        .type('Test Title')
-        .get('input[name="description"]')
-        .type('Test Description')
-        .get('[data-testid="active-switch"]')
-        .click()
-      }
-    })
-
-    cy.get('[id="open-settings"]')
-      .click()
+  
+    cy.setPageSettings()
 
     cy.contains('Add Block')
       .click()

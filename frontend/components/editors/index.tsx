@@ -176,6 +176,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
       </button>
       <button
         onClick={() => setOpen(false)}
+        className='close-editor'
       >
         close
       </button>
