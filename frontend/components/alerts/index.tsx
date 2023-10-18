@@ -38,12 +38,14 @@ export const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
   return (
     <AlertContext.Provider value={{ addAlert }}>
       {children}
-      <div className={cn(styles.alert, roboto.className, { [styles.open]: !!alert })}>
+      <div
+        className={cn(styles.alert, roboto.className, { [styles.open]: !!alert })}
+        role='button'
+        onClick={() => setAlert(null) }
+        data-testid='alert-scrim'
+      >
         <div
-          role='button'
           className={cn(styles.scrim)}
-          onClick={() => setAlert(null) }
-          data-testid='alert-scrim'
         />
         <p className={styles.message}>
           {alert}
