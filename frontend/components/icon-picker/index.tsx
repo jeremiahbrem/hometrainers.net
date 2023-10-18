@@ -92,7 +92,7 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
             />
             <Button text='Update' onClick={onIconChange} type='button' data-testid='update-icon' />
           </form>
-          <ColorPicker color={color} updateColor={c => onColorChange(c)}/>
+          <ColorPicker color={iconColor} updateColor={c => onColorChange(c)}/>
           <button
             className={styles.closeModal}
             onClick={onModalClose}>x
