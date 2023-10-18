@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import styles from './imageText.module.scss'
 import richTextStyles from '../richTextStyles.module.scss'
 import Image from 'next/image'
@@ -15,6 +15,7 @@ export type ImageTextProps = ComponentProps<{
   text: string
   image: string
   imageAlt: string
+  textColor: string
 }>
 
 export type ImageTextBaseProps = ImageTextProps & {
@@ -37,6 +38,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
     text,
     image,
     imageAlt,
+    textColor = '',
   } = block
 
   const onTextUpdate = async (text: string) => {
@@ -66,6 +68,13 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
     })
   }
 
+  const onColorChange = (color: string) => {
+    onUpdate({
+      ...block,
+      textColor: color
+    })
+  }
+
   const textRight = textPos === 'right'
   const imageUrl = preview ? image : `${IMAGES_URL}/${image}`
 
@@ -87,8 +96,10 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
         right={textRight ? 'unset' : '1rem'}
         left={textRight ? '1rem' : 'unset'}
         contentRef={textRef}
+        color={textColor}
+        onColorChange={onColorChange}
       />}
-      
+
       <Container className={cn(styles.image)} preview={preview}>
         {image && <Image src={imageUrl} alt={imageAlt ?? ''} height={0} width={0} />}
         {!preview && <ImageUpload 

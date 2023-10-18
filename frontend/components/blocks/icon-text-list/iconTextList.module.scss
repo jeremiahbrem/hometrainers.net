@@ -1,7 +1,6 @@
 @import '@/styles/global.scss';
 
 .section {
-  color: $fontColor;
   padding: 3rem 2rem 1rem 2rem;
   max-width: 36rem;
   margin: 0 auto;
@@ -41,7 +40,6 @@
         min-height: 3rem;
         span {
           font-size: 3.5rem;
-          color: $orange;
         }
       }
 

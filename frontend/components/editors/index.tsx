@@ -15,14 +15,22 @@ import cn from 'classnames'
 import { allOptions } from './options'
 import { useIsEditing } from '@/utils/useIsEditing'
 import { useRefreshKey } from '../refresh'
+import { ColorPicker } from '../color-picker'
 
 type MenuBarProps = {
   setOpen: React.Dispatch<boolean>
   options?: string[]
+  onColorChange?: (color: string) => void
 }
 
-const MenuBar: React.FC<MenuBarProps> = ({ options, setOpen }) => {
+const MenuBar: React.FC<MenuBarProps> = ({
+  options,
+  setOpen,
+  onColorChange,
+}) => {
   const { editor } = useCurrentEditor()
+
+  const [colorOpen, setColorOpen] = useState(false)
 
   const opts = options
     ? allOptions.filter(x => options.includes(x))
@@ -79,65 +87,68 @@ const MenuBar: React.FC<MenuBarProps> = ({ options, setOpen }) => {
       >
         paragraph
       </button>}
-      {opts.includes('h1') &&<button
+      {opts.includes('h1') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         className={editor.isActive('heading', { level: 1 }) ? styles.isActive : ''}
       >
         h1
       </button>}
-      {opts.includes('h2') &&<button
+      {opts.includes('h2') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         className={editor.isActive('heading', { level: 2 }) ? styles.isActive : ''}
       >
         h2
       </button>}
-      {opts.includes('h3') &&<button
+      {opts.includes('h3') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         className={editor.isActive('heading', { level: 3 }) ? styles.isActive : ''}
       >
         h3
       </button>}
-      {opts.includes('h4') &&<button
+      {opts.includes('h4') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
         className={editor.isActive('heading', { level: 4 }) ? styles.isActive : ''}
       >
         h4
       </button>}
-      {opts.includes('h5') &&<button
+      {opts.includes('h5') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
         className={editor.isActive('heading', { level: 5 }) ? styles.isActive : ''}
       >
         h5
       </button>}
-      {opts.includes('h6') &&<button
+      {opts.includes('h6') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
         className={editor.isActive('heading', { level: 6 }) ? styles.isActive : ''}
       >
         h6
       </button>}
-      {opts.includes('bulletList') &&<button
+      {opts.includes('bulletList') && <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? styles.isActive : ''}
       >
         bullet list
       </button>}
-      {opts.includes('orderedList') &&<button
+      {opts.includes('orderedList') && <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={editor.isActive('orderedList') ? styles.isActive : ''}
       >
         ordered list
       </button>}
-      {opts.includes('blockquote') &&<button
+      {opts.includes('blockquote') && <button
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         className={editor.isActive('blockquote') ? styles.isActive : ''}
       >
         blockquote
       </button>}
-      {opts.includes('hr') &&<button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
+      {opts.includes('hr') && <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         horizontal rule
       </button>}
-      {opts.includes('hardBreak') &&<button onClick={() => editor.chain().focus().setHardBreak().run()}>
+      {opts.includes('hardBreak') && <button onClick={() => editor.chain().focus().setHardBreak().run()}>
         hard break
+      </button>}
+      {opts.includes('color') && <button onClick={() => setColorOpen(!colorOpen)}>
+        color
       </button>}
       <button
         onClick={() => editor.chain().focus().undo().run()}
@@ -168,6 +179,18 @@ const MenuBar: React.FC<MenuBarProps> = ({ options, setOpen }) => {
       >
         close
       </button>
+      {onColorChange &&<div
+        style={{ display: colorOpen ? 'block' : 'none' }}
+      >
+        <ColorPicker
+          color={editor.getAttributes('textStyle').color}
+          updateColor={c => {
+            editor.chain().focus().setColor(c).run()
+            onColorChange(c)
+          }}
+          className={styles.colorPicker}
+        />
+      </div>}
     </div>
   )
 }
@@ -197,6 +220,8 @@ type EditorProps = {
   bottom?: string
   contentRef: React.MutableRefObject<any>
   options?: string[]
+  onColorChange?: (color: string) => void
+  color?: string
 }
 
 export const Editor: React.FC<EditorProps> = ({
@@ -206,7 +231,9 @@ export const Editor: React.FC<EditorProps> = ({
   right,
   left,
   contentRef,
-  options
+  options,
+  onColorChange,
+  color
 }) => {
 
   const editing = useIsEditing()
@@ -246,12 +273,18 @@ export const Editor: React.FC<EditorProps> = ({
         width: width ?? '45%',
         left: left ?? 'unset',
         right: right ?? 'unset',
-        display: open ? 'block' : 'none'
+        display: open ? 'block' : 'none',
+        color
       }}
     >
       <EditorProvider
         key={refreshKey} // editor content does not update on reset, so re-mounting
-        slotBefore={<MenuBar {...{ options, setOpen }} />}
+        slotBefore={<MenuBar {...{
+          options,
+          setOpen,
+          color,
+          onColorChange,
+        }} />}
         extensions={extensions}
         onUpdate={e => onUpdate(e.editor.getHTML())}
         content={content}

@@ -5,10 +5,12 @@ import { Button } from '../button'
 import { ClickToAdd } from '../click-to-add'
 import { useIsEditing } from '@/utils/useIsEditing'
 import cn from 'classnames'
+import { ColorPicker } from '../color-picker'
 
 type IconPickerProps = {
   icon: string
-  onIconUpdate: (icon: string) => void
+  color: string
+  onIconUpdate: (icon: string, color: string) => void
   preview?: boolean
   className?: string
 }
@@ -16,6 +18,7 @@ type IconPickerProps = {
 export const IconPicker: React.FC<IconPickerProps> = (props) => {
   const {
     icon,
+    color,
     onIconUpdate,
     preview,
     className
@@ -23,12 +26,17 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
 
   const [iconModalOpen, setIconModalOpen] = useState(false)
   const [iconVal, setIconVal] = useState(icon)
+  const [iconColor, setIconColor] = useState(color)
   const isEditing = useIsEditing()
 
-  const onIconAdd = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onIconChange = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     evt.stopPropagation()
-    onIconUpdate(iconVal)
+    onIconUpdate(iconVal, iconColor)
     setIconModalOpen(false)
+  }
+
+  const onColorChange = (newColor: string) => {
+    setIconColor(newColor)
   }
 
   const onModalClose = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -39,16 +47,25 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
   const sanitizeIcon = (icon: string) =>
     icon.toLowerCase().split(' ').join('_')
 
+  const handleModalOpen = () => {
+    if (isEditing && !preview) {
+      setIconModalOpen(true)
+    }
+  }
+
   return (
     <Container
       className={cn(styles.icon, className)}
       preview={preview}
       role={isEditing ? 'button' : undefined}
       data-testid='open-icon-picker'
-      onClick={() => setIconModalOpen(true)}
+      onClick={handleModalOpen}
     >
       {icon
-        ? <span className='material-symbols-outlined'>{sanitizeIcon(icon)}</span>
+        ? <span
+          className='material-symbols-outlined'
+          style={{ color }}
+        >{sanitizeIcon(icon)}</span>
         : <span />}
 
       <ClickToAdd {...{ text: 'icon', value: icon,  }} />
@@ -73,8 +90,9 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
               placeholder='Enter icon name'
               onChange={e => setIconVal(e.target.value)}
             />
-            <Button text='Update' onClick={onIconAdd} type='button' data-testid='update-icon' />
+            <Button text='Update' onClick={onIconChange} type='button' data-testid='update-icon' />
           </form>
+          <ColorPicker color={color} updateColor={c => onColorChange(c)}/>
           <button
             className={styles.closeModal}
             onClick={onModalClose}>x

@@ -13,6 +13,7 @@ import { PreviewBlocksType } from '../block-selector/previewBlocks'
 import { PageSettings, SettingsError } from './pageSettings'
 import { useAlert } from '../alerts'
 import { useProfile } from '../profile-provider'
+import styles from './myPage.module.scss'
 
 export type MyPageComponentProps = {
   Blocks:  Record<string, React.FC<ComponentProps<any>>>
@@ -144,26 +145,28 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
 
   return (
     <Layout {...layoutProps}>
-      <PageComponent {...{ page: pageContext, Blocks, setPageContext }} />
-      <BlockSelector onClick={onBlockClick} PreviewBlocks={PreviewBlocks}/>
-      <PageSaver {...{
-        pageProps: page!,
-        pageContext,
-        reset: resetContent,
-        setSettingsError
-      }} />
-      <PageSettings {...{
-        update: (settings: PageSettings) => setPageContext(ctx => {
-          const copy = {
-            ...ctx,
-            ...settings
-          } as Page
+      <div className={styles.myPage}>
+        <PageComponent {...{ page: pageContext, Blocks, setPageContext }} />
+        <BlockSelector onClick={onBlockClick} PreviewBlocks={PreviewBlocks}/>
+        <PageSaver {...{
+          pageProps: page!,
+          pageContext,
+          reset: resetContent,
+          setSettingsError
+        }} />
+        <PageSettings {...{
+          update: (settings: PageSettings) => setPageContext(ctx => {
+            const copy = {
+              ...ctx,
+              ...settings
+            } as Page
 
-          return copy
-        }),
-        page: pageContext,
-        settingsError
-      }} />
+            return copy
+          }),
+          page: pageContext,
+          settingsError
+        }} />
+      </div>
     </Layout>
   )
 }

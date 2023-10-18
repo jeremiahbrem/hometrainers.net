@@ -1,0 +1,23 @@
+.color-picker {
+  position: relative;
+  & > div {
+    & > div:nth-child(2) {
+      & > div:nth-child(1) {
+        & > div:nth-child(1) {
+          position: relative;
+          bottom: .5rem;
+        }
+        & > div:nth-child(2) {
+          & > div:nth-child(2) {
+            display: none;
+          }
+        }
+      }
+      & > div:nth-child(2) {
+        & > div:nth-child(2) {
+          display: none;
+        }
+      }
+    }
+  }
+}

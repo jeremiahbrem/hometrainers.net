@@ -12,7 +12,9 @@ import { IconPicker } from '@/components/icon-picker'
 
 type IconText = {
   text: string
+  textColor: string
   icon: string
+  iconColor: string
 }
 
 type IconTextListProps = ComponentProps<{
@@ -24,9 +26,9 @@ type ItemProps = {
   preview?: boolean
   index: number
   item: IconText
-  onTextUpdate: (text: string) => Promise<void>
+  onTextUpdate: (text: string, color: string) => Promise<void>
   onRemove: () => void
-  onIconUpdate: (icon: string) => void
+  onIconUpdate: (icon: string, color: string) => void
 }
 
 const Item: React.FC<ItemProps> = (props) => {
@@ -41,9 +43,12 @@ const Item: React.FC<ItemProps> = (props) => {
 
   const isEditing = useIsEditing()
 
-  const { text, icon } = item
+  const { text, icon, textColor, iconColor } = item
 
   const textRef = useRef(null)
+
+  const onTextChange = (newText: string) => onTextUpdate(newText, textColor)
+  const onColorChange = (color: string) => onTextUpdate(text, color)
 
   return (
     <div className={styles.item}>
@@ -54,6 +59,7 @@ const Item: React.FC<ItemProps> = (props) => {
 
       <IconPicker {...{
         onIconUpdate,
+        color: iconColor,
         preview,
         icon,
         className: styles.icon
@@ -64,6 +70,7 @@ const Item: React.FC<ItemProps> = (props) => {
         ref={textRef}
         preview={preview}
         data-testid='image-text-content'
+        style={{ color: textColor }}
       >
         {parse(text ?? '')}
         <ClickToAdd {...{ text: 'text', value: text }} />
@@ -71,9 +78,11 @@ const Item: React.FC<ItemProps> = (props) => {
 
       {!preview && <Editor
         content={text}
-        onUpdate={onTextUpdate}
+        onUpdate={onTextChange}
         right={'1rem'}
         contentRef={textRef}
+        color={textColor}
+        onColorChange={onColorChange}
       />}
     </div>
   )
@@ -102,7 +111,12 @@ export const IconTextList: React.FC<IconTextListProps> = (props) => {
   const onItemAdd = () => {
     onUpdate({
       ...block,
-      items: [...block.items, { text: '', icon: '' }]
+      items: [...block.items, {
+        text: '',
+        icon: '',
+        iconColor: '#dd940c',
+        textColor: '#3c3636'
+      }]
     })
   }
 
@@ -126,12 +140,12 @@ export const IconTextList: React.FC<IconTextListProps> = (props) => {
             item: x,
             preview,
             index: i,
-            onTextUpdate: async (text: string) => {
+            onTextUpdate: async (text: string, color: string) => {
               onUpdate({
                 ...block,
                 items: [
                   ...items.slice(0, i),
-                  { ...items[i], text },
+                  { ...items[i], text, textColor: color },
                   ...items.slice(i + 1)
                 ]
               })
@@ -140,11 +154,11 @@ export const IconTextList: React.FC<IconTextListProps> = (props) => {
               ...block,
               items: items.filter((_, idx) => idx !== i)
             }),
-            onIconUpdate: (iconName: string) => onUpdate({
+            onIconUpdate: (iconName: string, iconColor: string) => onUpdate({
               ...block,
               items: [
                 ...items.slice(0, i),
-                { ...items[i], icon: iconName },
+                { ...items[i], icon: iconName, iconColor },
                 ...items.slice(i + 1)
               ]
             })

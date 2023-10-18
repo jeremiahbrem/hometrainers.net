@@ -39,3 +39,4 @@ global.fetch = jest.fn(() =>
 document.elementFromPoint = function() {}
 window.ClipboardEvent = function() {}
 window.DragEvent = function() {}
+HTMLCanvasElement.prototype.getContext = () => {}

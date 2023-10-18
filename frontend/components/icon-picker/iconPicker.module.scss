@@ -6,12 +6,14 @@
   .icon-modal {
     z-index: 2;
     position: absolute;
-    left: 1rem;
-    top: -1rem;
+    left: 0rem;
+    top: 4rem;
     padding: 1rem;
     background: white;
     box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
     border-radius: 5px;
+    height: 22rem;
+    overflow: scroll;
 
     .modal-contents {
       position: relative;

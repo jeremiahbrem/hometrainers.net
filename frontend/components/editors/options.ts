@@ -13,7 +13,8 @@ export const allOptions = [
   'orderedList',
   'blockquote',
   'hr',
-  'hardBreak'
+  'hardBreak',
+  'color'
 ]
 
 export const optionTexts = [
@@ -31,5 +32,6 @@ export const optionTexts = [
   'ordered list',
   'blockquote',
   'horizontal rule',
-  'hard break'
+  'hard break',
+  'color'
 ]
