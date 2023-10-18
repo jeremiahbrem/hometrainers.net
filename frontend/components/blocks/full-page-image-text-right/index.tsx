@@ -6,6 +6,7 @@ export type FullPageImageTextRightProps = ComponentProps<{
   text: string
   image: string
   imageAlt: string
+  color: string
 }>
 
 export const FullPageImageTextRight: React.FC<FullPageImageTextRightProps> = (props) => {
