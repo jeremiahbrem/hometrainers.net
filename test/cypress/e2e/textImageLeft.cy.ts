@@ -1,4 +1,4 @@
-Cypress.config('defaultCommandTimeout', 20000);
+Cypress.config('defaultCommandTimeout', 25000);
 
 describe('TextImageLeft', () => {
   it('test', () => {

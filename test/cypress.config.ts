@@ -21,5 +21,6 @@ export default defineConfig({
       })
     },
     experimentalModifyObstructiveThirdPartyCode: true,
+    experimentalRunAllSpecs: true,
   },
 });
