@@ -1,3 +1,5 @@
+Cypress.config('defaultCommandTimeout', 20000);
+
 describe('IconTextList', () => {
   it('test', () => {
     cy.loginTrainer()

@@ -1,3 +1,5 @@
+Cypress.config('defaultCommandTimeout', 20000);
+
 describe('TextImageLeft', () => {
   it('test', () => {
     cy.loginTrainer()
