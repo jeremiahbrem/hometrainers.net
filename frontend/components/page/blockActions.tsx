@@ -2,17 +2,28 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '../button'
 import styles from './blockActions.module.scss'
 import cn from 'classnames'
+import { ColorPicker } from '../color-picker'
 
 type BlockActionProps = {
   onRemove: () => void
   onReorder: (order: number) => void
   order: number
+  onBackgroundChange?: (color: string) => void
+  background?: string
 }
 
 export const BlockActions: React.FC<BlockActionProps> = (props) => {
-  const { onRemove, onReorder, order } = props
+  const {
+    onRemove,
+    onReorder,
+    order,
+    background,
+    onBackgroundChange
+  } = props
+
   const [blockOrder, setBlockOrder] = useState(`${order + 1}`)
-  const [open, setOpen] = useState(false)
+  const [reorderOpen, setReorderOpen] = useState(false)
+  const [backgroundOpen, setBackgroundOpen] = useState(false)
 
   const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const val = evt.target.value
@@ -25,16 +36,17 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
     }
 
     setBlockOrder(`${order + 1}`)
-    setOpen(false)
+    setReorderOpen(false)
   }
  
   return (
     <div className={styles.blockActions}>
       <Button text='Remove Block' onClick={onRemove} />
-      <Button text='Reorder' onClick={() => setOpen(true)} />
+      <Button text='Reorder' onClick={() => setReorderOpen(true)} />
+      <Button text='Background' onClick={() => setBackgroundOpen(true)} />
       
-      <div className={cn(styles.reorderForm, { [styles.open]: open })}>
-        {open && <form onSubmit={onSubmit}>
+      <div className={cn(styles.reorderForm, { [styles.open]: reorderOpen })}>
+        {reorderOpen && <form onSubmit={onSubmit}>
           <label htmlFor='order'>Order</label>
           <input
             name='order'
@@ -44,9 +56,16 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
             type='number'
           />
           <Button text='Update' onClick={onSubmit} />
-          <Button text='Cancel' onClick={() => setOpen(false)} type='button' />
+          <Button text='Cancel' onClick={() => setReorderOpen(false)} type='button' />
         </form>}
       </div>
+      
+      {onBackgroundChange && <div className={cn(styles.background, { [styles.open]: backgroundOpen })}>
+        <ColorPicker color={background ?? 'white'} updateColor={c => onBackgroundChange(c)}/>
+        <div>
+          <Button text='Close' onClick={() => setBackgroundOpen(false)} type='button' />
+        </div>
+      </div>}
     </div>
   )
 }

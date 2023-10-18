@@ -15,6 +15,7 @@ export type FullPageImageTextProps = ComponentProps<{
   text: string
   image: string
   imageAlt: string
+  color: string
 }> & { textPos: 'left' | 'right' }
 
 export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
@@ -31,6 +32,7 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
     text,
     image,
     imageAlt,
+    color,
   } = block
 
   const textRef = useRef(null)
@@ -64,6 +66,13 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
     })
   }
 
+  const onColorChange = (color: string) => {
+    onUpdate({
+      ...block,
+      color
+    })
+  }
+
   return (
     <section className={cn(styles.section, { [styles.right]: textPos === 'right'})}>
       <Container className={styles.image} preview={preview}>
@@ -90,6 +99,8 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
         onUpdate={onTextUpdate}
         right={'1rem'}
         contentRef={textRef}
+        color={color}
+        onColorChange={onColorChange}
       />}
     </section>
   )

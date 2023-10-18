@@ -20,6 +20,8 @@ type IconText = {
 type IconTextListProps = ComponentProps<{
   title: string
   items: IconText[]
+  background: string
+  titleColor: string
 }>
 
 type ItemProps = {
@@ -93,7 +95,7 @@ export const IconTextList: React.FC<IconTextListProps> = (props) => {
     preview,
   } = props
 
-  const { items, title } = block
+  const { items, title, titleColor, background } = block
 
   const titleRef = useRef(null)
 
@@ -118,52 +120,63 @@ export const IconTextList: React.FC<IconTextListProps> = (props) => {
     })
   }
 
+  const onTitleColorChange = (color: string) => {
+    onUpdate({
+      ...block,
+      titleColor: color
+    })
+  }
+
   return (
-    <section className={styles.section}>
-      <Container className={cn(styles.title, richTextStyles.richText)} ref={titleRef} preview={preview}>
-        {parse(title ?? '')}
-        <ClickToAdd value={title} text='title' />
-      </Container>
+    <section className={styles.section} style={{ backgroundColor: background ?? 'white'}}>
+      <div className={styles.container}>
+        <Container className={cn(styles.title, richTextStyles.richText)} ref={titleRef} preview={preview}>
+          {parse(title ?? '')}
+          <ClickToAdd value={title} text='title' />
+        </Container>
 
-      {!preview && <Editor
-        content={title}
-        onUpdate={onTitleUpdate}
-        right={'1rem'}
-        contentRef={titleRef}
-      />}
+        {!preview && <Editor
+          content={title}
+          onUpdate={onTitleUpdate}
+          right={'1rem'}
+          contentRef={titleRef}
+          color={titleColor}
+          onColorChange={onTitleColorChange}
+        />}
 
-      <div className={styles.items}>
-        {items.map((x, i) => (
-          <Item key={i} {...{
-            item: x,
-            preview,
-            onTextUpdate: async (text: string, color: string) => {
-              onUpdate({
+        <div className={styles.items}>
+          {items.map((x, i) => (
+            <Item key={i} {...{
+              item: x,
+              preview,
+              onTextUpdate: async (text: string, color: string) => {
+                onUpdate({
+                  ...block,
+                  items: [
+                    ...items.slice(0, i),
+                    { ...items[i], text, textColor: color },
+                    ...items.slice(i + 1)
+                  ]
+                })
+              },
+              onRemove: () => onUpdate({
+                ...block,
+                items: items.filter((_, idx) => idx !== i)
+              }),
+              onIconUpdate: (iconName: string, iconColor: string) => onUpdate({
                 ...block,
                 items: [
                   ...items.slice(0, i),
-                  { ...items[i], text, textColor: color },
+                  { ...items[i], icon: iconName, iconColor },
                   ...items.slice(i + 1)
                 ]
               })
-            },
-            onRemove: () => onUpdate({
-              ...block,
-              items: items.filter((_, idx) => idx !== i)
-            }),
-            onIconUpdate: (iconName: string, iconColor: string) => onUpdate({
-              ...block,
-              items: [
-                ...items.slice(0, i),
-                { ...items[i], icon: iconName, iconColor },
-                ...items.slice(i + 1)
-              ]
-            })
-          }} />
-        ))}
-        {isEditing && !preview && <Container preview={preview}>
-          <ClickToAdd value={false} text={'item'}  onClick={onItemAdd} />
-        </Container>}
+            }} />
+          ))}
+          {isEditing && !preview && <Container preview={preview}>
+            <ClickToAdd value={false} text={'item'}  onClick={onItemAdd} />
+          </Container>}
+        </div>
       </div>
     </section>
   )

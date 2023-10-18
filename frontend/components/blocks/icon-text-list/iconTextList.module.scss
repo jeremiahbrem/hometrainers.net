@@ -1,60 +1,62 @@
 @import '@/styles/global.scss';
 
 .section {
-  padding: 3rem 2rem 1rem 2rem;
-  max-width: 36rem;
-  margin: 0 auto;
-  .title {
-    margin: 0;
-    text-align: center;
-    min-height: 2rem;
-  }
-
-  .items {
-    display: grid;
-    position: relative;
-    min-height: 5rem;
-    .item {
+  .container {
+    padding: 3rem 2rem 1rem 2rem;
+    max-width: 36rem;
+    margin: 0 auto;
+    .title {
+      margin: 0;
+      text-align: center;
+      min-height: 2rem;
+    }
+  
+    .items {
       display: grid;
-      grid-template-columns: 6rem 3fr;
       position: relative;
-      margin-bottom: 1rem;
-      align-items: center;
-
-      .remove-item {
-        position: absolute;
-        right: -0.9rem;
-        top: 1rem;
-        background-color: rgba(0,0,0, .2);
-        border-radius: 100%;
-        width: 1rem;
-        height: 1rem;
-        display: flex;
+      min-height: 5rem;
+      .item {
+        display: grid;
+        grid-template-columns: 6rem 3fr;
+        position: relative;
+        margin-bottom: 1rem;
         align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: .78rem;
-      }
-
-      .icon {
-        min-height: 3rem;
-        span {
-          font-size: 3.5rem;
+  
+        .remove-item {
+          position: absolute;
+          right: -0.9rem;
+          top: 1rem;
+          background-color: rgba(0,0,0, .2);
+          border-radius: 100%;
+          width: 1rem;
+          height: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: .78rem;
+        }
+  
+        .icon {
+          min-height: 3rem;
+          span {
+            font-size: 3.5rem;
+          }
+        }
+  
+        .text {
+          max-width: 30rem;
         }
       }
-
-      .text {
-        max-width: 30rem;
-      }
     }
-  }
-
-  @media (max-width: 600px) {
-    padding: 3rem 1.25rem 1rem 1.25rem;
-
-    .items {
-      .item {
-        grid-template-columns: 4.5rem 3fr;
+  
+    @media (max-width: 600px) {
+      padding: 3rem 1.25rem 1rem 1.25rem;
+  
+      .items {
+        .item {
+          grid-template-columns: 4.5rem 3fr;
+        }
       }
     }
   }

@@ -2,6 +2,7 @@ import React from 'react'
 import {
   PageComponent,
   addImage,
+  onBackgroundChange,
   onRemove,
   onReorder,
   onUpdate,
@@ -176,6 +177,46 @@ describe('page component', () => {
           {
             blockName: 'text3',
             text: 'initial text3'
+          },
+        ]}
+      })
+    })
+    
+    it('updates page block background', () => {
+      const blocks = [
+        {
+          blockName: 'text1',
+          text: 'initial text1'
+        },
+        {
+          blockName: 'text2',
+          text: 'initial text2'
+        },
+      ].map(x => x as Block)
+  
+      const initial: Page = {
+        blocks: { blocks},
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+  
+      const result = onBackgroundChange('#FFFFFF', 1, initial, 'text2')
+  
+      expect(result).toEqual({
+        ...initial,
+        blocks: { blocks: [
+          {
+            blockName: 'text1',
+            text: 'initial text1'
+          },
+          {
+            blockName: 'text2',
+            text: 'initial text2',
+            background: '#FFFFFF'
           },
         ]}
       })

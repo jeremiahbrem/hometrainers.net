@@ -128,7 +128,7 @@ describe('Editor', () => {
     
     await act(() => userEvent.click(screen.getByText('color')))
 
-    const colorInput = document.querySelector('#color-picker input')!
+    const colorInput = document.querySelector('.color-picker input')!
     fireEvent.change(colorInput, { target: { value: '#ffffff' }})
 
     expect(onColorChange).toBeCalledWith('#ffffff')

@@ -16,6 +16,7 @@ export type ImageTextProps = ComponentProps<{
   image: string
   imageAlt: string
   textColor: string
+  background: string
 }>
 
 export type ImageTextBaseProps = ImageTextProps & {
@@ -39,6 +40,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
     image,
     imageAlt,
     textColor = '',
+    background,
   } = block
 
   const onTextUpdate = async (text: string) => {
@@ -79,7 +81,13 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
   const imageUrl = preview ? image : `${IMAGES_URL}/${image}`
 
   return (
-    <section className={cn(styles.imageText)}>
+    <section
+      className={cn(styles.imageText)}
+      style={{
+        backgroundColor: background ?? 'white'
+      }}
+      data-testid='image-text-section'
+    >
       <Container
         className={cn(styles.text, richTextStyles.richText, { [styles.right]: textRight})}
         ref={textRef}

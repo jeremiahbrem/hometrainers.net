@@ -67,6 +67,26 @@ export function onUpdate(
   return copy
 }
 
+export function onBackgroundChange(
+  color: string,
+  index: number,
+  ctx: Page,
+  blockName: string,
+): Page {
+  const copy = {
+    ...ctx,
+    blocks: {
+      blocks: [
+        ...ctx.blocks.blocks.slice(0, index),
+        { ...ctx.blocks.blocks[index], blockName, background: color },
+        ...ctx.blocks.blocks.slice(index + 1)
+      ]
+    }
+  }
+
+  return copy
+}
+
 export function addImage(img: string, ctx: Page): Page {
   return {
     ...ctx,
@@ -129,7 +149,14 @@ export const PageComponent = (props: PageProps) => {
                 ctx,
                 idx
               )),
-              order: idx
+              order: idx,
+              onBackgroundChange: (color: string) => setPageContext(ctx => onBackgroundChange(
+                color,
+                idx,
+                ctx,
+                blockName
+              )),
+              background: page.blocks.blocks[idx].background
             }} />}
 
           </React.Fragment>

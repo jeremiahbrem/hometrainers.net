@@ -5,10 +5,10 @@
   display: flex;
   width: 100%;
   justify-content: center;
-  padding-bottom: 1rem;
+  padding: 1rem 0;
   border-bottom: 2px solid rgba($fontColor, .3);
 
-  .reorder-form {
+  .reorder-form, .background {
     position: fixed;
     margin: auto;
     left: 0;

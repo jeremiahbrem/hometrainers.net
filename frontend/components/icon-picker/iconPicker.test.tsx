@@ -30,7 +30,7 @@ describe('IconPicker', () => {
 
     await act(() => userEvent.type(screen.getByRole('textbox', { name: /Enter Icon/ }), 'Health Metrics'))
 
-    const colorInput = document.querySelector('#color-picker input')!
+    const colorInput = document.querySelector('.color-picker input')!
     fireEvent.change(colorInput, { target: { value: '#ffffff' }})
 
     await act(() => userEvent.click(screen.getByTestId('update-icon')))

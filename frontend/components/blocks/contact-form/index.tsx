@@ -15,6 +15,7 @@ import { ImageUpload } from '@/components/image-upload'
 import { Editor } from '@/components/editors'
 import { useIsEditing } from '@/utils/useIsEditing'
 import { ClickToAdd } from '@/components/click-to-add'
+import blockStyles from './contactFormBlock.module.scss'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -36,6 +37,8 @@ export type ContactFormProps = ComponentProps<{
   title: string
   image: string
   imageAlt: string
+  color: string
+  background: string
 }>
 
 export const ContactForm: React.FC<ContactFormProps> = (props) => {
@@ -53,7 +56,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     preview,
   } = props
 
-  const { title, image, imageAlt } = block
+  const { title, image, imageAlt, color, background } = block
 
   const { profile } = useProfile()
  
@@ -162,11 +165,23 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     })
   }
 
+  const onColorChange = (color: string) => {
+    onUpdate({
+      ...block,
+      color
+    })
+  }
+
   return (
-    <div className={styles.contactFormPage}>
+    <div className={styles.contactFormPage} style={{
+      backgroundColor: background ?? 'white'
+    }}>
       <form
         onSubmit={e => e.preventDefault()}
         className={cn(styles.contactForm, roboto.className)}
+        style={{
+          color
+        }}
       >
         <Container preview={preview} ref={textRef} className={styles.title}>
           {parse(title || '<h3></h3>')}
@@ -178,7 +193,9 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
           onUpdate={onTextUpdate}
           right={'1rem'}
           contentRef={textRef}
-          options={[]}
+          options={['color']}
+          color={color}
+          onColorChange={onColorChange}
         />}
 
         <label className={styles.name} htmlFor='name'>Name</label>
@@ -223,6 +240,8 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
             onClick={onSubmit}
             type='button'
             disabled={preview || isEditing || false}
+            className={blockStyles.button}
+            style={{ backgroundColor: color, borderColor: color }}
           />
         </div>
 

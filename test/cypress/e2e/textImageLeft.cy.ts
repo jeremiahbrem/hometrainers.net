@@ -22,6 +22,19 @@ describe('TextImageLeft', () => {
       .type('My test content')
       .get('[data-testid="image-text-content"]')
       .contains('test')
+    
+    cy.contains('close')
+      .click()
+
+    cy.contains('Background')
+      .click()
+    
+    const inputText = `${[...new Array(7).fill('{backspace}')].join('')}#dd940c`
+    cy.get('.color-picker input').eq(1)
+      .type(inputText)
+
+    cy.contains('Close')
+      .click()
 
     cy.contains('Save Changes')
       .click()
@@ -32,6 +45,8 @@ describe('TextImageLeft', () => {
       .reload()
       
     cy.contains('My test content')
+      .get('[data-testid="image-text-section"]')
+      .should('have.attr', 'style', 'background-color:#dd940c')
 
     cy.visit('/my-page')
 
