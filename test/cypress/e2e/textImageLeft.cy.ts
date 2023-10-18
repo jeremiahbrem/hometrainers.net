@@ -25,8 +25,8 @@ describe('TextImageLeft', () => {
 
     cy.contains('Save Changes')
       .click()
-
-    cy.contains('Page updated')
+      .get('[data-testid="alert-scrim"]')
+      .click()
 
     cy.visit('/test-page-1')
       .reload()
@@ -42,6 +42,8 @@ describe('TextImageLeft', () => {
       .click()
     
     cy.contains('Save Changes')
+      .click()
+      .get('[data-testid="alert-scrim"]')
       .click()
   })
 })

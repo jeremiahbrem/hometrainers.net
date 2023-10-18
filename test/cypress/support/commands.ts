@@ -90,6 +90,8 @@ export function registerCommands() {
               .get('button')
               .contains('Save')
               .click()
+              .get('[data-testid="alert-scrim"]')
+              .click()
           }
         })
     })
