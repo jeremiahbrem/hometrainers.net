@@ -18,6 +18,8 @@ type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButton
   className?: string
   preview?: boolean
   onButtonChange: (text: string, color: string, outlined: boolean) => void
+  modalLeft?: number
+  modalTop?: number
 }
 
 export const BlockButton: React.FC<ButtonProps> = (props) => {
@@ -31,6 +33,8 @@ export const BlockButton: React.FC<ButtonProps> = (props) => {
     color,
     preview,
     onButtonChange,
+    modalLeft,
+    modalTop,
     ...rest
   } = props;
 
@@ -96,7 +100,11 @@ export const BlockButton: React.FC<ButtonProps> = (props) => {
       </button>
       {isEditing && <div
         className={styles.modal}
-        style={{ display: open ? 'block' : 'none' }}
+        style={{
+          display: open ? 'block' : 'none',
+          left: `${modalLeft ?? 0}rem`,
+          top: `${modalTop ?? 0}rem`,
+        }}
       >
         <div className={styles.innerModal}>
           <label htmlFor={buttonId} className={styles.label}>Button Text</label>
