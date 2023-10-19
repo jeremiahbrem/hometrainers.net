@@ -31,11 +31,6 @@
       }
       transition: background-color .25s ease-in-out;
 
-      &:first-of-type {
-      background-color: rgba($orange, .3);
-
-      }
-
       &:hover {
         background-color: rgba($orange, .3);
       }
