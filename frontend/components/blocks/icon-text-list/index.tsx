@@ -69,7 +69,7 @@ const Item: React.FC<ItemProps> = (props) => {
         className={cn(styles.text, richTextStyles.richText)}
         ref={textRef}
         preview={preview}
-        data-testid='image-text-content'
+        data-testid='icon-text-content'
         style={{ color: textColor }}
       >
         {parse(text ?? '')}
