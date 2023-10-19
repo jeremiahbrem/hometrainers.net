@@ -71,7 +71,7 @@ export default NextAuth({
   ],
   callbacks: {
     async session({ session, token }) {
-      session.idToken = token.idToken
+      session.idToken = token.idToken ?? session.idToken
       session.accessToken = token.accessToken
       session.refreshToken = token.refreshToken
       session.error = token.error
@@ -81,7 +81,7 @@ export default NextAuth({
     },
     async jwt({ token, account }) {
       const provider = account?.provider ?? token.provider
-
+ 
       if (provider === 'google') {
         return googleJwtCallback(token, account)
       }

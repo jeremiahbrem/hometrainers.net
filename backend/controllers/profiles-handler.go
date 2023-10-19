@@ -154,7 +154,7 @@ func CreateProfilesHandlers(router *gin.Engine, provider services.ServiceProvide
 					bucketService.DeleteImage(val)
 				}
 			}
-			fmt.Sprintf("profile image: %s", profile.Image)
+
 			if profile.Image != "" {
 				if !slices.Contains(images, profile.Image) {
 					profilesRepo.AddProfileImage(profile.Image, user.Email)
