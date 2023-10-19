@@ -105,6 +105,7 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
             checked={settings.active}
             onChange={onActiveChange}
             label='Active'
+            dataTestId='active-switch'
           />
         </fieldset>
         

@@ -5,16 +5,17 @@ type ToggleProps = {
   label: string
   checked: boolean
   onChange: (checked: boolean) => void
+  dataTestId?: string
 }
 export const Toggle: React.FC<ToggleProps> = (props) => {
-  const { label, checked, onChange } = props
+  const { label, checked, onChange, dataTestId } = props
 
   const onToggleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     onChange(evt.target.checked)
   }
 
   return (
-    <label className={styles.switch} data-testid='active-switch'>
+    <label className={styles.switch} data-testid={dataTestId}>
       {label}
       <input
         id='active'
