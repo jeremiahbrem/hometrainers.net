@@ -38,8 +38,8 @@ describe('IconTextList', () => {
       .get('input[name="icon-name"]').eq(0)
       .type('Health Metrics')
 
-    const inputText = `${[...new Array(6).fill('{backspace}')].map(x => x)}#dd940c`
-    cy.get('.color-picker input').eq(0)
+    const inputText = `${[...new Array(7).fill('{backspace}')].join('')}#dd940c`
+    cy.get('.color-picker input').eq(1)
       .type(inputText)
       .get('[data-testid="update-icon"]').eq(0)
       .click()
