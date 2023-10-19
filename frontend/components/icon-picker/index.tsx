@@ -6,6 +6,7 @@ import { ClickToAdd } from '../click-to-add'
 import { useIsEditing } from '@/utils/useIsEditing'
 import cn from 'classnames'
 import { ColorPicker } from '../color-picker'
+import { CloseButton } from '../close-button'
 
 type IconPickerProps = {
   icon: string
@@ -39,8 +40,7 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
     setIconColor(newColor)
   }
 
-  const onModalClose = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    evt.stopPropagation()
+  const onModalClose = () => {
     setIconModalOpen(false)
   }
 
@@ -93,10 +93,7 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
             <Button text='Update' onClick={onIconChange} type='button' data-testid='update-icon' />
           </form>
           <ColorPicker color={iconColor} updateColor={c => onColorChange(c)}/>
-          <button
-            className={styles.closeModal}
-            onClick={onModalClose}>x
-          </button>
+          <CloseButton onClose={onModalClose}/>
         </div>
       </div>
     </Container>

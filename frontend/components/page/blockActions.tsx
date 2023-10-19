@@ -61,7 +61,7 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
       </div>
       
       {onBackgroundChange && <div className={cn(styles.background, { [styles.open]: backgroundOpen })}>
-        <ColorPicker color={background ?? 'white'} updateColor={c => onBackgroundChange(c)}/>
+        <ColorPicker color={background || ''} updateColor={c => onBackgroundChange(c)}/>
         <div>
           <Button text='Close' onClick={() => setBackgroundOpen(false)} type='button' />
         </div>

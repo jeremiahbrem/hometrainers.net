@@ -1,8 +1,8 @@
 import { useIsLoggedIn } from "./useIsLoggedIn";
 import { useIsMyPage } from "./useIsMyPage";
 
-export function useIsEditing() {
+export function useIsEditing(): boolean {
   const isLoggedIn = useIsLoggedIn()
   const isMyPage = useIsMyPage()
-  return isLoggedIn && isMyPage
+  return !!isLoggedIn && !!isMyPage
 }

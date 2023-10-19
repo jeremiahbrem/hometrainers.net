@@ -13,7 +13,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = (props) => {
   const { updateColor, color, className } = props
 
   return (
-    <div className={cn(styles.colorPicker, 'color-picker')}>
+    <div className={cn(styles.colorPicker, className, 'color-picker')}>
       <ChromePicker color={color} onChange={c => updateColor(c.hex)} />
     </div>
   )

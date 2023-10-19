@@ -116,6 +116,7 @@ export const ContactForm: React.FC = () => {
 
         <label className={styles.name} htmlFor='name'>Name</label>
         <input
+          className={styles.input}
           name='name'
           id='name'
           onChange={onChange}
@@ -128,6 +129,7 @@ export const ContactForm: React.FC = () => {
         
         <label className={styles.name} htmlFor='email'>Email</label>
         <input
+          className={styles.input}
           name='email'
           id='email'
           onChange={onChange}

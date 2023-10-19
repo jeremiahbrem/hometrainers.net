@@ -145,7 +145,12 @@ export const PreviewBlocks: PreviewBlocksType = [
       ...defaultProps,
       block: {
         image: '/luna-active-fitness-iEpsg6OzyXw-unsplash.jpg',
-        title: '<h3>Contact Us</h3>' 
+        title: '<h3>Contact Us</h3>' ,
+        button: {
+          text: 'Send',
+          outlined: false,
+          color: '#dd940c',
+        }
       },
       blockName: 'contact-form'
     },

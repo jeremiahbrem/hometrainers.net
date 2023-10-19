@@ -40,21 +40,6 @@
         margin: .3rem 0;
         border: 2px solid transparent;
       }
-
-      .close-modal {
-        position: absolute;
-        right: 0rem;
-        top: 0rem;
-        background-color: rgba(0,0,0, .2);
-        border-radius: 100%;
-        width: 1rem;
-        height: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: .78rem;
-      }
     }
   }
 }

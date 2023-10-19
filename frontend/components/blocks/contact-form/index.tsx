@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react'
 import { useAlert } from '../../alerts'
-import { Button } from '../../button'
 import styles from '../../contact-form/contactForm.module.scss'
 import cn from 'classnames'
 import { Roboto } from 'next/font/google'
@@ -15,7 +14,7 @@ import { ImageUpload } from '@/components/image-upload'
 import { Editor } from '@/components/editors'
 import { useIsEditing } from '@/utils/useIsEditing'
 import { ClickToAdd } from '@/components/click-to-add'
-import blockStyles from './contactFormBlock.module.scss'
+import { BlockButton, BlockButtonProps } from '@/components/block-button'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -39,6 +38,7 @@ export type ContactFormProps = ComponentProps<{
   imageAlt: string
   color: string
   background: string
+  button: BlockButtonProps
 }>
 
 export const ContactForm: React.FC<ContactFormProps> = (props) => {
@@ -56,7 +56,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     preview,
   } = props
 
-  const { title, image, imageAlt, color, background } = block
+  const { title, image, imageAlt, color, background, button } = block
 
   const { profile } = useProfile()
  
@@ -172,6 +172,13 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     })
   }
 
+  const onButtonChange = (text: string, color: string, outlined: boolean) => {
+    onUpdate({
+      ...block,
+      button: { text, color, outlined }
+    })
+  }
+
   return (
     <div className={styles.contactFormPage} style={{
       backgroundColor: background ?? 'white'
@@ -200,6 +207,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
 
         <label className={styles.name} htmlFor='name'>Name</label>
         <input
+          className={styles.input}
           name='name'
           id='name'
           onChange={onChange}
@@ -212,6 +220,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
         
         <label className={styles.name} htmlFor='email'>Email</label>
         <input
+          className={styles.input}
           name='email'
           id='email'
           onChange={onChange}
@@ -235,13 +244,12 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
         />
 
         <div className={styles.saveButton}>
-          <Button
-            text={'Send'}
+          <BlockButton
+            {...button}
             onClick={onSubmit}
             type='button'
-            disabled={preview || isEditing || false}
-            className={blockStyles.button}
-            style={{ backgroundColor: color, borderColor: color }}
+            preview={preview}
+            onButtonChange={onButtonChange}
           />
         </div>
 

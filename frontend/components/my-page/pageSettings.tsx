@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from './pageSettings.module.scss'
 import { Page } from '../types'
+import { Toggle } from '../toggle'
 
 export type PageSettings = {
   slug: string
@@ -36,9 +37,14 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
     const key = evt.target.name
     update({
       ...settings,
-      [key]: key === 'active'
-        ? evt.target.checked
-        : evt.target.value
+      [key]: evt.target.value
+    })
+  }
+
+  const onActiveChange = (checked: boolean) => {
+    update({
+      ...settings,
+      active: checked,
     })
   }
 
@@ -95,17 +101,11 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
         </fieldset>
         
         <fieldset>
-          <label className={styles.switch} data-testid='active-switch'>
-            Active
-            <input
-              id='active'
-              type="checkbox"
-              checked={settings.active}
-              onChange={onChange}
-              name='active'
-            />
-            <span className={styles.slider}></span>
-          </label>
+          <Toggle
+            checked={settings.active}
+            onChange={onActiveChange}
+            label='Active'
+          />
         </fieldset>
         
       </form>
