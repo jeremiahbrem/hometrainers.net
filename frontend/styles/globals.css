@@ -20,7 +20,6 @@ button {
   transition: all .25s ease-in-out;
   cursor: pointer;
   font-size: inherit;
-  font-family: inherit;
 }
 
 a {

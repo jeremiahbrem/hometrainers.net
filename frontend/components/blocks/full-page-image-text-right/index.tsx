@@ -1,14 +1,6 @@
 import React from 'react'
-import { ComponentProps } from '@/components/types'
-import { FullPageImageText } from '../full-page-image-text'
+import { FullPageImageText, FullPageImageTextBase } from '../full-page-image-text'
 
-export type FullPageImageTextRightProps = ComponentProps<{
-  text: string
-  image: string
-  imageAlt: string
-  color: string
-}>
-
-export const FullPageImageTextRight: React.FC<FullPageImageTextRightProps> = (props) => {
+export const FullPageImageTextRight: React.FC<FullPageImageTextBase> = (props) => {
   return <FullPageImageText {...{ ...props, textPos: 'right'}} />
 }

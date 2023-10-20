@@ -14,7 +14,8 @@ export const allOptions = [
   'blockquote',
   'hr',
   'hardBreak',
-  'color'
+  'color',
+  'font'
 ]
 
 export const optionTexts = [
@@ -33,5 +34,6 @@ export const optionTexts = [
   'blockquote',
   'horizontal rule',
   'hard break',
-  'color'
+  'color',
+  'font'
 ]

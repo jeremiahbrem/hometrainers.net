@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import styles from './imageText.module.scss'
 import richTextStyles from '../richTextStyles.module.scss'
 import Image from 'next/image'
@@ -10,6 +10,7 @@ import { Container } from '@/components/container'
 import { ClickToAdd } from '@/components/click-to-add'
 import { IMAGES_URL } from '@/api'
 import { ImageUpload } from '@/components/image-upload'
+import { MY_PAGE_FONTS } from '@/components/layout'
 
 export type ImageTextProps = ComponentProps<{
   text: string
@@ -17,6 +18,7 @@ export type ImageTextProps = ComponentProps<{
   imageAlt: string
   textColor: string
   background: string
+  font: string
 }>
 
 export type ImageTextBaseProps = ImageTextProps & {
@@ -41,6 +43,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
     imageAlt,
     textColor = '',
     background,
+    font = 'roboto'
   } = block
 
   const onTextUpdate = async (text: string) => {
@@ -89,12 +92,17 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
       data-testid='image-text-section'
     >
       <Container
-        className={cn(styles.text, richTextStyles.richText, { [styles.right]: textRight})}
+        className={cn(
+          styles.text,
+          richTextStyles.richText, { [styles.right]: textRight},
+          MY_PAGE_FONTS[font].className
+        )}
         ref={textRef}
         preview={preview}
         data-testid='image-text-content'
+        style={{ color: textColor }}
       >
-        {parse(text ?? '')}
+        {parse(text || '<p></p>')}
         <ClickToAdd {...{ text: 'text', value: text }} />
       </Container>
 
@@ -106,6 +114,10 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
         contentRef={textRef}
         color={textColor}
         onColorChange={onColorChange}
+        onFontChange={f => onUpdate({
+          ...block,
+          font: f
+        })}
       />}
 
       <Container className={cn(styles.image)} preview={preview}>

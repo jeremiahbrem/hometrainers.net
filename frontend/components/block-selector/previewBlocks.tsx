@@ -107,7 +107,8 @@ export const PreviewBlocks: PreviewBlocksType = [
       ...defaultProps,
       block: {
         image: '/carl-barcelo-hHzzdVQnkn0-unsplash.jpg',
-        text: '<h4>Reach Your Personal Goals</h4>' 
+        text: '<h4>Reach Your Personal Goals</h4>',
+        color: '#FFFFFF'
       },
       blockName: 'full-page-image-text-left'
     },
@@ -126,7 +127,8 @@ export const PreviewBlocks: PreviewBlocksType = [
       ...defaultProps,
       block: {
         image: '/carl-barcelo-hHzzdVQnkn0-unsplash.jpg',
-        text: '<h4>Reach Your Personal Goals</h4>' 
+        text: '<h4>Reach Your Personal Goals</h4>',
+        color: '#FFFFFF'
       },
       blockName: 'full-page-image-text-right'
     },
@@ -171,15 +173,21 @@ export const PreviewBlocks: PreviewBlocksType = [
         items: [
           {
             icon: 'Exercise',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
           },
           {
             icon: 'Health Metrics',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
           },
           {
             icon: 'Body System',
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
           },
         ]
       },

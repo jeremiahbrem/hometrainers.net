@@ -87,6 +87,7 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
               id='icon-name'
               name='icon-name'
               value={iconVal}
+              className={styles.input}
               placeholder='Enter icon name'
               onChange={e => setIconVal(e.target.value)}
             />

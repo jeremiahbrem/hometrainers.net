@@ -10,13 +10,17 @@ import { ClickToAdd } from '@/components/click-to-add'
 import { Editor } from '@/components/editors'
 import cn from 'classnames'
 import richStyles from '../richTextStyles.module.scss'
+import { MY_PAGE_FONTS } from '@/components/layout'
 
-export type FullPageImageTextProps = ComponentProps<{
+export type FullPageImageTextBase = ComponentProps<{
   text: string
   image: string
   imageAlt: string
   color: string
-}> & { textPos: 'left' | 'right' }
+  font: string
+}>
+
+export type FullPageImageTextProps = FullPageImageTextBase & { textPos: 'left' | 'right' }
 
 export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
   const {
@@ -32,7 +36,8 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
     text,
     image,
     imageAlt,
-    color,
+    color = '#3c3636',
+    font = 'roboto'
   } = block
 
   const textRef = useRef(null)
@@ -86,8 +91,13 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
         />}
       </Container>
 
-      <Container className={cn(styles.text, richStyles.richText)} preview={preview} ref={textRef}>
-        {parse(text ?? '')}
+      <Container className={cn(
+        styles.text,
+        richStyles.richText,
+        MY_PAGE_FONTS[font].className
+      )} preview={preview} ref={textRef} style={{ color }}
+      >
+        {parse(text || '<h1></h1>')}
 
         <div className={styles.addContainer}>
           <ClickToAdd {...{ text: 'text', value: text }} />
@@ -97,10 +107,13 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
       {!preview && <Editor
         content={text}
         onUpdate={onTextUpdate}
-        right={'1rem'}
+        right={textPos === 'left' ? '1rem' : 'unset'}
+        left={textPos === 'left' ? 'unset' : '1rem'}
         contentRef={textRef}
         color={color}
         onColorChange={onColorChange}
+        onFontChange={f => onUpdate({...block, font: f })}
+        font={font}
       />}
     </section>
   )

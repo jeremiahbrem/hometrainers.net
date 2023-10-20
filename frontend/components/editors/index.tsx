@@ -16,21 +16,26 @@ import { allOptions } from './options'
 import { useIsEditing } from '@/utils/useIsEditing'
 import { useRefreshKey } from '../refresh'
 import { ColorPicker } from '../color-picker'
+import { FontPicker } from '../font-picker'
+import { MY_PAGE_FONTS } from '../layout'
 
 type MenuBarProps = {
   setOpen: React.Dispatch<boolean>
   options?: string[]
   onColorChange?: (color: string) => void
+  onFontChange?: (font: string) => void
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({
   options,
   setOpen,
   onColorChange,
+  onFontChange,
 }) => {
   const { editor } = useCurrentEditor()
 
   const [colorOpen, setColorOpen] = useState(false)
+  const [fontOpen, setFontOpen] = useState(false)
 
   const opts = options
     ? allOptions.filter(x => options.includes(x))
@@ -39,6 +44,13 @@ const MenuBar: React.FC<MenuBarProps> = ({
   if (!editor) {
     return null
   }
+
+  const buttonStyle = (option: string, options?: Record<string, any>) =>
+    cn(
+      editor.isActive(option, options) ? styles.isActive : '',
+      styles.button,
+      MY_PAGE_FONTS.roboto.className
+    )
 
   return (
     <div className={styles.editorMenu}>
@@ -51,7 +63,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
             .toggleBold()
             .run()
         }
-        className={editor.isActive('bold') ? styles.isActive : ''}
+        className={buttonStyle('bold')}
       >
         bold
       </button>}
@@ -64,7 +76,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
             .toggleItalic()
             .run()
         }
-        className={editor.isActive('italic') ? styles.isActive : ''}
+        className={buttonStyle('italic')}
       >
         italic
       </button>}
@@ -77,78 +89,93 @@ const MenuBar: React.FC<MenuBarProps> = ({
             .toggleStrike()
             .run()
         }
-        className={editor.isActive('strike') ? styles.isActive : ''}
+        className={buttonStyle('strike')}
       >
         strike
       </button>}
       {opts.includes('p') && <button
         onClick={() => editor.chain().focus().setParagraph().run()}
-        className={editor.isActive('paragraph') ? styles.isActive : ''}
+        className={buttonStyle('paragraph')}
       >
         paragraph
       </button>}
       {opts.includes('h1') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={editor.isActive('heading', { level: 1 }) ? styles.isActive : ''}
+        className={buttonStyle('heading', { level: 1 })}
       >
         h1
       </button>}
       {opts.includes('h2') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={editor.isActive('heading', { level: 2 }) ? styles.isActive : ''}
+        className={buttonStyle('heading', { level: 2 })}
       >
         h2
       </button>}
       {opts.includes('h3') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={editor.isActive('heading', { level: 3 }) ? styles.isActive : ''}
+        className={buttonStyle('heading', { level: 3 })}
       >
         h3
       </button>}
       {opts.includes('h4') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-        className={editor.isActive('heading', { level: 4 }) ? styles.isActive : ''}
+        className={buttonStyle('heading', { level: 4 })}
       >
         h4
       </button>}
       {opts.includes('h5') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-        className={editor.isActive('heading', { level: 5 }) ? styles.isActive : ''}
+        className={buttonStyle('heading', { level: 5 })}
       >
         h5
       </button>}
       {opts.includes('h6') && <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-        className={editor.isActive('heading', { level: 6 }) ? styles.isActive : ''}
+        className={buttonStyle('heading', { level: 6 })}
       >
         h6
       </button>}
       {opts.includes('bulletList') && <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={editor.isActive('bulletList') ? styles.isActive : ''}
+        className={buttonStyle('bulletList')}
       >
         bullet list
       </button>}
       {opts.includes('orderedList') && <button
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={editor.isActive('orderedList') ? styles.isActive : ''}
+        className={buttonStyle('orderedList')}
       >
         ordered list
       </button>}
       {opts.includes('blockquote') && <button
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={editor.isActive('blockquote') ? styles.isActive : ''}
+        className={buttonStyle('blockQuote')}
       >
         blockquote
       </button>}
-      {opts.includes('hr') && <button onClick={() => editor.chain().focus().setHorizontalRule().run()}>
+      {opts.includes('hr') && <button
+        onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        className={styles.button}
+      >
         horizontal rule
       </button>}
-      {opts.includes('hardBreak') && <button onClick={() => editor.chain().focus().setHardBreak().run()}>
+      {opts.includes('hardBreak') && <button
+        onClick={() => editor.chain().focus().setHardBreak().run()}
+        className={styles.button}
+      >
         hard break
       </button>}
-      {opts.includes('color') && <button onClick={() => setColorOpen(!colorOpen)}>
+      {opts.includes('color') && <button
+        onClick={() => setColorOpen(!colorOpen)}
+        className={styles.button}
+      >
         color
+      </button>}
+      {opts.includes('font') && <button
+        onClick={() => setFontOpen(!fontOpen)}
+        className={styles.button}
+      >
+        font
       </button>}
       <button
         onClick={() => editor.chain().focus().undo().run()}
@@ -159,6 +186,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
             .undo()
             .run()
         }
+        className={styles.button}
       >
         undo
       </button>
@@ -171,16 +199,17 @@ const MenuBar: React.FC<MenuBarProps> = ({
             .redo()
             .run()
         }
+        className={styles.button}
       >
         redo
       </button>
       <button
         onClick={() => setOpen(false)}
-        className='close-editor'
+        className={cn(styles.button, 'close-editor')}
       >
         close
       </button>
-      {onColorChange &&<div
+      {onColorChange && <div
         style={{ display: colorOpen ? 'block' : 'none' }}
       >
         <ColorPicker
@@ -191,6 +220,11 @@ const MenuBar: React.FC<MenuBarProps> = ({
           }}
           className={styles.colorPicker}
         />
+      </div>}
+      {onFontChange && <div
+        style={{ display: fontOpen ? 'block' : 'none' }}
+      >
+        <FontPicker updateFont={f => onFontChange(f)} />
       </div>}
     </div>
   )
@@ -222,6 +256,8 @@ type EditorProps = {
   contentRef: React.MutableRefObject<any>
   options?: string[]
   onColorChange?: (color: string) => void
+  onFontChange?: (font: string) => void
+  font?: string
   color?: string
 }
 
@@ -234,6 +270,8 @@ export const Editor: React.FC<EditorProps> = ({
   contentRef,
   options,
   onColorChange,
+  onFontChange,
+  font = 'roboto',
   color
 }) => {
 
@@ -269,7 +307,10 @@ export const Editor: React.FC<EditorProps> = ({
       data-testid='editor-scrim'
     />
     <div
-      className={cn(styles.editor, { [styles.open]: open })}
+      className={cn(
+        styles.editor, { [styles.open]: open },
+        MY_PAGE_FONTS[font].className
+      )}
       style={{
         width: width ?? '45%',
         left: left ?? 'unset',
@@ -285,6 +326,7 @@ export const Editor: React.FC<EditorProps> = ({
           setOpen,
           color,
           onColorChange,
+          onFontChange,
         }} />}
         extensions={extensions}
         onUpdate={e => onUpdate(e.editor.getHTML())}

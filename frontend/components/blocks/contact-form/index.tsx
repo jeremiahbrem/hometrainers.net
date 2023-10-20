@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react'
 import { useAlert } from '../../alerts'
 import styles from '../../contact-form/contactForm.module.scss'
 import cn from 'classnames'
-import { Roboto } from 'next/font/google'
 import { Loading } from '../../loading'
 import Image from 'next/image'
 import { API } from '@/api'
@@ -12,14 +11,9 @@ import { Container } from '@/components/container'
 import parse from 'html-react-parser'
 import { ImageUpload } from '@/components/image-upload'
 import { Editor } from '@/components/editors'
-import { useIsEditing } from '@/utils/useIsEditing'
 import { ClickToAdd } from '@/components/click-to-add'
 import { BlockButton, BlockButtonProps } from '@/components/block-button'
-
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['300', '400','500','700','900']
-})
+import { MY_PAGE_FONTS } from '@/components/layout'
 
 type ContactFormValues = {
   name: string
@@ -39,14 +33,13 @@ export type ContactFormProps = ComponentProps<{
   color: string
   background: string
   button: BlockButtonProps
+  titleFont: string
 }>
 
 export const ContactForm: React.FC<ContactFormProps> = (props) => {
   const [loading, setLoading] = useState(false)
 
   const textRef = useRef(null)
-
-  const isEditing = useIsEditing()
 
   const {
     block,
@@ -56,7 +49,15 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     preview,
   } = props
 
-  const { title, image, imageAlt, color, background, button } = block
+  const {
+    title,
+    image,
+    imageAlt,
+    color,
+    background,
+    button,
+    titleFont = 'roboto',
+  } = block
 
   const { profile } = useProfile()
  
@@ -185,12 +186,16 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     }}>
       <form
         onSubmit={e => e.preventDefault()}
-        className={cn(styles.contactForm, roboto.className)}
+        className={cn(styles.contactForm, MY_PAGE_FONTS.roboto.className)}
         style={{
           color
         }}
       >
-        <Container preview={preview} ref={textRef} className={styles.title}>
+        <Container
+          preview={preview}
+          ref={textRef}
+          className={cn(styles.title, MY_PAGE_FONTS[titleFont].className)}
+        >
           {parse(title || '<h3></h3>')}
           <ClickToAdd {...{ text: 'title', value: title }} />
         </Container>
@@ -200,9 +205,11 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
           onUpdate={onTextUpdate}
           right={'1rem'}
           contentRef={textRef}
-          options={['color']}
+          options={['color','font']}
           color={color}
           onColorChange={onColorChange}
+          font={titleFont}
+          onFontChange={f => onUpdate({...block, titleFont: f })}
         />}
 
         <label className={styles.name} htmlFor='name'>Name</label>

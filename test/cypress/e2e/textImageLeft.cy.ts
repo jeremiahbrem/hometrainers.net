@@ -18,11 +18,17 @@ describe('TextImageLeft', () => {
 
     cy.contains('Click to add text +')
       .click()
+
+    cy.contains('font')
+      .click()
+    
+    cy.contains('Oswald')
+      .click()
       .get('.ProseMirror')
       .type('My test content')
       .get('[data-testid="image-text-content"]')
       .contains('test')
-    
+
     cy.contains('close')
       .click()
 
@@ -47,6 +53,9 @@ describe('TextImageLeft', () => {
     cy.contains('My test content')
       .get('[data-testid="image-text-section"]')
       .should('have.attr', 'style', 'background-color:#dd940c')
+      .get('[data-testid="image-text-content"]')
+      .should('have.css', 'font-family')
+      .should('include', 'Oswald')
 
     cy.visit('/my-page')
 

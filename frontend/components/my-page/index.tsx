@@ -14,6 +14,20 @@ import { PageSettings, SettingsError } from './pageSettings'
 import { useAlert } from '../alerts'
 import { useProfile } from '../profile-provider'
 import styles from './myPage.module.scss'
+import { Roboto, Oswald } from 'next/font/google'
+import { NextFont } from 'next/dist/compiled/@next/font'
+
+// const roboto = Roboto({
+//   subsets: ['latin'],
+//   weight: ['300','400','500','700','900']
+// })
+
+// const oswald = Oswald({
+//   subsets: ['latin'],
+//   weight: 'variable'
+// })
+
+// // export const MY_PAGE_FONTS: Record<string, NextFont> = { roboto, oswald }
 
 export type MyPageComponentProps = {
   Blocks:  Record<string, React.FC<ComponentProps<any>>>
