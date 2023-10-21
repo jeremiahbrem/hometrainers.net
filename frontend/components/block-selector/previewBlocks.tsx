@@ -8,6 +8,7 @@ import { FullPageImageTextLeft } from '../blocks/full-page-image-text-left'
 import { FullPageImageTextRight } from '../blocks/full-page-image-text-right'
 import { ContactForm } from '../blocks/contact-form'
 import { IconTextList } from '../blocks/icon-text-list'
+import { TwoColumnText } from '../blocks/two-column-text'
 
 type PreviewBlockProps = {
   onBlockClick: (block: Record<string, any>) => void
@@ -194,5 +195,39 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'icon-text-list'
     },
     Component: IconTextList
+  },
+  {
+    newBlock: {
+      blockName: 'two-column-text',
+      left: {
+        color: '',
+        text: '',
+        font: ''
+      },
+      right: {
+        color: '',
+        text: '',
+        font: ''
+      }
+    },
+    className: styles.twoColumnText,
+    testId: 'two-column-text-preview',
+    componentProps: {
+      ...defaultProps,
+      block: {
+        left: {
+          text: '<h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</h3>',
+          color: '#3c3636',
+          font: 'oswald',
+        },
+        right: {
+          text: '<p>Sed ut <span>perspiciatis</span> unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>',
+          color: '#A4A0AE',
+          font: 'openSans',
+        },
+      },
+      blockName: 'two-column-text'
+    },
+    Component: TwoColumnText
   },
 ]

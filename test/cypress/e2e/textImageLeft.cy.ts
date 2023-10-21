@@ -26,7 +26,7 @@ describe('TextImageLeft', () => {
       .click()
       .get('.ProseMirror')
       .type('My test content')
-      .get('[data-testid="image-text-content"]')
+      .get('[data-testid="text-column-content"]')
       .contains('test')
 
     cy.contains('close')
@@ -53,7 +53,7 @@ describe('TextImageLeft', () => {
     cy.contains('My test content')
       .get('[data-testid="image-text-section"]')
       .should('have.attr', 'style', 'background-color:#dd940c')
-      .get('[data-testid="image-text-content"]')
+      .get('[data-testid="text-column-content"]')
       .should('have.css', 'font-family')
       .should('include', 'Oswald')
 

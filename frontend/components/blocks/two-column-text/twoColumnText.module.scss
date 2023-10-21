@@ -1,0 +1,22 @@
+.two-column-text {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3rem;
+  max-width: 1500px;
+  margin: auto;
+  position: relative;
+
+  @media(max-width: 750px) {
+    grid-template-columns: 1fr;
+    .left {
+      padding-bottom: 0.5rem;
+    }
+    .right {
+      padding-top: 0rem;
+    }
+  }
+  @media(max-width: 600px) {
+    padding: 3rem 1.5rem;
+  }
+}

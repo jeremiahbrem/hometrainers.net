@@ -1,16 +1,12 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import styles from './imageText.module.scss'
-import richTextStyles from '../richTextStyles.module.scss'
 import Image from 'next/image'
-import parse from 'html-react-parser'
 import cn from 'classnames'
-import { Editor } from '@/components/editors'
 import { ComponentProps } from '@/components/types'
 import { Container } from '@/components/container'
-import { ClickToAdd } from '@/components/click-to-add'
 import { IMAGES_URL } from '@/api'
 import { ImageUpload } from '@/components/image-upload'
-import { MY_PAGE_FONTS } from '@/components/layout'
+import { TextColumn } from '../text-column'
 
 export type ImageTextProps = ComponentProps<{
   text: string
@@ -26,8 +22,6 @@ export type ImageTextBaseProps = ImageTextProps & {
 }
 
 export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
-  const textRef = useRef(null)
-  
   const {
     block,
     onUpdate,
@@ -80,7 +74,6 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
     })
   }
 
-  const textRight = textPos === 'right'
   const imageUrl = preview ? image : `${IMAGES_URL}/${image}`
 
   return (
@@ -91,34 +84,19 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
       }}
       data-testid='image-text-section'
     >
-      <Container
-        className={cn(
-          styles.text,
-          richTextStyles.richText, { [styles.right]: textRight},
-          MY_PAGE_FONTS[font].className
-        )}
-        ref={textRef}
-        preview={preview}
-        data-testid='image-text-content'
-        style={{ color: textColor }}
-      >
-        {parse(text || '<p></p>')}
-        <ClickToAdd {...{ text: 'text', value: text }} />
-      </Container>
-
-      {!preview && <Editor
-        content={text}
-        onUpdate={onTextUpdate}
-        right={textRight ? 'unset' : '1rem'}
-        left={textRight ? '1rem' : 'unset'}
-        contentRef={textRef}
-        color={textColor}
-        onColorChange={onColorChange}
-        onFontChange={f => onUpdate({
+      <TextColumn {...{
+        onColorChange,
+        onFontChange: f => onUpdate({
           ...block,
           font: f
-        })}
-      />}
+        }),
+        onTextUpdate,
+        color: textColor,
+        font,
+        textPos,
+        text,
+        preview
+      }} />
 
       <Container className={cn(styles.image)} preview={preview}>
         {image && <Image src={imageUrl} alt={imageAlt ?? ''} height={0} width={0} />}

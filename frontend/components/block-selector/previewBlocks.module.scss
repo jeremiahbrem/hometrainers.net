@@ -12,6 +12,10 @@
   &.icon-text-list {
     height: 11rem;
   }
+  
+  &.two-column-text {
+    height: 9rem;
+  }
 
   &.full-page-image-text, &.contact-form {
     height: 11rem;
@@ -40,11 +44,17 @@
     &.contact-form {
       height: 18rem;
     }
+    &.two-column-text {
+      height: 11rem;
+    }
   }
 
   @media (max-width: 350px) {
     &.image-text {
       height: 20rem;
+    }
+    &.two-column-text {
+      height: 15rem;
     }
     &.full-page-image-text {
       height: 13rem;
