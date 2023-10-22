@@ -17,6 +17,8 @@ const keydown = (key: string) => {
   ))
 }
 
+const getInput = () => screen.queryByRole('textbox') as HTMLInputElement
+
 describe('select component', () => {
   it('renders selected and hides input if no allow multiple', () => {
     render(<Select {...{
@@ -30,7 +32,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    expect(getInput()).not.toBeInTheDocument()
     expect(screen.getByTestId('selected-option1')).toBeInTheDocument()
   })
  
@@ -63,7 +65,7 @@ describe('select component', () => {
       error: false
     }} />)
 
-    expect(screen.queryByRole('textbox')!.style.borderColor).toBe('transparent')
+    expect(getInput().style.borderColor).toBe('transparent')
   })
   
   it('renders multiple selected with input', () => {
@@ -78,7 +80,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    expect(screen.queryByRole('textbox')).toBeInTheDocument()
+    expect(getInput()).toBeInTheDocument()
     expect(screen.getByTestId('selected-option1')).toBeInTheDocument()
     expect(screen.getByTestId('selected-option2')).toBeInTheDocument()
   })
@@ -90,12 +92,30 @@ describe('select component', () => {
       options: ['option1','option2'],
       addValue,
       allowMultiple: true,
-      selected: ['option1','option2'],
+      selected: [],
       onRemove,
       placeholder: 'test'
     }} />)
 
     expect(screen.getByTestId('select-options')!.style.maxHeight).toBe('0')
+  })
+  
+  it('shows all options if show all true and input focused', async () => {
+    render(<Select {...{
+      name: 'name',
+      label: 'Label',
+      options: ['option1','option2'],
+      addValue,
+      allowMultiple: true,
+      selected: [],
+      onRemove,
+      placeholder: 'test',
+      showAll: true
+    }} />)
+
+    expect(screen.getByTestId('select-options')!.style.maxHeight).toBe('0')
+    await (act(() => userEvent.click(getInput())))
+    expect(screen.getByTestId('select-options')!.style.maxHeight).not.toBe('0')
   })
   
   it('shows filtered option menu with filter', async () => {
@@ -110,7 +130,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), '1'))
+    await act(() => userEvent.type(getInput(), '1'))
     expect(screen.getByTestId('select-options')!.style.maxHeight).not.toBe('0')
     expect(screen.getByText('option1')).toBeInTheDocument()
     expect(screen.queryByText('option2')).not.toBeInTheDocument()
@@ -128,7 +148,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), '1'))
+    await act(() => userEvent.type(getInput(), '1'))
     await act(() => userEvent.click(screen.getByText('option1')))
     expect(addValue).toBeCalledWith('option1')
   })
@@ -145,9 +165,28 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), '1'))
+    await act(() => userEvent.type(getInput(), '1'))
     await act(() => userEvent.click(screen.getByText('option1')))
     expect(screen.getByTestId('select-options')!.style.maxHeight).toBe('0')
+  })
+  
+  it('closes menu on select when empty filter and show all', async () => {
+    render(<Select {...{
+      name: 'name',
+      label: 'Label',
+      options: ['option1','option2'],
+      addValue,
+      allowMultiple: true,
+      selected: [],
+      onRemove,
+      placeholder: 'test',
+      showAll: true
+    }} />)
+
+    await act(() => userEvent.click(getInput()))
+    await act(() => userEvent.click(screen.getByText('option1')))
+    expect(screen.getByTestId('select-options')!.style.maxHeight).toBe('0')
+    expect(addValue).toBeCalledWith('option1')
   })
   
   it('selects val on enter', async () => {
@@ -162,7 +201,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), '1'))
+    await act(() => userEvent.type(getInput(), '1'))
     
     keydown('Enter')
 
@@ -182,7 +221,7 @@ describe('select component', () => {
       allowAdd: true
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), 'new value'))
+    await act(() => userEvent.type(getInput(), 'new value'))
     
     keydown('Enter')
 
@@ -201,7 +240,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), 'option'))
+    await act(() => userEvent.type(getInput(), 'option'))
 
     keydown('ArrowDown')
 
@@ -224,7 +263,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), 'option'))
+    await act(() => userEvent.type(getInput(), 'option'))
 
     keydown('ArrowDown')
     keydown('ArrowDown')
@@ -244,7 +283,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), 'option'))
+    await act(() => userEvent.type(getInput(), 'option'))
 
     keydown('ArrowUp')
 
@@ -263,7 +302,7 @@ describe('select component', () => {
       placeholder: 'test'
     }} />)
 
-    await act(() => userEvent.type(screen.getByRole('textbox'), 'option'))
+    await act(() => userEvent.type(getInput(), 'option'))
 
     keydown('ArrowDown')
     keydown('Enter')

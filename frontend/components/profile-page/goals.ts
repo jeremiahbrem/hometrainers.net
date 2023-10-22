@@ -1,0 +1,15 @@
+export const goals = [
+  'Weight Loss',
+  'Balance',
+  'Muscle Gain',
+  'Flexibility',
+  'Endurance',
+  'Cardiovascular Fitness',
+  'Senior Fitness',
+  'Sports Performance',
+  'Strength',
+  'Prenatal Fitness',
+  'Post Rehabilitation',
+  'Toning',
+  'Youth Fitness',
+]

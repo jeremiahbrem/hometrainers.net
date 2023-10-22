@@ -11,6 +11,8 @@ import { Loading } from '../loading'
 import { ImageUpload } from '../image-upload'
 import Image from 'next/image'
 import { IMAGES_URL } from '@/api'
+import { goals } from './goals'
+import _ from 'lodash'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -207,12 +209,12 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
           ...st,
           goals: st.goals.filter(x => x != val)
         })),
-        placeholder: 'Search or type a goal',
-        options: [],
+        placeholder: 'Search a goal',
+        options: goals.sort(),
         name: 'goals',
         label: isTrainer ? 'Training Goals Offered' : 'Desired Goals',
         error: errors.some(x => x.key === 'goals'),
-        allowAdd: true,
+        showAll: true
       }} />
 
       <fieldset className={styles.imageUpload}>
