@@ -96,7 +96,7 @@ func GetImagePath(context *gin.Context) (string, multipart.File, bool) {
 	defer file.Close()
 
 	filetype := http.DetectContentType(buff)
-
+	fmt.Println(filetype)
 	acceptedTypes := []string{"image/jpeg", "image/jpg", "image/png", "image/gif"}
 
 	if !slices.Contains(acceptedTypes, filetype) {
