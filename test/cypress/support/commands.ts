@@ -119,4 +119,10 @@ export function registerCommands() {
     cy.get('[id="open-settings"]')
     .click()
   })
+  Cypress.Commands.add('saveChanges', () => {
+    cy.contains('Save Changes')
+      .click()
+      .get('[data-testid="alert-scrim"]')
+      .click()
+  })
 }

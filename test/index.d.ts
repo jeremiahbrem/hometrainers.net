@@ -3,5 +3,6 @@ declare namespace Cypress {
     loginTrainer(): Chainable<MyCustomType>
     trainerProfile(): Chainable<MyCustomType>
     setPageSettings(): Chainable<MyCustomType>
+    saveChanges(): Chainable<MyCustomType>
   }
 }

@@ -5,11 +5,15 @@
   border: .2rem solid transparent;
   border-radius: .3rem;
 
+  &.header {
+    height: 5rem;
+  }
+  
   &.image-text {
     height: 12rem;
   }
 
-  &.icon-text-list {
+  &.icon-text-list, &.icon-text-row {
     height: 11rem;
   }
   
@@ -41,7 +45,7 @@
   }
 
   @media (max-width: 600px) {
-    &.contact-form {
+    &.contact-form, &.icon-text-row {
       height: 18rem;
     }
     &.two-column-text {

@@ -2,9 +2,16 @@ import { useFetchWithAuth } from '@/utils/useFetchWithAuth'
 import { useIsEditing } from '@/utils/useIsEditing'
 import React, { useState } from 'react'
 import { useAlert } from '../alerts'
-import { v4 } from 'uuid';
+import { v4 } from 'uuid'
 import styles from './imageUpload.module.scss'
-import { Button } from '../button';
+import { Button } from '../button'
+import { Roboto } from 'next/font/google'
+import cn from 'classnames'
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['300','400','500','700','900']
+})
 
 type ImageUploadProps = {
   value: string
@@ -13,11 +20,23 @@ type ImageUploadProps = {
   onRemove: () => void
   show?: boolean
   path?: string
+  addText?: string
+  className?: string
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   const isEditing = useIsEditing()
-  const { value, text, onChange, onRemove, path, show } = props
+  const {
+    value,
+    text,
+    onChange,
+    onRemove,
+    path,
+    show,
+    addText,
+    className
+  } = props
+
   const [removeOpen, setRemoveOpen] = useState(false)
 
   const fetchWithAuth = useFetchWithAuth()
@@ -67,11 +86,13 @@ export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
     }
   }
 
+  const clickAddText = `${addText ?? `Click to add ${text}`}` + ' +'
+
   if (!value) {
     return (
-      <div className={styles.imageUpload}>
+      <div className={cn(styles.imageUpload, roboto.className, className)}>
         <label>
-          Click to add {text} +
+          {clickAddText}
           <input data-testid='image-upload' type="file" onChange={onFileChange}/>
         </label>
       </div>

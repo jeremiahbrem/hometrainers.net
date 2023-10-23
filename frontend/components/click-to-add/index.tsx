@@ -1,6 +1,13 @@
 import { useIsEditing } from '@/utils/useIsEditing'
 import React from 'react'
 import styles from './clicktoAdd.module.scss'
+import { Roboto } from 'next/font/google'
+import cn from 'classnames'
+
+const roboto = Roboto({
+  subsets: ['latin'],
+  weight: ['300','400','500','700','900']
+})
 
 type ClickToAddProps = {
   value: any
@@ -18,7 +25,7 @@ export const ClickToAdd: React.FC<ClickToAddProps> = (props) => {
 
   return (
     <div
-      className={styles.clickToAdd}
+      className={cn(styles.clickToAdd, roboto.className)}
       role='button'
       onClick={onClick}
     >

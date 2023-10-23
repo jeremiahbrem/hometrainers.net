@@ -15,11 +15,15 @@ const props = {
   block: {
     image: 'image-path',
     text: '<h1>test heading</h1><p>test body</p>',
-    imageAlt: ''
+    imageAlt: '',
+    textColor: '',
+    background: '',
+    font: 'roboto'
   },
   onUpdate,
   addImage,
   removeImage,
+  blockNames: [],
 }
 
 const mockV4 = jest.fn()

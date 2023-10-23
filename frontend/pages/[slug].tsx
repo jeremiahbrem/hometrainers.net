@@ -8,7 +8,8 @@ import Layout from '@/components/layout';
 
 const Page = (props: { page: Page }) => <Layout {...{
   title: props.page.title,
-  description: props.page.description
+  description: props.page.description,
+  isTrainerPage: true
 }}>
   <PageComponent {...{...props, Blocks, setPageContext: () => undefined }}/>
 </Layout>

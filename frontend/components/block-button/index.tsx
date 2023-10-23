@@ -98,7 +98,7 @@ export const BlockButton: React.FC<ButtonProps> = (props) => {
       >
         {text}
       </button>
-      {isEditing && <div
+      {isEditing && !preview && <div
         className={styles.modal}
         style={{
           display: open ? 'block' : 'none',

@@ -1,7 +1,7 @@
 Cypress.config('defaultCommandTimeout', 25000);
 
 describe('TextImageLeft', () => {
-  it('test', () => {
+  it('adds TextImageLeft block', () => {
     cy.loginTrainer()
 
     cy.trainerProfile()
@@ -42,10 +42,7 @@ describe('TextImageLeft', () => {
     cy.contains('Close')
       .click()
 
-    cy.contains('Save Changes')
-      .click()
-      .get('[data-testid="alert-scrim"]')
-      .click()
+    cy.saveChanges()
 
     cy.visit('/test-page-1')
       .reload()
@@ -65,9 +62,6 @@ describe('TextImageLeft', () => {
     cy.contains('Remove Block')
       .click()
     
-    cy.contains('Save Changes')
-      .click()
-      .get('[data-testid="alert-scrim"]')
-      .click()
+    cy.saveChanges()
   })
 })

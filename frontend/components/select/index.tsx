@@ -2,15 +2,17 @@ import React, { useEffect, useRef, useState } from 'react'
 import styles from './select.module.scss'
 import cn from 'classnames'
 import { Selected } from '../selected'
+import { Option } from './types'
+import { MY_PAGE_FONTS } from '../layout'
 
 type SelectProps = {
   name: string
   label: string
-  options: string[]
-  addValue: (val: string) => void
+  options: Option[]
+  addValue: (val: any) => void
   allowMultiple?: boolean
-  selected: string[]
-  onRemove: (val: string) => void
+  selected: Option[]
+  onRemove: (val: any) => void
   placeholder: string
   allowAdd?: boolean
   error?: boolean
@@ -52,19 +54,19 @@ export const Select: React.FC<SelectProps> = (props) => {
 
   const { filter, canBlur, focused } = selectState
 
-  const unselected = options.filter(x => !selected.includes(x))
+  const unselected = options.filter(x => !selected.find(s => s.value === x.value))
 
   const filteredOptions = filter
-    ? unselected.filter(o => o.toLowerCase().includes(filter.toLowerCase()))
+    ? unselected.filter(o => o.label.toLowerCase().includes(filter.toLowerCase()))
     : unselected
 
   const optionResults = filteredOptions.length === 0 && allowAdd
-    ? [filter]
+    ? [{ label: filter, value: filter }]
     : filteredOptions
 
   const maxHeight = optionResults.length * 3 + 3
 
-  const handleClick = (val: string) => {
+  const handleClick = (val: any) => {
     if ((filter || showAll) && inputRef.current) {
       addValue(val)
       setSelectState(st => ({
@@ -80,8 +82,10 @@ export const Select: React.FC<SelectProps> = (props) => {
   }
 
   useEffect(() => {
+    const isFocused = selectState.inputFocused || selectState.menuFocused
+
     const onKeydown = (e: KeyboardEvent) => {
-      if ((filter || showAll) && inputRef.current) {
+      if ((filter || showAll) && inputRef.current && isFocused) {
         if ((e.key === 'ArrowDown' || e.code === 'ArrowDown')
           && focused != optionResults.length - 1
         ) {
@@ -98,7 +102,7 @@ export const Select: React.FC<SelectProps> = (props) => {
 
         if (e.key === 'Enter' || e.code === 'Enter'
         ) {
-          handleClick(optionResults[focused])
+          handleClick(optionResults[focused].value)
         }
       }
     }
@@ -125,7 +129,7 @@ export const Select: React.FC<SelectProps> = (props) => {
   return (
     <div
       tabIndex={0}
-      className={styles.dropdown}
+      className={cn(styles.dropdown, MY_PAGE_FONTS.roboto.className)}
       aria-expanded={!!filter || (selectState.inputFocused && showAll)}
       aria-pressed={!!filter  || (selectState.inputFocused && showAll)}
       onBlur={() => { canBlur && setSelectState(st => ({...st, filter: ''})) }}
@@ -160,13 +164,13 @@ export const Select: React.FC<SelectProps> = (props) => {
             onMouseEnter={() => setSelectState(st => ({...st, canBlur: false, focused: i }))}
             onMouseLeave={() => setSelectState(st => ({...st, canBlur: true, focused: 0 }))}
             key={i}
-            onClick={() => handleClick(o)}
+            onClick={() => handleClick(o.value)}
             className={cn(styles.optionButton, {
               [styles.focused]: focused === i,
               'focused': focused === i
             })}
           >
-            {o}
+            {o.label}
           </button>
         ))}
       </div>
@@ -174,8 +178,8 @@ export const Select: React.FC<SelectProps> = (props) => {
         {selected.map((c, i) => (
           <Selected
             key={i}
-            onRemove={() => onRemove(c)}
-            text={c}
+            onRemove={() => onRemove(c.value)}
+            text={c.label}
           />
         ))}
       </div>}

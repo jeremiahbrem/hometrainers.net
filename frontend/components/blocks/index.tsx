@@ -5,6 +5,8 @@ import { FullPageImageTextRight } from "./full-page-image-text-right";
 import { ContactForm } from "./contact-form";
 import { IconTextList } from "./icon-text-list";
 import { TwoColumnText } from "./two-column-text";
+import { IconTextRow } from "./icon-text-row";
+import { BlockHeader } from "./header";
 
 export const Blocks = {
   'image-text-left': ImageTextLeft,
@@ -13,5 +15,7 @@ export const Blocks = {
   'full-page-image-text-right': FullPageImageTextRight,
   'contact-form': ContactForm,
   'icon-text-list': IconTextList,
-  'two-column-text': TwoColumnText
+  'icon-text-row': IconTextRow,
+  'two-column-text': TwoColumnText,
+  'header': BlockHeader
 }

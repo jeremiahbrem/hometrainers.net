@@ -6,7 +6,8 @@ import {
   onRemove,
   onReorder,
   onUpdate,
-  removeImage
+  removeImage,
+  updateAnchors
 } from '.'
 import { Block, ComponentProps, Page } from '../types'
 import { BlockActions } from './blockActions'
@@ -465,6 +466,339 @@ describe('page component', () => {
           blocks: { blocks: expected}
         })
       })
+    })
+
+    it('updates page context with onReorder when including header, footer', () => {
+      const blocks = [
+        {
+          blockName: 'header'
+        },
+        {
+          blockName: 'text1',
+          text: 'initial text1'
+        },
+        {
+          blockName: 'text2',
+          text: 'initial text2'
+        },
+        {
+          blockName: 'text3',
+          text: 'initial text3'
+        },
+        {
+          blockName: 'footer',
+        },
+      ].map(x => x as Block)
+  
+      const initial: Page = {
+        blocks: { blocks },
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+  
+      const scenarios = [
+        {
+          order: 0,
+          currentIndex: 2,
+          expected: [
+            {
+              blockName: 'header'
+            },
+            {
+              blockName: 'text2',
+              text: 'initial text2'
+            },
+            {
+              blockName: 'text1',
+              text: 'initial text1'
+            },
+            {
+              blockName: 'text3',
+              text: 'initial text3'
+            },
+            {
+              blockName: 'footer'
+            },
+          ]
+        },
+        {
+          order: 1,
+          currentIndex: 1,
+          expected: [
+            {
+              blockName: 'header'
+            },
+            {
+              blockName: 'text2',
+              text: 'initial text2'
+            },
+            {
+              blockName: 'text1',
+              text: 'initial text1'
+            },
+            {
+              blockName: 'text3',
+              text: 'initial text3'
+            },
+            {
+              blockName: 'footer'
+            },
+          ]
+        },
+        {
+          order: 0,
+          currentIndex: 3,
+          expected: [
+            {
+              blockName: 'header'
+            },
+            {
+              blockName: 'text3',
+              text: 'initial text3'
+            },
+            {
+              blockName: 'text1',
+              text: 'initial text1'
+            },
+            {
+              blockName: 'text2',
+              text: 'initial text2'
+            },
+            {
+              blockName: 'footer'
+            },
+          ]
+        },
+        {
+          order: 2,
+          currentIndex: 1,
+          expected: [
+            {
+              blockName: 'header'
+            },
+            {
+              blockName: 'text2',
+              text: 'initial text2'
+            },
+            {
+              blockName: 'text3',
+              text: 'initial text3'
+            },
+            {
+              blockName: 'text1',
+              text: 'initial text1'
+            },
+            {
+              blockName: 'footer'
+            },
+          ]
+        },
+        {
+          order: 1,
+          currentIndex: 3,
+          expected: [
+            {
+              blockName: 'header'
+            },
+            {
+              blockName: 'text1',
+              text: 'initial text1'
+            },
+            {
+              blockName: 'text3',
+              text: 'initial text3'
+            },
+            {
+              blockName: 'text2',
+              text: 'initial text2'
+            },
+            {
+              blockName: 'footer'
+            },
+          ]
+        },
+      ]
+  
+      scenarios.forEach(({ order, currentIndex, expected }) => {
+        const result = onReorder(order, initial, currentIndex)
+  
+        expect(result).toEqual({
+          ...initial,
+          blocks: { blocks: expected}
+        })
+      })
+    })
+
+    it('adds new anchor', () => {
+      const blocks = [
+        { blockName: 'header', links: [{ label: 'About', index: 1 }] },
+        { blockName: 'test-block' }
+      ]
+
+      const old: Page = {
+        blocks: { blocks: [
+          { ...blocks[0], links: [] },
+          blocks[1]
+        ]},
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+
+      const updated: Page = {
+        blocks: { blocks },
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+
+      const result = updateAnchors(
+        old,
+        updated,
+      )
+
+      expect(result).toEqual({
+        ...updated,
+        blocks: { blocks: [
+          { blockName: 'header', links: [{ label: 'About', index: 1 }] },
+          { blockName: 'test-block', anchors: ['About'] }
+        ]}
+      })
+    })
+    
+    it('removes anchor', () => {
+      const blocks = [
+        { blockName: 'header', links: [] },
+        { blockName: 'test-block', anchors: ['About'] }
+      ]
+
+      const old: Page = {
+        blocks: { blocks: [
+          { ...blocks[0], links: [{ label: 'About', index: 1 }] },
+          blocks[1]
+        ]},
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+
+      const updated: Page = {
+        blocks: { blocks },
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+
+      const result = updateAnchors(
+        old,
+        updated,
+      )
+
+      expect(result).toEqual({
+        ...updated,
+        blocks: { blocks: [
+          { blockName: 'header', links: [] },
+          { blockName: 'test-block', anchors: [] }
+        ]}
+      })
+    })
+    
+    it('replaces anchor', () => {
+      const blocks = [
+        { blockName: 'header', links: [{ label: 'About', index: 1 }] },
+        { blockName: 'test-block', anchors: ['About'] }
+      ]
+
+      const old: Page = {
+        blocks: { blocks: [
+          { ...blocks[0], links: [{ label: 'About', index: 1 }] },
+          blocks[1]
+        ]},
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+
+      const updated: Page = {
+        blocks: { blocks: [
+          { ...blocks[0], links: [{ label: 'Contact', index: 1 }] },
+          blocks[1]
+        ]},
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+
+      const result = updateAnchors(
+        old,
+        updated,
+      )
+
+      expect(result).toEqual({
+        ...updated,
+        blocks: { blocks: [
+          { blockName: 'header', links: [{ label: 'Contact', index: 1 }] },
+          { blockName: 'test-block', anchors: ['Contact'] }
+        ]}
+      })
+    })
+    
+    it('leaves anchor unchanged', () => {
+      const blocks = [
+        { blockName: 'header', links: [
+          { label: 'About', index: 1 }
+        ] },
+        { blockName: 'test-block', anchors: ['About'] }
+      ]
+
+      const old: Page = {
+        blocks: { blocks },
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+
+      const updated: Page = {
+        blocks: { blocks },
+        slug: '',
+        email: '',
+        title: '',
+        description: '',
+        active: false,
+        images: []
+      }
+
+      const result = updateAnchors(
+        old,
+        updated,
+      )
+
+      expect(result).toEqual(updated)
     })
   })
 

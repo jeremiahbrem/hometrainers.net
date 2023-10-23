@@ -7,6 +7,7 @@ import { Container } from '@/components/container'
 import { IMAGES_URL } from '@/api'
 import { ImageUpload } from '@/components/image-upload'
 import { TextColumn } from '../text-column'
+import { BlockWrapper } from '../block-wrapper'
 
 export type ImageTextProps = ComponentProps<{
   text: string
@@ -14,7 +15,8 @@ export type ImageTextProps = ComponentProps<{
   imageAlt: string
   textColor: string
   background: string
-  font: string
+  font: string,
+  anchors?: string[]
 }>
 
 export type ImageTextBaseProps = ImageTextProps & {
@@ -28,7 +30,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
     addImage,
     removeImage,
     textPos,
-    preview 
+    preview,
   } = props
 
   const {
@@ -37,7 +39,8 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
     imageAlt,
     textColor = '',
     background,
-    font = 'roboto'
+    font = 'roboto',
+    anchors
   } = block
 
   const onTextUpdate = async (text: string) => {
@@ -77,12 +80,13 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
   const imageUrl = preview ? image : `${IMAGES_URL}/${image}`
 
   return (
-    <section
+    <BlockWrapper
       className={cn(styles.imageText)}
       style={{
         backgroundColor: background ?? 'white'
       }}
       data-testid='image-text-section'
+      anchors={anchors}
     >
       <TextColumn {...{
         onColorChange,
@@ -107,6 +111,6 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
           onRemove={onRemoveImage}
         />}
       </Container>
-    </section>
+    </BlockWrapper>
   )
 }

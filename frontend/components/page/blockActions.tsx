@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from '../button'
 import styles from './blockActions.module.scss'
 import cn from 'classnames'
@@ -10,6 +10,7 @@ type BlockActionProps = {
   order: number
   onBackgroundChange?: (color: string) => void
   background?: string
+  isHeaderFooter?: boolean
 }
 
 export const BlockActions: React.FC<BlockActionProps> = (props) => {
@@ -18,7 +19,8 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
     onReorder,
     order,
     background,
-    onBackgroundChange
+    onBackgroundChange,
+    isHeaderFooter,
   } = props
 
   const [blockOrder, setBlockOrder] = useState(`${order + 1}`)
@@ -42,10 +44,10 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
   return (
     <div className={styles.blockActions}>
       <Button text='Remove Block' onClick={onRemove} />
-      <Button text='Reorder' onClick={() => setReorderOpen(true)} />
+      {!isHeaderFooter && <Button text='Reorder' onClick={() => setReorderOpen(true)} />}
       <Button text='Background' onClick={() => setBackgroundOpen(true)} />
       
-      <div className={cn(styles.reorderForm, { [styles.open]: reorderOpen })}>
+      {!isHeaderFooter && <div className={cn(styles.reorderForm, { [styles.open]: reorderOpen })}>
         {reorderOpen && <form onSubmit={onSubmit}>
           <label htmlFor='order'>Order</label>
           <input
@@ -58,7 +60,7 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
           <Button text='Update' onClick={onSubmit} />
           <Button text='Cancel' onClick={() => setReorderOpen(false)} type='button' />
         </form>}
-      </div>
+      </div>}
       
       {onBackgroundChange && <div className={cn(styles.background, { [styles.open]: backgroundOpen })}>
         <ColorPicker color={background || ''} updateColor={c => onBackgroundChange(c)}/>

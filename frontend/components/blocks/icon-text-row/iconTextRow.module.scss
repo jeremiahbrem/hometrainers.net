@@ -1,0 +1,74 @@
+@import '@/styles/global.scss';
+
+.section {
+  .container {
+    padding: 3rem 2rem 1rem 2rem;
+    max-width: 60rem;
+    margin: 0 auto;
+    .title {
+      margin: 0;
+      text-align: center;
+      min-height: 2rem;
+    }
+  
+    .items {
+      display: grid;
+      position: relative;
+      min-height: 5rem;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 1rem;
+      .item {
+        display: grid;
+        position: relative;
+        margin-bottom: 1rem;
+        align-items: center;
+  
+        .remove-item {
+          position: absolute;
+          right: -0.9rem;
+          top: 1rem;
+          background-color: rgba(0,0,0, .2);
+          border-radius: 100%;
+          width: 1rem;
+          height: 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: .78rem;
+        }
+  
+        .icon {
+          min-height: 3rem;
+          text-align: center;
+          span {
+            font-size: 3.5rem;
+          }
+        }
+  
+        .text {
+          max-width: 30rem;
+        }
+      }
+    }
+    @media (max-width: 780px) {
+      padding: 3rem 1.25rem 1rem 1.25rem;
+  
+      .items {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+    @media (max-width: 600px) {
+      padding: 3rem 1.25rem 1rem 1.25rem;
+  
+      .items {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 400px) {
+      .items {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

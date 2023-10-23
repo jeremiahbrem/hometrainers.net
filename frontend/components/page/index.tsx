@@ -1,28 +1,35 @@
 import React from 'react'
-import { PageProps, Block, Page, ComponentProps } from '../types';
+import { PageProps, Block, Page, ComponentProps, HeaderLink } from '../types';
 import _ from 'lodash';
 import { NotFound } from '../not-found';
 import { BlockActions } from './blockActions';
 import { useIsEditing } from '@/utils/useIsEditing';
+import { useRefreshKey } from '../refresh';
 
 export type SetPageContext = React.Dispatch<React.SetStateAction<Page>>
 
 export function onReorder(
   order: number,
   ctx: Page,
-  currentIndex: number
+  currentIndex: number,
 ): Page {
   const blocks = ctx.blocks.blocks
 
-  const filtered = blocks.filter((_, index) => currentIndex !== index)
+  const filtered = blocks.filter((b, index) =>
+    currentIndex !== index && !['header','footer'].includes(b.blockName)
+  )
+  const header = blocks.filter(b => b.blockName === 'header')
+  const footer = blocks.filter(b => b.blockName === 'footer')
 
   const copy = {
     ...ctx,
     blocks: {
       blocks: [
+        ...header,
         ...filtered.slice(0,order),
         blocks[currentIndex],
-        ...filtered.slice(order)
+        ...filtered.slice(order),
+        ...footer
       ]
     }
   }
@@ -53,7 +60,7 @@ export function onUpdate(
   ctx: Page,
   blockName: string,
 ): Page {
-  const copy = {
+  let copy = {
     ...ctx,
     blocks: {
       blocks: [
@@ -64,7 +71,53 @@ export function onUpdate(
     }
   }
 
+  if (blockName === 'header') {
+    copy = updateAnchors(ctx, copy)
+  }
+
   return copy
+}
+
+export function updateAnchors(
+  original: Page,
+  updated: Page,
+): Page {
+  const links = updated.blocks.blocks[0].links as HeaderLink[]
+
+  const update = (block: Block, idx: number) => {
+    const newLink = links.find(l => l.index === idx)?.label
+    const oldLink = (original.blocks.blocks[0].links as HeaderLink[])
+      .find(l => l.index === idx)?.label
+
+    let anchors = block.anchors
+
+    if (newLink) {
+      anchors = anchors
+        ? [...anchors.filter(x => x !== newLink), newLink]
+        : [newLink]
+    }
+
+    if (oldLink && oldLink !== newLink) {
+      anchors = anchors
+        ? [...anchors.filter(x => x !== oldLink)]
+        : anchors
+    }
+
+    return anchors
+  }
+
+  updated.blocks.blocks = updated.blocks.blocks.map((b, i) => {
+    const newAnchors = update(b, i)
+
+    if (!newAnchors) {
+      delete b.anchors
+      return b
+    }
+
+    return { ...b, anchors: newAnchors }
+  })
+
+  return updated
 }
 
 export function onBackgroundChange(
@@ -104,6 +157,7 @@ export function removeImage(img: string, ctx: Page): Page {
 export const PageComponent = (props: PageProps) => {
   const { page, setPageContext } = props
   const isEditing = useIsEditing()
+  const { reset } = useRefreshKey()
 
   const components = props.Blocks
 
@@ -128,6 +182,10 @@ export const PageComponent = (props: PageProps) => {
           return <div key={idx}>Block {blockName} not found</div>
         }
 
+        const blockOrder = blocks.find(x => x.blockName === 'header')
+          ? idx - 1
+          : idx
+
         return (
           <React.Fragment key={idx}>
             <Component
@@ -140,23 +198,28 @@ export const PageComponent = (props: PageProps) => {
               ))}
               addImage={(img: string) => setPageContext(ctx => addImage(img, ctx))}
               removeImage={(img: string) => setPageContext(ctx => removeImage(img, ctx))}
+              blockNames={blocks.map(x => x.blockName)}
             />
 
             {isEditing && <BlockActions {...{
               onRemove: () => setPageContext(ctx => onRemove(idx, ctx)),
-              onReorder: (order: number) => setPageContext(ctx => onReorder(
-                order,
-                ctx,
-                idx
-              )),
-              order: idx,
+              onReorder: (order: number) => {
+                setPageContext(ctx => onReorder(
+                  order,
+                  ctx,
+                  idx
+                ))
+                reset()
+              },
+              order: blockOrder,
               onBackgroundChange: (color: string) => setPageContext(ctx => onBackgroundChange(
                 color,
                 idx,
                 ctx,
                 blockName
               )),
-              background: page.blocks.blocks[idx].background
+              background: page.blocks.blocks[idx].background,
+              isHeaderFooter: ['header','footer'].includes(block.blockName)
             }} />}
 
           </React.Fragment>

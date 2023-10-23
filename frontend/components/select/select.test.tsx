@@ -19,28 +19,33 @@ const keydown = (key: string) => {
 
 const getInput = () => screen.queryByRole('textbox') as HTMLInputElement
 
+const defaultOptions = [
+  { label: 'Option 1', value: 'option1' },
+  { label: 'Option 2', value: 'option2' },
+]
+
 describe('select component', () => {
   it('renders selected and hides input if no allow multiple', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: false,
-      selected: ['option1'],
+      selected: [defaultOptions[0]],
       onRemove,
       placeholder: 'test'
     }} />)
 
     expect(getInput()).not.toBeInTheDocument()
-    expect(screen.getByTestId('selected-option1')).toBeInTheDocument()
+    expect(screen.getByTestId('selected-Option 1')).toBeInTheDocument()
   })
  
   it('shows error border color', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: false,
       selected: [],
@@ -56,7 +61,7 @@ describe('select component', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: false,
       selected: [],
@@ -72,24 +77,24 @@ describe('select component', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
-      selected: ['option1','option2'],
+      selected: defaultOptions,
       onRemove,
       placeholder: 'test'
     }} />)
 
     expect(getInput()).toBeInTheDocument()
-    expect(screen.getByTestId('selected-option1')).toBeInTheDocument()
-    expect(screen.getByTestId('selected-option2')).toBeInTheDocument()
+    expect(screen.getByTestId('selected-Option 1')).toBeInTheDocument()
+    expect(screen.getByTestId('selected-Option 2')).toBeInTheDocument()
   })
   
   it('hides option menu with empty filter', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -104,7 +109,7 @@ describe('select component', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -118,11 +123,30 @@ describe('select component', () => {
     expect(screen.getByTestId('select-options')!.style.maxHeight).not.toBe('0')
   })
   
+  it('filters out selected from menu', async () => {
+    render(<Select {...{
+      name: 'name',
+      label: 'Label',
+      options: defaultOptions,
+      addValue,
+      allowMultiple: true,
+      selected: [defaultOptions[0]],
+      onRemove,
+      placeholder: 'test',
+      showAll: true
+    }} />)
+
+    await (act(() => userEvent.click(getInput())))
+    const menu = screen.getByTestId('select-options')
+    expect(menu).toHaveTextContent('Option 2')
+    expect(menu).not.toHaveTextContent('Option 1')
+  })
+  
   it('shows filtered option menu with filter', async () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -132,15 +156,15 @@ describe('select component', () => {
 
     await act(() => userEvent.type(getInput(), '1'))
     expect(screen.getByTestId('select-options')!.style.maxHeight).not.toBe('0')
-    expect(screen.getByText('option1')).toBeInTheDocument()
-    expect(screen.queryByText('option2')).not.toBeInTheDocument()
+    expect(screen.getByText('Option 1')).toBeInTheDocument()
+    expect(screen.queryByText('Option 2')).not.toBeInTheDocument()
   })
   
   it('selects val on click', async () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -149,7 +173,7 @@ describe('select component', () => {
     }} />)
 
     await act(() => userEvent.type(getInput(), '1'))
-    await act(() => userEvent.click(screen.getByText('option1')))
+    await act(() => userEvent.click(screen.getByText('Option 1')))
     expect(addValue).toBeCalledWith('option1')
   })
   
@@ -157,7 +181,7 @@ describe('select component', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -166,7 +190,7 @@ describe('select component', () => {
     }} />)
 
     await act(() => userEvent.type(getInput(), '1'))
-    await act(() => userEvent.click(screen.getByText('option1')))
+    await act(() => userEvent.click(screen.getByText('Option 1')))
     expect(screen.getByTestId('select-options')!.style.maxHeight).toBe('0')
   })
   
@@ -174,7 +198,7 @@ describe('select component', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -184,7 +208,7 @@ describe('select component', () => {
     }} />)
 
     await act(() => userEvent.click(getInput()))
-    await act(() => userEvent.click(screen.getByText('option1')))
+    await act(() => userEvent.click(screen.getByText('Option 1')))
     expect(screen.getByTestId('select-options')!.style.maxHeight).toBe('0')
     expect(addValue).toBeCalledWith('option1')
   })
@@ -193,7 +217,7 @@ describe('select component', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -232,7 +256,7 @@ describe('select component', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -244,18 +268,18 @@ describe('select component', () => {
 
     keydown('ArrowDown')
 
-    expect(screen.getByText('option2')).toHaveAttribute('aria-current', 'true')
+    expect(screen.getByText('Option 2')).toHaveAttribute('aria-current', 'true')
 
     keydown('ArrowUp')
 
-    expect(screen.getByText('option1')).toHaveAttribute('aria-current', 'true')
+    expect(screen.getByText('Option 1')).toHaveAttribute('aria-current', 'true')
   })
   
   it('ignores navigating passed last item', async () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -268,14 +292,14 @@ describe('select component', () => {
     keydown('ArrowDown')
     keydown('ArrowDown')
 
-    expect(screen.getByText('option2')).toHaveAttribute('aria-current', 'true')
+    expect(screen.getByText('Option 2')).toHaveAttribute('aria-current', 'true')
   })
 
   it('ignores navigating before first item', async () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -287,14 +311,14 @@ describe('select component', () => {
 
     keydown('ArrowUp')
 
-    expect(screen.getByText('option1')).toHaveAttribute('aria-current', 'true')
+    expect(screen.getByText('Option 1')).toHaveAttribute('aria-current', 'true')
   })
   
   it('selects on enter after navigating menu', async () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: true,
       selected: [],
@@ -314,15 +338,15 @@ describe('select component', () => {
     render(<Select {...{
       name: 'name',
       label: 'Label',
-      options: ['option1','option2'],
+      options: defaultOptions,
       addValue,
       allowMultiple: false,
-      selected: ['option1'],
+      selected: [{ label: 'Option 1', value: 'option1' }],
       onRemove,
       placeholder: 'test'
     }} />)
 
-    await userEvent.click(screen.getByTestId('remove-selected-option1'))
+    await userEvent.click(screen.getByTestId('remove-selected-Option 1'))
     expect(onRemove).toBeCalledWith('option1')
   })
 })

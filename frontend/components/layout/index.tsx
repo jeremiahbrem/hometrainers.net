@@ -20,6 +20,7 @@ import Header from '../header'
 import styles from './layout.module.scss'
 import { Footer } from '../footer'
 import { NextFont } from 'next/dist/compiled/@next/font'
+import { BlockFooterProps, BlockHeaderProps } from '../types'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -118,12 +119,14 @@ type LayoutProps = {
   title: string
   description: string
   children?: React.ReactNode
+  isTrainerPage?: boolean
 }
 
 export default function Layout({
   title,
   description,
   children,
+  isTrainerPage
 }: LayoutProps) {
 
   return (
@@ -138,11 +141,11 @@ export default function Layout({
           <meta charSet="utf-8" />
           <link rel="icon" href="/favicon-144x144.png" />
         </Head>
-        <Header />
+        {!isTrainerPage && <Header />}
         <main className={styles.main}>
           {children}
         </main>
-        <Footer />
+        {!isTrainerPage && <Footer />}
       </div>
     </ErrorBoundary>
   )

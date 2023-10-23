@@ -9,6 +9,8 @@ import { FullPageImageTextRight } from '../blocks/full-page-image-text-right'
 import { ContactForm } from '../blocks/contact-form'
 import { IconTextList } from '../blocks/icon-text-list'
 import { TwoColumnText } from '../blocks/two-column-text'
+import { IconTextRow } from '../blocks/icon-text-row'
+import { BlockHeader } from '../blocks/header'
 
 type PreviewBlockProps = {
   onBlockClick: (block: Record<string, any>) => void
@@ -54,6 +56,7 @@ export type PreviewBlocksType = {
 const defaultProps = {
   onUpdate: () => undefined,
   preview: true,
+  blockNames: []
 }
 
 const imageTextProps = {
@@ -63,6 +66,32 @@ const imageTextProps = {
 }
 
 export const PreviewBlocks: PreviewBlocksType = [
+ {
+    newBlock: {
+      blockName: 'header',
+      text: '',
+      logo: '',
+      links: []
+    },
+    className: styles.header,
+    testId: 'header-preview',
+    componentProps: {
+      ...defaultProps,
+      block: {
+        text: 'My Header',
+        logo: '/hpt-logo.svg',
+        font: 'roboto',
+        color: '#ffffff',
+        background: '#3c3636',
+        links: [
+          { label: 'About', link: '' },
+          { label: 'Contact', link: '' },
+        ]
+      },
+      blockName: 'header'
+    },
+    Component: BlockHeader
+  },
  {
     newBlock: {
       blockName: 'image-text-left',
@@ -195,6 +224,61 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'icon-text-list'
     },
     Component: IconTextList
+  },
+  {
+    newBlock: {
+      blockName: 'icon-text-row',
+      title: '',
+      items: []
+    },
+    className: styles.iconTextRow,
+    testId: 'icon-text-row-preview',
+    componentProps: {
+      ...defaultProps,
+      block: {
+        title: '<h2>Benefits of Personal Training</h2>',
+        items: [
+          {
+            icon: 'Exercise',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
+          },
+          {
+            icon: 'Health Metrics',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
+          },
+          {
+            icon: 'Body System',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
+          },
+          {
+            icon: 'Exercise',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
+          },
+          {
+            icon: 'Health Metrics',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
+          },
+          {
+            icon: 'Body System',
+            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+            iconColor: '#dd940c',
+            textColor: '#A4A0AE'
+          },
+        ]
+      },
+      blockName: 'icon-text-row'
+    },
+    Component: IconTextRow
   },
   {
     newBlock: {

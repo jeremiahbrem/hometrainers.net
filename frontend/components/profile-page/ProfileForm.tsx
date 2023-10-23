@@ -6,18 +6,13 @@ import { Select } from '../select'
 import { Button } from '../button'
 import styles from './profileForm.module.scss'
 import cn from 'classnames'
-import { Roboto } from 'next/font/google'
 import { Loading } from '../loading'
 import { ImageUpload } from '../image-upload'
 import Image from 'next/image'
 import { IMAGES_URL } from '@/api'
 import { goals } from './goals'
 import _ from 'lodash'
-
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['300', '400','500','700','900']
-})
+import { MY_PAGE_FONTS } from '../layout'
 
 type ProfileFormProps = {
   type: 'client' | 'trainer'
@@ -161,7 +156,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
   return (
     <form
       onSubmit={e => e.preventDefault()}
-      className={cn(styles.profileForm, roboto.className)}
+      className={cn(styles.profileForm, MY_PAGE_FONTS.roboto.className)}
     >
       <h3>My {isTrainer ? 'Trainer' : 'Client'} Profile</h3>
 
@@ -183,7 +178,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
             ...st,
             cities: [...st.cities, sanitizeVal(val)]
         })),
-        selected: formState.cities,
+        selected: formState.cities.map(c => ({ label: c, value: c })),
         onRemove: val => setFormState(st => ({
           ...st,
           cities: st.cities.filter(x => x != val)
@@ -203,14 +198,14 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
             ...st,
             goals: [...st.goals, sanitizeVal(val)]
         })),
-        selected: formState.goals,
+        selected: formState.goals.map(g => ({ label: g, value: g})),
         allowMultiple: true,
         onRemove: val => setFormState(st => ({
           ...st,
           goals: st.goals.filter(x => x != val)
         })),
         placeholder: 'Search a goal',
-        options: goals.sort(),
+        options: goals.sort().map(g => ({ label: g, value: g })),
         name: 'goals',
         label: isTrainer ? 'Training Goals Offered' : 'Desired Goals',
         error: errors.some(x => x.key === 'goals'),

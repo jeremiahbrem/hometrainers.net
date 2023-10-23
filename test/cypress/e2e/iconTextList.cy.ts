@@ -1,7 +1,7 @@
 Cypress.config('defaultCommandTimeout', 25000);
 
 describe('IconTextList', () => {
-  it('test', () => {
+  it('adds IconTextList block', () => {
     cy.loginTrainer()
 
     cy.trainerProfile()
@@ -44,10 +44,7 @@ describe('IconTextList', () => {
       .get('[data-testid="update-icon"]').eq(0)
       .click()
 
-    cy.contains('Save Changes')
-      .click()
-      .get('[data-testid="alert-scrim"]')
-      .click()
+    cy.saveChanges()
 
     cy.visit('/test-page-1')
       .reload()
@@ -67,9 +64,6 @@ describe('IconTextList', () => {
     cy.contains('Remove Block')
       .click()
     
-    cy.contains('Save Changes')
-      .click()
-      .get('[data-testid="alert-scrim"]')
-      .click()
+    cy.saveChanges()
   })
 })

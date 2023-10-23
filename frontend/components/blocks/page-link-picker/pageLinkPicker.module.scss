@@ -1,0 +1,36 @@
+@import '@/styles/global.scss';
+
+.add-link-modal {
+  position: absolute;
+  top: 3rem;
+  right: 1rem;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  z-index: 2;
+  color: $fontColor;
+
+  label {
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    display: block;
+  }
+
+  .label-input {
+    color: inherit;
+    border: none;
+    padding: .5rem;
+    background-color: rgba(128, 128, 128, .2);
+    width: 13.5rem;
+    margin: .3rem 0;
+    border: 2px solid transparent;
+  }
+
+  .buttons {
+    button {
+      margin-left: 0;
+    }
+  }
+}
