@@ -32,8 +32,8 @@ export default function Header() {
 
     {isLoggedIn && !profileLoading ? <span className={checkStyle} id='login-checked'>check</span> : <span />}
 
-    <button className={styles.signInButton} id='sign-in-button' onClick={openAllowClose}>
+    {!profileLoading && <button className={styles.signInButton} id='sign-in-button' onClick={openAllowClose}>
       <span className='material-symbols-outlined'>person</span>
-    </button>
+    </button>}
   </div>
 }
