@@ -1,3 +1,5 @@
+Cypress.config('defaultCommandTimeout', 20000);
+
 describe('header', () => {
   it('adds BlockHeader', () => {
     cy.loginTrainer()

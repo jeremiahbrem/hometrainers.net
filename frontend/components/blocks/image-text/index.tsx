@@ -85,7 +85,7 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
       style={{
         backgroundColor: background ?? 'white'
       }}
-      data-testid='image-text-section'
+      dataTestId='image-text-section'
       anchors={anchors}
     >
       <TextColumn {...{
