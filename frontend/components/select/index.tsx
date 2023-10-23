@@ -118,14 +118,6 @@ export const Select: React.FC<SelectProps> = (props) => {
     setSelectState(st => ({ ...st, focused: 0 }))
   }, [optionResults.length])
 
-  const handleInputBlur = () => {
-    if (selectState.menuFocused) {
-      return
-    }
-
-    setSelectState(st => ({...st, inputFocused: false }))
-  }
-
   return (
     <div
       tabIndex={0}
@@ -142,7 +134,6 @@ export const Select: React.FC<SelectProps> = (props) => {
           value={filter}
           onChange={e => setSelectState(st => ({...st, filter: e.target.value }))}
           onFocus={() => setSelectState(st => ({...st, inputFocused: true }))}
-          onBlur={handleInputBlur}
           type='text'
           className={styles.textbox}
           placeholder={placeholder}
