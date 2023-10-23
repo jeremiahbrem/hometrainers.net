@@ -50,6 +50,8 @@ export const Select: React.FC<SelectProps> = (props) => {
     menuFocused: false
   })
 
+  const selectRef = useRef<HTMLDivElement>(null)
+
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { filter, canBlur, focused } = selectState
@@ -115,6 +117,20 @@ export const Select: React.FC<SelectProps> = (props) => {
   }, [focused, filter, optionResults, inputRef])
 
   useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (selectRef.current && !selectRef.current!.contains(e.target as Node)) {
+        setSelectState(st => ({...st, inputFocused: false }))
+      }
+    }
+
+    document.addEventListener('click', onClick)
+    
+    return (() => {
+      document.removeEventListener('click', onClick)
+    })
+  }, [selectRef])
+
+  useEffect(() => {
     setSelectState(st => ({ ...st, focused: 0 }))
   }, [optionResults.length])
 
@@ -125,6 +141,7 @@ export const Select: React.FC<SelectProps> = (props) => {
       aria-expanded={!!filter || (selectState.inputFocused && showAll)}
       aria-pressed={!!filter  || (selectState.inputFocused && showAll)}
       onBlur={() => { canBlur && setSelectState(st => ({...st, filter: ''})) }}
+      ref={selectRef}
     >
       <label htmlFor={name}>{label}</label>
       {(allowMultiple || selected.length === 0) &&
