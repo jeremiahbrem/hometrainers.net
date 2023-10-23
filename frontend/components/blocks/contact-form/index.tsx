@@ -4,7 +4,7 @@ import styles from '../../contact-form/contactForm.module.scss'
 import cn from 'classnames'
 import { Loading } from '../../loading'
 import Image from 'next/image'
-import { API } from '@/api'
+import { API, IMAGES_URL } from '@/api'
 import { ComponentProps } from '@/components/types'
 import { useProfile } from '@/components/profile-provider'
 import { Container } from '@/components/container'
@@ -268,7 +268,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
       </form>
       <Container className={styles.imageContainer} preview={preview}>
         {image && <Image
-          src={image}
+          src={preview ? image : `${IMAGES_URL}/${image}`}
           alt={imageAlt ?? ''}
           height={0}
           width={0}
