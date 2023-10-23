@@ -14,6 +14,7 @@ import { ImageUpload } from '@/components/image-upload'
 import { sanitizeAnchor } from '../block-wrapper'
 import { PageLinkPicker } from '../page-link-picker'
 import { CloseButton } from '@/components/close-button'
+import { IMAGES_URL } from '@/api'
 
 export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
   const {
@@ -81,13 +82,18 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
     { [styles.editing]: isEditing }
   )
 
+  const logUrl = preview ? logo : `${IMAGES_URL}/${logo}`
+
   return <div
     className={headerStyle}
     id='header'
     style={{ backgroundColor: background, color }}
   >
     <Container preview={preview} className={styles.logoContainer}>
-      {logo && <Logo className={styles.innerLogoContainer} logo={logo} />}
+      {logo && <Logo
+        className={styles.innerLogoContainer}
+        logo={logUrl}
+      />}
       {!preview && <ImageUpload 
         value={logo}
         onChange={onImageChange}
