@@ -18,7 +18,7 @@ const IconListItem: React.FC<{ text: string; icon: string; }> = ({ text, icon })
 
 const trainerImage = '/jonathan-borba-R0y_bEUjiOM-unsplash-home.jpg'
 const trainerAlt = 'image by Jonathan Borba from Upsplash'
-const clientImage = '/bruce-mars-gJtDg6WfMlQ-unsplash.jpg'
+const clientImage = '/bruce-mars-gJtDg6WfMlQ-unsplash-home.jpg'
 const clientAlt = 'image by Bruce Mars from Upsplash'
 
 export function HomeComponent() {
@@ -36,6 +36,7 @@ export function HomeComponent() {
               height={0}
               width={0}
               className={styles.image}
+              priority
             />
             <div className={styles.overlay} />
             <h2 className={oswald.className}>Trainers</h2>
