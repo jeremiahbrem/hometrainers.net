@@ -16,7 +16,7 @@ const IconListItem: React.FC<{ text: string; icon: string; }> = ({ text, icon })
   </li>
 )
 
-const trainerImage = '/jonathan-borba-R0y_bEUjiOM-unsplash.jpg'
+const trainerImage = '/jonathan-borba-R0y_bEUjiOM-unsplash-home.jpg'
 const trainerAlt = 'image by Jonathan Borba from Upsplash'
 const clientImage = '/bruce-mars-gJtDg6WfMlQ-unsplash.jpg'
 const clientAlt = 'image by Bruce Mars from Upsplash'
