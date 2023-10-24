@@ -16,7 +16,7 @@ describe('TextImageLeft', () => {
       .get('[data-testid="image-text-left-preview"]')
       .click()
 
-    cy.contains('Click to add text +')
+    cy.contains('text +')
       .click()
 
     cy.contains('font')

@@ -42,6 +42,8 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
   const [addLinkOpen, setAddLinkOpen] = useState(false)
   const [editLink, setEditLink] = useState<number | null>(null)
 
+  const [menuOpen, setMenuOpen] = useState(false)
+
   const onImageChange = (img: string) => {
     if (img) {
       addImage(img)
@@ -84,6 +86,15 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
 
   const logUrl = preview ? logo : `${IMAGES_URL}/${logo}`
 
+  const onLinkClick = (idx: number) => {
+    if (isEditing) {
+      setEditLink(idx)
+      return
+    }
+    
+    setMenuOpen(false)
+  }
+
   return <div
     className={headerStyle}
     id='header'
@@ -104,7 +115,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
       />}
     </Container>
 
-    <Container preview={preview} ref={textRef} style={{ color }}>
+    <Container preview={preview} ref={textRef} style={{ color }} className={styles.text}>
       {parse(text || '<p></p>')}
       <ClickToAdd {...{ text: 'text', value: text }} />
     </Container>
@@ -121,11 +132,17 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
       onFontChange={f => onUpdate({...block, font: f })}
     />}
 
-    <div className={styles.links}>
+    <div
+      className={cn(styles.links, {
+        [styles.open]: menuOpen,
+        [styles.editing]: isEditing && !preview
+      })}
+      style={{ backgroundColor: background }}
+    >
       {!preview && isEditing && <Container
         preview={preview}
         role='button'
-        className={MY_PAGE_FONTS.roboto.className}
+        className={cn(MY_PAGE_FONTS.roboto.className, styles.desktopAddLink)}
         onClick={() => setAddLinkOpen(true)}
       >
         Add link +
@@ -136,7 +153,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
           key={idx}
           preview={preview}
           role={isEditing ? 'button' : undefined}
-          onClick={isEditing ? (() => setEditLink(idx)) : undefined}
+          onClick={() => onLinkClick(idx)}
         >
           <Link
             href={isEditing ? '' : `#${sanitizeAnchor(l.label)}`}
@@ -151,6 +168,15 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
           })} className={styles.linkClose} />}
         </Container>
       ))}
+
+      {!preview && isEditing && <Container
+        preview={preview}
+        role='button'
+        className={cn(MY_PAGE_FONTS.roboto.className, styles.mobileAddLink)}
+        onClick={() => setAddLinkOpen(true)}
+      >
+        Add link +
+      </Container>}
 
       {isEditing && !preview && <PageLinkPicker {...{
         open: addLinkOpen,
@@ -177,5 +203,15 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
         link: links[editLink]
       }} />}
     </div>
+
+    <button
+      className={styles.hamburger}
+      onClick={() => setMenuOpen(!menuOpen)}
+    >
+      <span
+        className="material-symbols-outlined"
+        style={{ color }}
+      >menu</span>
+    </button>
   </div>
 }

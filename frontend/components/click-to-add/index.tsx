@@ -29,7 +29,7 @@ export const ClickToAdd: React.FC<ClickToAddProps> = (props) => {
       role='button'
       onClick={onClick}
     >
-      Click to add {text} +
+      {text} +
     </div>
   )
 }

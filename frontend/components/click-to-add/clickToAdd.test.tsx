@@ -13,13 +13,13 @@ describe('click to add', () => {
 
     render(<ClickToAdd {...{ value: '', text: 'text'}} />)
 
-    expect(screen.getByText('Click to add text +')).not.toBeNull()
+    expect(screen.getByText('text +')).not.toBeNull()
   })
   
   it('no render not editing', () => {
     render(<ClickToAdd {...{ value: 'content', text: 'text'}} />)
 
-    expect(screen.queryByText('Click to add text +')).toBeNull()
+    expect(screen.queryByText('text +')).toBeNull()
   })
   
   it('no render if non-empty value', () => {
@@ -28,7 +28,7 @@ describe('click to add', () => {
 
     render(<ClickToAdd {...{ value: 'content', text: 'text'}} />)
 
-    expect(screen.queryByText('Click to add text +')).toBeNull()
+    expect(screen.queryByText('text +')).toBeNull()
   })
 })
 

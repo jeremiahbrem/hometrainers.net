@@ -14,13 +14,21 @@
   &.editing {
     position: relative;
     z-index: unset;
-    padding-left: 2rem;
+    padding-left: 1rem;
   }
 
   .image-upload {
     label {
       min-height: 3.5rem;
     }
+  }
+
+  .text {
+    padding-left: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-right: 2rem;
+    min-width: 10rem;
   }
 
   .links {
@@ -31,6 +39,11 @@
     gap: 1rem;
     padding-right: 2rem;
     position: relative;
+
+    .mobile-add-link {
+      display: none;
+    }
+
     .page-link {
       font-size: 0.8rem;
       margin-right: 1rem;
@@ -60,33 +73,58 @@
     width: 6rem;
     overflow: hidden;
     padding-left: .25rem;
-    // .inner-logo-container {
-
-    // }
-    // height: 100%;
-    // width: 6rem;
-    // overflow: hidden;
-    // padding-left: .25rem;
   }
 
-  p {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-right: 2rem;
-    min-width: 10rem;
+  .hamburger {
+    display: none;
   }
 
   @media(max-width: 645px) {
+    grid-template-columns: 4.5rem 1fr 2rem;
+    .add-text {
+      width: 67%;
+    }
     .links {
-      .page-link {
+      position: fixed;
+      top: 4rem;
+      z-index: 2;
+      left: -105vw;
+      transition: all .25s ease-in-out;
+      background: white;
+      grid-auto-flow: unset;
+      width: 100%;
+      justify-content: left;
+      padding-top: 3rem;
+      padding-left: 2rem;
+      height: calc(100vh - 6.8rem);
+      align-items: flex-start;
+      grid-template-rows: max-content;
+      &.open {
+        left: 0;
+      }
+      &.editing {
+        top: 8rem;
+      }
+
+      .desktop-add-link {
         display: none;
       }
+
+      .mobile-add-link {
+        display: block;
+      }
+
+      .page-link {
+        font-size: 1.4rem;
+      }
+    }
+
+    .hamburger {
+      display: block;
     }
   }
 
   @media(max-width: 440px) {
-    grid-template-columns: 4.5rem max-content 1fr;
-
     .logo-container {
       width: 4.5rem;
       img {
@@ -94,8 +132,17 @@
       }
     }
   
-    p {
+    .text {
       font-size: .8rem;
+    }
+  }
+
+  @media(max-width: 350px) {
+    grid-template-columns: 25% 50% 25%;
+    gap: .5rem;
+
+    .text {
+      padding-left: 0rem;
     }
   }
 }

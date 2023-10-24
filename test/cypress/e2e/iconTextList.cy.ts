@@ -16,14 +16,14 @@ describe('IconTextList', () => {
       .get('[data-testid="icon-text-list-preview"]')
       .click()
 
-    cy.contains('Click to add title +')
+    cy.contains('title +')
       .click()
       .get('.ProseMirror').eq(0)
       .type('Icons Text Title')
       .get('.close-editor').eq(0)
       .click()
 
-    cy.contains('Click to add item +')
+    cy.contains('item +')
       .click()
 
     cy.get('[data-testid="icon-text-content"]').eq(0)
