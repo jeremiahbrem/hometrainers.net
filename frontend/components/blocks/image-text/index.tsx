@@ -99,7 +99,8 @@ export const ImageText: React.FC<ImageTextBaseProps> = (props) => {
         font,
         textPos,
         text,
-        preview
+        preview,
+        background,
       }} />
 
       <Container className={cn(styles.image)} preview={preview}>

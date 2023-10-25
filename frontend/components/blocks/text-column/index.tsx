@@ -16,6 +16,7 @@ type TextColumnProps = {
   onFontChange: (font: string) => void
   font: string
   color: string
+  background?: string
   preview?: boolean
   className?: string
 }
@@ -30,7 +31,8 @@ export const TextColumn: React.FC<TextColumnProps> = (props) => {
     onTextUpdate,
     onColorChange,
     onFontChange,
-    className
+    className,
+    background,
   } = props
 
   const ref = useRef(null)
@@ -64,6 +66,7 @@ export const TextColumn: React.FC<TextColumnProps> = (props) => {
         color={color}
         onColorChange={onColorChange}
         onFontChange={onFontChange}
+        background={background}
       />}
     </>
   )

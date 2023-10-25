@@ -14,6 +14,9 @@ import { Editor } from '@/components/editors'
 import { ClickToAdd } from '@/components/click-to-add'
 import { BlockButton, BlockButtonProps } from '@/components/block-button'
 import { MY_PAGE_FONTS } from '@/components/layout'
+import { useIsEditing } from '@/utils/useIsEditing'
+import { ColorPicker } from '@/components/color-picker'
+import { CloseButton } from '@/components/close-button'
 
 type ContactFormValues = {
   name: string
@@ -34,6 +37,7 @@ export type ContactFormProps = ComponentProps<{
   background: string
   button: BlockButtonProps
   titleFont: string
+  inputColor: string
 }>
 
 export const ContactForm: React.FC<ContactFormProps> = (props) => {
@@ -57,6 +61,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     background,
     button,
     titleFont = 'roboto',
+    inputColor = '#ede8e4'
   } = block
 
   const { profile } = useProfile()
@@ -71,7 +76,10 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     message: '',
   })
 
+  const isEditing = useIsEditing()
+
   const [formState, setFormState] = useState<ContactFormValues>(initializeValues())
+  const [inputColorOpen, setInputColorOpen] = useState(false)
 
   const onChange = (evt: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setErrors([])
@@ -173,11 +181,17 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     })
   }
 
-  const onButtonChange = (text: string, color: string, outlined: boolean) => {
+  const onButtonChange = (text: string, color: string, background: string, outlined: boolean) => {
     onUpdate({
       ...block,
-      button: { text, color, outlined }
+      button: { text, color, outlined, background }
     })
+  }
+
+  const inputContainerProps = {
+    role: isEditing && !preview ? 'button' : undefined,
+    onClick: isEditing && !preview ? () => setInputColorOpen(true) : undefined,
+    preview
   }
 
   return (
@@ -210,45 +224,69 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
           onColorChange={onColorChange}
           font={titleFont}
           onFontChange={f => onUpdate({...block, titleFont: f })}
+          background={background}
         />}
 
         <label className={styles.name} htmlFor='name'>Name</label>
-        <input
-          className={styles.input}
-          name='name'
-          id='name'
-          onChange={onChange}
-          value={formState.name}
-          placeholder='Enter your name'
-          style={{ borderColor:
-            errors.some(x => x.key === 'name') ? 'red' : 'transparent'
-          }}
-        />
+        <Container {...inputContainerProps}>
+          <input
+            className={styles.input}
+            name='name'
+            id='name'
+            onChange={onChange}
+            value={formState.name}
+            placeholder='Enter your name'
+            style={{ borderColor:
+              errors.some(x => x.key === 'name') ? 'red' : 'transparent',
+              background: inputColor,
+            }}
+          />
+        </Container>
         
         <label className={styles.name} htmlFor='email'>Email</label>
-        <input
-          className={styles.input}
-          name='email'
-          id='email'
-          onChange={onChange}
-          value={formState.email}
-          placeholder='Enter your email'
-          style={{ borderColor:
-            errors.some(x => x.key === 'email') ? 'red' : 'transparent'
-          }}
-        />
+        <Container {...inputContainerProps}>
+          <input
+            className={styles.input}
+            name='email'
+            id='email'
+            onChange={onChange}
+            value={formState.email}
+            placeholder='Enter your email'
+            style={{ borderColor:
+              errors.some(x => x.key === 'email') ? 'red' : 'transparent',
+              background: inputColor,
+            }}
+          />
+        </Container>
         
         <label className={styles.name} htmlFor='message'>Message</label>
-        <textarea
-          name='message'
-          id='message'
-          onChange={onChange}
-          value={formState.message}
-          placeholder='Enter your message'
-          style={{ borderColor:
-            errors.some(x => x.key === 'message') ? 'red' : 'transparent'
-          }}
-        />
+        <Container {...inputContainerProps}>
+          <textarea
+            name='message'
+            id='message'
+            onChange={onChange}
+            value={formState.message}
+            placeholder='Enter your message'
+            style={{ borderColor:
+              errors.some(x => x.key === 'message') ? 'red' : 'transparent',
+              background: inputColor,
+            }}
+          />
+        </Container>
+
+        {isEditing && !preview && <div
+          className={styles.inputColorPicker}
+          style={{ display: inputColorOpen ? 'block' : 'none'}}
+        >
+          <ColorPicker
+            color={inputColor}
+            updateColor={c => onUpdate({
+              ...block,
+              inputColor: c
+            })}
+          />
+          <CloseButton onClose={() => setInputColorOpen(false)} className="input-color-close"/>
+        </div>}
 
         <div className={styles.saveButton}>
           <BlockButton
@@ -258,7 +296,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
             preview={preview}
             onButtonChange={onButtonChange}
             modalTop={3}
-            modalLeft={-10}
+            modalLeft={-9}
           />
         </div>
 
@@ -280,6 +318,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
           onChange={onImageChange}
           text='image'
           onRemove={onRemoveImage}
+          color={color}
         />}
       </Container>
     </div>

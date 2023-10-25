@@ -18,6 +18,7 @@ export type FullPageImageTextBase = ComponentProps<{
   imageAlt: string
   color: string
   font: string
+  background: string
 }>
 
 export type FullPageImageTextProps = FullPageImageTextBase & { textPos: 'left' | 'right' }
@@ -29,7 +30,7 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
     addImage,
     removeImage,
     preview,
-    textPos
+    textPos,
   } = props
 
   const {
@@ -37,7 +38,8 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
     image,
     imageAlt,
     color = '#3c3636',
-    font = 'roboto'
+    font = 'roboto',
+    background,
   } = block
 
   const textRef = useRef(null)
@@ -79,7 +81,10 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
   }
 
   return (
-    <section className={cn(styles.section, { [styles.right]: textPos === 'right'})}>
+    <section
+      className={cn(styles.section, { [styles.right]: textPos === 'right'})}
+      style={{ background }}
+    >
       <Container className={styles.image} preview={preview}>
         {image && <Image src={imageUrl} alt={imageAlt ?? ''} height={0} width={0} />}
         {image && <div className={styles.overlay} />}
@@ -114,6 +119,7 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
         onColorChange={onColorChange}
         onFontChange={f => onUpdate({...block, font: f })}
         font={font}
+        background={background}
       />}
     </section>
   )

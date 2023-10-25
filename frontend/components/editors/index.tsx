@@ -274,6 +274,7 @@ export const Editor: React.FC<EditorProps> = ({
   onFontChange,
   font = 'roboto',
   color,
+  background
 }) => {
 
   const editing = useIsEditing()
@@ -317,6 +318,8 @@ export const Editor: React.FC<EditorProps> = ({
         left: left ?? 'unset',
         right: right ?? 'unset',
         display: open ? 'block' : 'none',
+        color,
+        background
       }}
     >
       <EditorProvider

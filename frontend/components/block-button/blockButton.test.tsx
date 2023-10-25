@@ -33,6 +33,7 @@ const onClick = jest.fn()
 const onButtonChange = jest.fn()
 
 const color = 'rgb(246, 246, 246)'
+const background = 'rgb(246, 246, 0)'
 
 describe('block button', () => {
   afterEach(() => {
@@ -45,6 +46,7 @@ describe('block button', () => {
     const setup = (outlined: boolean) => {
       render(<BlockButton
         color={color}
+        background={background}
         text={'Submit'}
         outlined={outlined}
         onButtonChange={onButtonChange}
@@ -69,8 +71,8 @@ describe('block button', () => {
 
       it('renders solid color', () => {
         const button = screen.getByRole('button')
-        expect(button.style.backgroundColor).toBe(color)
-        expect(button.style.color).toBe('white')
+        expect(button.style.backgroundColor).toBe(background)
+        expect(button.style.color).toBe(color)
       })
 
       it('changes to transparent on hover', () => {
@@ -78,7 +80,7 @@ describe('block button', () => {
         fireEvent.mouseOver(button)
 
         expect(button.style.backgroundColor).toBe('transparent')
-        expect(button.style.color).toBe(color)
+        expect(button.style.color).toBe(background)
       })
       
       it('changes back to solid on mouse out', () => {
@@ -86,8 +88,8 @@ describe('block button', () => {
         fireEvent.mouseOver(button)
         fireEvent.mouseOut(button)
 
-        expect(button.style.backgroundColor).toBe(color)
-        expect(button.style.color).toBe('white')
+        expect(button.style.backgroundColor).toBe(background)
+        expect(button.style.color).toBe(color)
       })
     })
 
@@ -99,15 +101,15 @@ describe('block button', () => {
       it('renders transparent color', () => {
         const button = screen.getByRole('button')
         expect(button.style.backgroundColor).toBe('transparent')
-        expect(button.style.color).toBe(color)
+        expect(button.style.color).toBe(background)
       })
 
       it('changes to solid on hover', () => {
         const button = screen.getByRole('button')
         fireEvent.mouseOver(button)
 
-        expect(button.style.backgroundColor).toBe(color)
-        expect(button.style.color).toBe('white')
+        expect(button.style.backgroundColor).toBe(background)
+        expect(button.style.color).toBe(color)
       })
       
       it('changes back to transparent on mouse out', () => {
@@ -116,7 +118,7 @@ describe('block button', () => {
         fireEvent.mouseOut(button)
 
         expect(button.style.backgroundColor).toBe('transparent')
-        expect(button.style.color).toBe(color)
+        expect(button.style.color).toBe(background)
       })
     })
   })
@@ -127,6 +129,7 @@ describe('block button', () => {
 
       render(<BlockButton
         color={''}
+        background={''}
         text={'Submit'}
         outlined={false}
         onButtonChange={onButtonChange}
@@ -151,7 +154,18 @@ describe('block button', () => {
       await act(() => fireEvent.change(colorInput, { target: { value: '#f6f6f6' }}))
       await act(() => userEvent.click(document.querySelector('.edit-button-close')!))
 
-      expect(onButtonChange).toBeCalledWith('Submit', '#f6f6f6', false)
+      expect(onButtonChange).toBeCalledWith('Submit', '#f6f6f6', '', false)
+    })
+    
+    it('changes background', async () => {
+      await act(() => userEvent.click(screen.getByText('Submit')))
+
+      const colorInput = document.querySelector('.color-picker input')!
+      await act(() => userEvent.click(document.querySelectorAll('.toggle')[0]!))
+      await act(() => fireEvent.change(colorInput, { target: { value: '#f6f6f6' }}))
+      await act(() => userEvent.click(document.querySelector('.edit-button-close')!))
+
+      expect(onButtonChange).toBeCalledWith('Submit', '', '#f6f6f6', false)
     })
     
     it('changes text', async () => {
@@ -161,16 +175,16 @@ describe('block button', () => {
       await act(() => fireEvent.change(textInput, { target: { value: 'Send' }}))
       await act(() => userEvent.click(document.querySelector('.edit-button-close')!))
 
-      expect(onButtonChange).toBeCalledWith('Send', '', false)
+      expect(onButtonChange).toBeCalledWith('Send', '', '', false)
     })
     
     it('changes outlined', async () => {
       await act(() => userEvent.click(screen.getByText('Submit')))
 
-      await act(() => userEvent.click(document.querySelector('.toggle')!))
+      await act(() => userEvent.click(document.querySelectorAll('.toggle')[1]!))
       await act(() => userEvent.click(document.querySelector('.edit-button-close')!))
 
-      expect(onButtonChange).toBeCalledWith('Submit', '', true)
+      expect(onButtonChange).toBeCalledWith('Submit', '', '', true)
     })
   })
 })

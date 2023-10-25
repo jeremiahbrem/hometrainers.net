@@ -16,9 +16,10 @@
   border-radius: 5px;
   position: absolute;
   top: 0;
-  z-index: 2;
+  z-index: 3;
   .inner-modal {
     position: relative;
+    color: $fontColor;
     .label {
       display: block;
       width: 0;
@@ -26,8 +27,14 @@
       overflow: hidden;
       margin: 0;
     }
+    .edit-color-label {
+      font-size: .8rem;
+    }
+    .color-toggle {
+      white-space: nowrap;
+      overflow: visible;
+    }
     .input {
-      color: inherit;
       border: none;
       padding: .5rem;
       background-color: rgba(128, 128, 128, .2);

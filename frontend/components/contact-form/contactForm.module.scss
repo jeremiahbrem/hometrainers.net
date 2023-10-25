@@ -9,6 +9,7 @@
     color: $fontColor;
     width: 15rem;
     margin: 2rem auto 0 auto;
+    position: relative;
 
     .error {
       color: red;
@@ -34,12 +35,23 @@
       color: inherit;
       border: none;
       padding: .5rem;
-      background-color: rgba(128, 128, 128, .2);
+      background-color: $inputColor;
       width: 13.5rem;
       margin: .3rem 0;
       border: 2px solid transparent;
       resize: none;
       font-family: inherit;
+    }
+
+    .input-color-picker {
+      position: absolute;
+      bottom: 0;
+      padding: 1rem;
+      box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
+      background: white;
+      border-radius: 5px;
+      z-index: 3;
+      left: -1rem;
     }
   
     .save-button {

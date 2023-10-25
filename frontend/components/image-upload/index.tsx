@@ -22,6 +22,7 @@ type ImageUploadProps = {
   path?: string
   addText?: string
   className?: string
+  color?: string
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
@@ -34,7 +35,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
     path,
     show,
     addText,
-    className
+    className,
+    color
   } = props
 
   const [removeOpen, setRemoveOpen] = useState(false)
@@ -90,7 +92,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
 
   if (!value) {
     return (
-      <div className={cn(styles.imageUpload, roboto.className, className)}>
+      <div className={cn(styles.imageUpload, roboto.className, className)} style={{ color }}>
         <label>
           {clickAddText}
           <input data-testid='image-upload' type="file" onChange={onFileChange}/>
@@ -106,7 +108,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
       data-testid='open-remove-image'
     />
     <div className={styles.imageRemoveModal} style={{
-      display: removeOpen ? 'block' : 'none'
+      display: removeOpen ? 'block' : 'none',
     }}>
       <Button text='Remove' onClick={onRemove} />
       <Button text='Cancel' onClick={() => setRemoveOpen(false)} />

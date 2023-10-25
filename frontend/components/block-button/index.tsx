@@ -10,6 +10,7 @@ import { CloseButton } from '../close-button'
 export type BlockButtonProps = {
   text: string
   color: string
+  background: string
   outlined: boolean
 }
 
@@ -17,7 +18,12 @@ type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButton
   onClick?: () => any
   className?: string
   preview?: boolean
-  onButtonChange: (text: string, color: string, outlined: boolean) => void
+  onButtonChange: (
+    text: string,
+    color: string,
+    background: string,
+    outlined: boolean
+  ) => void
   modalLeft?: number
   modalTop?: number
 }
@@ -31,6 +37,7 @@ export const BlockButton: React.FC<ButtonProps> = (props) => {
     disabled,
     outlined,
     color,
+    background,
     preview,
     onButtonChange,
     modalLeft,
@@ -46,17 +53,19 @@ export const BlockButton: React.FC<ButtonProps> = (props) => {
   
   const ref = useRef<HTMLButtonElement>(null)
 
+  const [colorSetting, setColorSetting] = useState<'color' | 'background'>('color')
+
   const onMouseOver = () => {
     if (ref.current) {
-      ref.current.style.color = outlined ? 'white' : color
-      ref.current.style.backgroundColor = outlined ? color : 'transparent'
+      ref.current.style.color = outlined ? color : background
+      ref.current.style.backgroundColor = outlined ? background : 'transparent'
     }
   }
 
   const onMouseOut = () => {
     if (ref.current) {
-      ref.current.style.color = outlined ? color : 'white'
-      ref.current.style.backgroundColor = outlined ? 'transparent' : color
+      ref.current.style.color = outlined ? background : color
+      ref.current.style.backgroundColor = outlined ? 'transparent' : background
     }
   }
 
@@ -75,11 +84,22 @@ export const BlockButton: React.FC<ButtonProps> = (props) => {
     onClick && onClick()
   }
 
+  const colorPickerProps = {
+    color: colorSetting === 'color' ? color : background,
+    updateColor: (c: string) => onButtonChange(
+      text,
+      colorSetting === 'color' ? c : color,
+      colorSetting === 'background' ? c : background,
+      outlined
+    )
+  }
+
   return (
     <Container
       role={isEditing ? 'button' : undefined}
       onClick={() => isEditing ? setOpen(true) : undefined}
       preview={preview}
+      data-testid='block-button'
     >
       <button
         {...rest}
@@ -91,9 +111,9 @@ export const BlockButton: React.FC<ButtonProps> = (props) => {
         onMouseOver={onMouseOver}
         onMouseOut={onMouseOut}
         style={{
-          color: outlined ? (color ?? 'white') : 'white',
-          backgroundColor: outlined ? 'transparent' : color,
-          borderColor: color
+          color: outlined ? background : color,
+          backgroundColor: outlined ? 'transparent' : background,
+          borderColor: background
         }}
       >
         {text}
@@ -114,10 +134,21 @@ export const BlockButton: React.FC<ButtonProps> = (props) => {
             id={buttonId}
             placeholder='Button text'
             value={text}
-            onChange={e => onButtonChange(e.target.value, color, outlined)}
+            onChange={e => onButtonChange(e.target.value, color, background, outlined)}
           />
-          <ColorPicker color={color} updateColor={c => onButtonChange(text, c, outlined)}/>
-          <Toggle checked={outlined} label='Outlined' onChange={c => onButtonChange(text, color, c)}/>
+          <p className={styles.editColorLabel}>Edit color</p>
+          <Toggle
+            checked={colorSetting == 'background'}
+            label='text / background'
+            onChange={c => setColorSetting(c ? 'background' : 'color')}
+            className={styles.colorToggle}
+          />
+          <ColorPicker {...colorPickerProps} />
+          <Toggle
+            checked={outlined}
+            label='Outlined'
+            onChange={c => onButtonChange(text, color, background, c)}
+          />
           <CloseButton onClose={() => setOpen(false)} className='edit-button-close'/>
         </div>
       </div>}
