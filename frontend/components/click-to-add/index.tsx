@@ -13,11 +13,12 @@ type ClickToAddProps = {
   value: any
   text: string
   onClick?: () => void
+  className?: string
 }
 
 export const ClickToAdd: React.FC<ClickToAddProps> = (props) => {
   const isEditing = useIsEditing()
-  const { value, text, onClick } = props
+  const { value, text, onClick, className } = props
 
   if (!isEditing || (value && value !== '<p></p>')) {
     return null
@@ -25,7 +26,7 @@ export const ClickToAdd: React.FC<ClickToAddProps> = (props) => {
 
   return (
     <div
-      className={cn(styles.clickToAdd, roboto.className)}
+      className={cn(styles.clickToAdd, roboto.className, className)}
       role='button'
       onClick={onClick}
     >

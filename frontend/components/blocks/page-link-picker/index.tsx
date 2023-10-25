@@ -10,6 +10,8 @@ type PageLinkPickerProps = {
   blockNames: string[]
   updateLinks: (label: string, index: number) => void
   link?: HeaderLink | null
+  top?: number
+  right?: number
 }
 
 const formatBlockName = (name: string, index: number) => {
@@ -32,7 +34,9 @@ export const PageLinkPicker: React.FC<PageLinkPickerProps> = (props) => {
     setOpen,
     blockNames,
     updateLinks,
-    link
+    link,
+    top,
+    right,
   } = props
 
   const [formState, setFormState] = useState<FormState>({
@@ -65,7 +69,11 @@ export const PageLinkPicker: React.FC<PageLinkPickerProps> = (props) => {
   return (
     <div
       className={styles.addLinkModal}
-      style={{ display: open ? 'block' : 'none' }}
+      style={{
+        display: open ? 'block' : 'none',
+        top: `${top ?? 3}rem`,
+        right: `${right ?? 1}rem`
+      }}
     >
       {open && <form onSubmit={e => e.preventDefault()}>
         <label htmlFor='block-link-label'>Label</label>

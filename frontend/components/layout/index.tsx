@@ -20,7 +20,6 @@ import Header from '../header'
 import styles from './layout.module.scss'
 import { Footer } from '../footer'
 import { NextFont } from 'next/dist/compiled/@next/font'
-import { BlockFooterProps, BlockHeaderProps } from '../types'
 
 const roboto = Roboto({
   subsets: ['latin'],

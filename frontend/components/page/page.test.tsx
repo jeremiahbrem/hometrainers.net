@@ -665,6 +665,7 @@ describe('page component', () => {
       const result = updateAnchors(
         old,
         updated,
+        0
       )
 
       expect(result).toEqual({
@@ -708,6 +709,7 @@ describe('page component', () => {
       const result = updateAnchors(
         old,
         updated,
+        0
       )
 
       expect(result).toEqual({
@@ -754,6 +756,7 @@ describe('page component', () => {
       const result = updateAnchors(
         old,
         updated,
+        0
       )
 
       expect(result).toEqual({
@@ -796,6 +799,7 @@ describe('page component', () => {
       const result = updateAnchors(
         old,
         updated,
+        0
       )
 
       expect(result).toEqual(updated)

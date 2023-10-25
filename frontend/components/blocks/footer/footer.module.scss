@@ -1,0 +1,27 @@
+@import '@/styles/global.scss';
+
+.footer {
+  color: white;
+  display: flex;
+  padding: 1rem 2rem;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+  position: relative;
+  flex-wrap: wrap;
+
+  .page-link {
+    margin-right: 1rem;
+  }
+
+  .copyright {
+    min-width: 1rem;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .add-copyright {
+    position: relative;
+  }
+}

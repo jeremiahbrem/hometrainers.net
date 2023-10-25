@@ -11,6 +11,7 @@ import { IconTextList } from '../blocks/icon-text-list'
 import { TwoColumnText } from '../blocks/two-column-text'
 import { IconTextRow } from '../blocks/icon-text-row'
 import { BlockHeader } from '../blocks/header'
+import { BlockFooter } from '../blocks/footer'
 
 type PreviewBlockProps = {
   onBlockClick: (block: Record<string, any>) => void
@@ -91,6 +92,28 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'header'
     },
     Component: BlockHeader
+  },
+  {
+    newBlock: {
+      blockName: 'footer',
+      links: []
+    },
+    className: styles.footer,
+    testId: 'footer-preview',
+    componentProps: {
+      ...defaultProps,
+      block: {
+        font: 'roboto',
+        color: '#ffffff',
+        background: '#3c3636',
+        links: [
+          { label: 'About', link: '' },
+          { label: 'Contact', link: '' },
+        ]
+      },
+      blockName: 'footer'
+    },
+    Component: BlockFooter
   },
  {
     newBlock: {

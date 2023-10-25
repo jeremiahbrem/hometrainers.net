@@ -123,7 +123,11 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
     setPageContext(page => {
       const newBlocks = block.blockName === 'header'
         ? [block, ...page!.blocks.blocks]
-        : [...page!.blocks.blocks, block]
+        : [
+          ...page!.blocks.blocks.filter(x => x.blockName !== 'footer'),
+          block,
+          ...page!.blocks.blocks.filter(x => x.blockName === 'footer')
+        ]
 
       const copy = {
         ...page,

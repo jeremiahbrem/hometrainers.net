@@ -71,8 +71,8 @@ export function onUpdate(
     }
   }
 
-  if (blockName === 'header') {
-    copy = updateAnchors(ctx, copy)
+  if (['header','footer'].includes(blockName)) {
+    copy = updateAnchors(ctx, copy, index)
   }
 
   return copy
@@ -81,12 +81,13 @@ export function onUpdate(
 export function updateAnchors(
   original: Page,
   updated: Page,
+  index: number
 ): Page {
-  const links = updated.blocks.blocks[0].links as HeaderLink[]
+  const links = updated.blocks.blocks[index].links as HeaderLink[]
 
   const update = (block: Block, idx: number) => {
     const newLink = links.find(l => l.index === idx)?.label
-    const oldLink = (original.blocks.blocks[0].links as HeaderLink[])
+    const oldLink = (original.blocks.blocks[index].links as HeaderLink[])
       .find(l => l.index === idx)?.label
 
     let anchors = block.anchors

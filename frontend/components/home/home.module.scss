@@ -1,14 +1,15 @@
 @import '@/styles/global.scss';
 
 .home {
-  padding: 4rem 5rem 2rem 5rem;
+  padding: 1rem 5rem 2rem 5rem;
   position: relative;
 
   @media (max-width: 600px) {
-    padding: 3rem;
+    padding: 1rem 3rem 2rem 3rem;
   }
+
   @media (max-width: 400px) {
-    padding: 3rem 1.5rem;
+    padding: 1rem 1.5rem 2rem 1.5rem;
   }
 
   h1 {

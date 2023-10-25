@@ -29,19 +29,3 @@ export type ComponentProps<T> = {
 }
 
 export type HeaderLink = { label: string, index: number }
-
-export type BlockHeaderProps = ComponentProps<{
-  text: string
-  logo: string
-  links: HeaderLink[]
-  color: string
-  font: string
-  background: string
-}>
-
-export type BlockFooterProps = ComponentProps<{
-  links: HeaderLink[]
-  color: string
-  font: string
-  background: string
-}>

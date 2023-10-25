@@ -166,6 +166,7 @@ export const IconText: React.FC<IconTextProps> = (props) => {
             ...block,
             titleFont: f
           })}
+          background={background}
         />}
 
         <div className={styles.items}>

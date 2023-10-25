@@ -9,6 +9,7 @@ export const Footer: React.FC = () => {
     <div className={styles.footer}>
       <Link href='/contact'>contact</Link>
       <Link href='/privacy'>privacy</Link>
+      <p>&copy;{new Date().getFullYear()}&nbsp;HomeTrainers.net</p>
     </div>
   )
 }

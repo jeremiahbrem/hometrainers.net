@@ -1,4 +1,4 @@
-import { BlockHeaderProps } from '@/components/types'
+import { ComponentProps, HeaderLink } from '@/components/types'
 import styles from './header.module.scss'
 import cn from 'classnames'
 import Link from 'next/link'
@@ -15,6 +15,15 @@ import { sanitizeAnchor } from '../block-wrapper'
 import { PageLinkPicker } from '../page-link-picker'
 import { CloseButton } from '@/components/close-button'
 import { IMAGES_URL } from '@/api'
+
+export type BlockHeaderProps = ComponentProps<{
+  text: string
+  logo: string
+  links: HeaderLink[]
+  color: string
+  font: string
+  background: string
+}>
 
 export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
   const {
@@ -130,6 +139,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
       onColorChange={onColorChange}
       font={font}
       onFontChange={f => onUpdate({...block, font: f })}
+      background={background}
     />}
 
     <div
@@ -154,6 +164,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
           preview={preview}
           role={isEditing ? 'button' : undefined}
           onClick={() => onLinkClick(idx)}
+          className={styles.linkContainer}
         >
           <Link
             href={isEditing ? '' : `#${sanitizeAnchor(l.label)}`}

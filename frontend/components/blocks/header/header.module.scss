@@ -40,20 +40,21 @@
     padding-right: 2rem;
     position: relative;
 
+    .mobile-add-link, .desktop-add-link {
+      font-size: 1rem;
+    }
+
     .mobile-add-link {
       display: none;
     }
-
+ 
     .page-link {
       font-size: 0.8rem;
       margin-right: 1rem;
+      margin-top: .15rem;
       display: flex;
       &:hover {
         cursor: pointer;
-      }
-
-      .link-close {
-        position: relative;
       }
     }
 
@@ -115,7 +116,7 @@
       }
 
       .page-link {
-        font-size: 1.4rem;
+        font-size: 1.1rem;
       }
     }
 

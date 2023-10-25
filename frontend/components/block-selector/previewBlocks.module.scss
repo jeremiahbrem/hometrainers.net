@@ -8,6 +8,10 @@
   &.header {
     height: 5rem;
   }
+
+  &.footer {
+    padding-top: 10rem;
+  }
   
   &.image-text {
     height: 12rem;
@@ -39,6 +43,11 @@
     &.image-text {
       height: 18rem;
     }
+
+    &.footer {
+      padding-top: 16rem;
+    }
+
     &.full-page-image-text, &.contact-form {
       height: 11rem;
     }
