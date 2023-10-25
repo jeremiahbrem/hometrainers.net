@@ -33,13 +33,11 @@ export const PreviewBlock: React.FC<PreviewBlockProps> = (props) => {
   return (
     <div
       className={cn(styles.blockContainer, className)}
+      onClick={() => onBlockClick(newBlock)}
+      data-testid={testId}
+      role='button'
     >
-      <div
-        className={styles.blockButton}
-        onClick={() => onBlockClick(newBlock)}
-        data-testid={testId}
-        role='button'
-      >
+      <div className={styles.blockButton}>
       {children}
       </div>
     </div>
@@ -109,7 +107,8 @@ export const PreviewBlocks: PreviewBlocksType = [
         links: [
           { label: 'About', link: '' },
           { label: 'Contact', link: '' },
-        ]
+        ],
+        copyright: "HomeTrainers.net"
       },
       blockName: 'footer'
     },
