@@ -36,6 +36,7 @@ type ItemProps = {
   onTextUpdate: (text: string, color: string, font: string) => Promise<void>
   onRemove: () => void
   onIconUpdate: (icon: string, color: string) => void
+  background?: string
   styles: {
     readonly [key: string]: string;
   }
@@ -48,7 +49,8 @@ const Item: React.FC<ItemProps> = (props) => {
     onTextUpdate,
     onRemove,
     onIconUpdate,
-    styles
+    styles,
+    background,
   } = props
 
   const isEditing = useIsEditing()
@@ -62,7 +64,7 @@ const Item: React.FC<ItemProps> = (props) => {
   const onFontChange = (newFont: string) => onTextUpdate(text, textColor, newFont)
 
   return (
-    <div className={styles.item}>
+    <div className={styles.item} style={{ color: textColor }}>
       {isEditing && !preview && <button
         className={styles.removeItem}
         onClick={onRemove}>x
@@ -96,6 +98,7 @@ const Item: React.FC<ItemProps> = (props) => {
         onColorChange={onColorChange}
         font={font}
         onFontChange={onFontChange}
+        background={background}
       />}
     </div>
   )
@@ -143,7 +146,10 @@ export const IconText: React.FC<IconTextProps> = (props) => {
   }
 
   return (
-    <section className={styles.section} style={{ backgroundColor: background ?? 'white'}}>
+    <section className={styles.section} style={{
+      backgroundColor: background ?? 'white',
+      color: titleColor
+    }}>
       <div className={styles.container}>
         <Container className={cn(
           styles.title,
@@ -166,6 +172,7 @@ export const IconText: React.FC<IconTextProps> = (props) => {
             ...block,
             titleFont: f
           })}
+          background={background}
         />}
 
         <div className={styles.items}>
@@ -174,6 +181,7 @@ export const IconText: React.FC<IconTextProps> = (props) => {
               item: x,
               preview,
               styles,
+              background,
               onTextUpdate: async (text: string, color: string, font: string) => {
                 onUpdate({
                   ...block,

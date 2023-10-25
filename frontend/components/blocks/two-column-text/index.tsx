@@ -74,7 +74,8 @@ export const TwoColumnText: React.FC<TwoColumnTextProps> = (props) => {
         textPos: 'left',
         text: left.text,
         preview,
-        className: styles.left
+        className: styles.left,
+        background
       }} />
 
       <TextColumn {...{
@@ -86,7 +87,8 @@ export const TwoColumnText: React.FC<TwoColumnTextProps> = (props) => {
         textPos: 'right',
         text: right.text,
         preview,
-        className: styles.right
+        className: styles.right,
+        background
       }} />
     </section>
   )

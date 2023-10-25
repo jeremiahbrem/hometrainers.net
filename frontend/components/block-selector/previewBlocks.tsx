@@ -204,7 +204,8 @@ export const PreviewBlocks: PreviewBlocksType = [
         button: {
           text: 'Send',
           outlined: false,
-          color: '#dd940c',
+          color: '#ffffff',
+          background: '#dd940c'
         }
       },
       blockName: 'contact-form'
