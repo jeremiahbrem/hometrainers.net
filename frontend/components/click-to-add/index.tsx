@@ -12,13 +12,14 @@ const roboto = Roboto({
 type ClickToAddProps = {
   value: any
   text: string
+  color?: string
   onClick?: () => void
   className?: string
 }
 
 export const ClickToAdd: React.FC<ClickToAddProps> = (props) => {
   const isEditing = useIsEditing()
-  const { value, text, onClick, className } = props
+  const { value, text, onClick, className, color } = props
 
   if (!isEditing || (value && value !== '<p></p>')) {
     return null
@@ -29,6 +30,7 @@ export const ClickToAdd: React.FC<ClickToAddProps> = (props) => {
       className={cn(styles.clickToAdd, roboto.className, className)}
       role='button'
       onClick={onClick}
+      style={{ color }}
     >
       {text} +
     </div>

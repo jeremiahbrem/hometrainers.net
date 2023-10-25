@@ -42,39 +42,32 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
   const [editLink, setEditLink] = useState<number | null>(null)
 
   const copyrightRef = useRef(null)
+  const fontColorRef = useRef(null)
 
   const updateCopyright = async (copyright: string) => onUpdate({
     ...block,
     copyright
   })
 
+  const editorProps = {
+    right: '1rem',
+    options: ['color','font'],
+    color,
+    onColorChange: (c: string) => onUpdate({
+      ...block,
+      color: c
+    }),
+    font,
+    onFontChange: (f: string) => onUpdate({...block, font: f }),
+    background,
+  }
+
   return (
     <div
       className={cn(styles.footer, MY_PAGE_FONTS[font].className)}
       style={{ backgroundColor: background, color }}
     >
-      <Container preview={preview} style={{ color }} className={styles.copyright}>
-        {copyright && copyright != '<p></p>' && <>
-          &copy;{new Date().getFullYear()}&nbsp;{parse(copyright || '<p></p>')}
-        </>}
-      </Container>
-
-      {!preview && <Editor
-        content={copyright}
-        onUpdate={updateCopyright}
-        right={'1rem'}
-        contentRef={copyrightRef}
-        options={['color','font']}
-        color={color}
-        onColorChange={c => onUpdate({
-          ...block,
-          color: c
-        })}
-        font={font}
-        onFontChange={f => onUpdate({...block, font: f })}
-        background={background}
-      />}
-
+      
       {links.map((l, idx) => (
         <Container
           key={idx}
@@ -104,14 +97,40 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
         Add link +
       </Container>} 
       
-      {!preview && isEditing && <Container
+      <Container
         preview={preview}
-        // role='button'
-        className={cn(MY_PAGE_FONTS.roboto.className, styles.addCopyright)}
+        style={{ color }}
+        className={styles.copyright}
         ref={copyrightRef}
       >
-        Add copyright +
-      </Container>} 
+        {copyright && <>
+          &copy;{new Date().getFullYear()}&nbsp;{parse(copyright || '<p></p>')}
+        </>}
+        <ClickToAdd text='Copyright' value={copyright} className={styles.addCopyright} />
+      </Container>
+
+      {!preview && <Editor {...{
+        ...editorProps,
+        content: copyright,
+        onUpdate: updateCopyright,
+        contentRef: copyrightRef
+      }} />}
+
+      {isEditing && !preview && <Container
+        preview={preview}
+        style={{ color }}
+        className={styles.desktopAddLink}
+        ref={fontColorRef}
+      >
+        Font/color +
+      </Container>}
+
+      {!preview && <Editor {...{
+         ...editorProps,
+         content: '',
+         onUpdate: () => Promise.resolve(),
+         contentRef: fontColorRef
+      }} />}
 
       {isEditing && !preview && <PageLinkPicker {...{
         open: addLinkOpen,

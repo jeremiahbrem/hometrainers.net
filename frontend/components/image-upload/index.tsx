@@ -86,7 +86,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
     }
   }
 
-  const clickAddText = `${addText ?? `Click to add ${text}`}` + ' +'
+  const clickAddText = `${addText ?? `${text}`}` + ' +'
 
   if (!value) {
     return (

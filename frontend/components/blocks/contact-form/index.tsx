@@ -210,7 +210,6 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
           onColorChange={onColorChange}
           font={titleFont}
           onFontChange={f => onUpdate({...block, titleFont: f })}
-          background={background}
         />}
 
         <label className={styles.name} htmlFor='name'>Name</label>

@@ -29,6 +29,23 @@ const clickSelect = async () => {
 
 describe('PageLinkPicker', () => {
   it('renders block options', async () => {
+    render(<PageLinkPicker
+      {...defaultProps }
+      blockNames={defaultProps.blockNames.slice(1)}
+    />)
+
+    await clickSelect()
+
+    const expected = [
+      '1 Text Image Left',
+      '2 Icon Text Row',
+      '3 Two Column Text'
+    ]
+
+    expected.forEach(e => expect(screen.getByText(e)).toBeInTheDocument())
+  })
+  
+  it('does not use zero-based indexing when no header', async () => {
     render(<PageLinkPicker {...defaultProps } />)
 
     await clickSelect()

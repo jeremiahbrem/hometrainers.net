@@ -46,15 +46,17 @@ export const PageLinkPicker: React.FC<PageLinkPickerProps> = (props) => {
 
   const { index, label } = formState
 
+  const hasHeader = blockNames.includes('header')
+
   const options = blockNames
-    .map(formatBlockName)
+    .map((x, idx) => formatBlockName(x, hasHeader ? idx : idx + 1))
     .map((x, idx) => ({ label: x, value: idx }))
     .filter(x => !x.label.includes('Header') && !x.label.includes('Footer'))
 
   const selected = index != null
     ? [ {
         value: index,
-        label: formatBlockName(blockNames[index], index)
+        label: formatBlockName(blockNames[index], hasHeader ? index : index + 1)
       }]
     : []
 

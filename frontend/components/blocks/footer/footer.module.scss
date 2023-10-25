@@ -1,7 +1,6 @@
 @import '@/styles/global.scss';
 
 .footer {
-  color: white;
   display: flex;
   padding: 1rem 2rem;
   align-items: center;
@@ -18,10 +17,11 @@
     min-width: 1rem;
     margin-right: 1rem;
     display: flex;
-    align-items: center;
   }
 
   .add-copyright {
     position: relative;
+    font-size: .8rem;
+    margin-bottom: .2rem;
   }
 }
