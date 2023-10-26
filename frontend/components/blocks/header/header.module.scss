@@ -84,6 +84,9 @@
     .add-text {
       width: 67%;
     }
+    .text {
+      margin-left: 1rem;
+    }
     .links {
       position: fixed;
       top: 4rem;
@@ -95,7 +98,7 @@
       width: 100%;
       padding-top: 3rem;
       padding-left: 2rem;
-      height: calc(100vh - 6.8rem);
+      height: calc(100vh - 4rem);
       &.open {
         left: 0;
       }
@@ -135,6 +138,7 @@
   
     .text {
       font-size: .8rem;
+      margin-top: .25rem;
     }
   }
 
