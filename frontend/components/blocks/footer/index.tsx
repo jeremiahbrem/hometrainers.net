@@ -65,10 +65,18 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
 
   const path = usePathname();
 
+  const onLinkClick = (idx: number) => {
+    if (isEditing) {
+      setEditLink(idx)
+      return
+    }
+  }
+
   return (
     <div
       className={cn(styles.footer, MY_PAGE_FONTS[font].className)}
       style={{ backgroundColor: background, color }}
+      id='page-footer'
     >
       
       {links.map((l, idx) => (
@@ -76,10 +84,11 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
           key={idx}
           preview={preview}
           role={isEditing ? 'button' : undefined}
+          onClick={() => onLinkClick(idx)}
         >
           <Link
             key={idx}
-            href={isEditing ? '' : `${path}#${sanitizeAnchor(l.label)}`}
+            href={isEditing ? `${path}#page-footer` : `${path}#${sanitizeAnchor(l.label)}`}
             className={styles.pageLink}
           >
             {l.label}
