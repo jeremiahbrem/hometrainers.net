@@ -8,6 +8,7 @@ import { Loading } from '../loading'
 import Image from 'next/image'
 import { createOverlayText } from '@/utils/createOverlayText'
 import { API } from '@/api'
+import { usePathname } from 'next/navigation'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -49,6 +50,8 @@ export const ContactForm: React.FC = () => {
     }))
   }
 
+  const slug = usePathname()
+
   const onSubmit = async () => {
     const required: { field: keyof ContactFormValues, error: string }[] = [
       {
@@ -83,7 +86,7 @@ export const ContactForm: React.FC = () => {
 
     const response = await fetch(`${API}/contact`, {
       method: 'POST',
-      body: JSON.stringify({...formState, to: "support@hometrainers.net" })
+      body: JSON.stringify({...formState, slug })
     })
 
     setLoading(false)

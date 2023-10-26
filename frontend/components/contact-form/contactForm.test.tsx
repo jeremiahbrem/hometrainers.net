@@ -10,6 +10,12 @@ global.fetch = jest.fn(() => Promise.resolve({
   ok: true
 } as Response))
 
+jest.mock('next/navigation', () => ({
+  usePathname() {
+    return '/contact'
+  },
+}))
+
 const submit = async () => {
   await act(() => userEvent.click(screen.getByRole('button', { name: /Send/ })))
 }
@@ -78,7 +84,7 @@ describe('ContactForm', () => {
           name: 'My Name',
           email: 'test@example.com',
           message: 'my message',
-          to: 'support@hometrainers.net',
+          slug: '/contact',
         })
       }
     )

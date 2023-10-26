@@ -16,7 +16,7 @@ func CreatePageRepo(db *gorm.DB) PageRepository {
 
 func (repo *PageRepository) GetPage(slug string) (*models.Page, error) {
 	var page *models.Page
-	if err := repo.db.Where("slug = ?", slug).Where("active = ?", true).First(&page).Error; err != nil {
+	if err := repo.db.Where("slug = ?", slug).Preload("Profile").Where("active = ?", true).First(&page).Error; err != nil {
 		return nil, err
 	}
 	return page, nil

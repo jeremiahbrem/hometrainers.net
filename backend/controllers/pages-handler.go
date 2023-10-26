@@ -146,8 +146,15 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 			return
 		}
 
-		if page.Slug == "my-page" {
-			context.JSON(http.StatusBadRequest, gin.H{"error": "slug my-page is reserved"})
+		restricted := []string{
+			"my-page",
+			"privacy",
+			"contact",
+		}
+
+		if slices.Contains(restricted, page.Slug) {
+			errMessage := fmt.Sprintf("slug %s is reserved", page.Slug)
+			context.JSON(http.StatusBadRequest, gin.H{"error": errMessage})
 			return
 		}
 

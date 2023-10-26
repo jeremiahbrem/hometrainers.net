@@ -18,6 +18,7 @@ import { useIsEditing } from '@/utils/useIsEditing'
 import { ColorPicker } from '@/components/color-picker'
 import { CloseButton } from '@/components/close-button'
 import { BlockWrapper } from '../block-wrapper'
+import { usePathname } from 'next/navigation'
 
 type ContactFormValues = {
   name: string
@@ -93,6 +94,8 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     }))
   }
 
+  const slug = usePathname()
+
   const onSubmit = async () => {
     const required: { field: keyof ContactFormValues, error: string }[] = [
       {
@@ -127,7 +130,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
 
     const response = await fetch(`${API}/contact`, {
       method: 'POST',
-      body: JSON.stringify({...formState, to: profile?.email })
+      body: JSON.stringify({...formState, slug })
     })
 
     setLoading(false)
