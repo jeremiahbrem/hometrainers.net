@@ -26,7 +26,7 @@ export const BuildPage: React.FC = () => {
           <p>Target your specific area and personal training services with an editable page title, description, and a customizeable page url at <strong>hometrainers.net/YOUR-PATH</strong>.</p>
 
           <Link href='/example' className={styles.example}>
-            Click here more information from an example page built entirely with the page builder.
+            Click here for more information from an example page built entirely with the page builder.
           </Link>
 
           <p>HomeTrainers.net will only ever charge a small, flat monthly hosting fee. Connect and negotiate pricing with your clients directly and get <strong>100%</strong> of your charged rate fees.</p>
