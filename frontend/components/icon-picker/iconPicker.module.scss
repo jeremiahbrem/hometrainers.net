@@ -2,6 +2,7 @@
 
 .icon {
   position: relative;
+  color: black;
 
   .icon-modal {
     z-index: 2;
@@ -29,6 +30,7 @@
         height: 0;
         display: block;
         overflow: hidden;
+        color: black;
       }
 
       .input {
@@ -39,6 +41,7 @@
         width: 9rem;
         margin: .3rem 0;
         border: 2px solid transparent;
+        color: black;
       }
     }
   }
