@@ -19,8 +19,19 @@
       text-align: left;
       margin-bottom: 3rem;
   
-      h3, p {
+      h3, p, a {
         margin-bottom: 2rem;
+      }
+
+      .example {
+        color: $orange;
+        transition: all .25s ease-in-out;
+        font-weight: bold;
+        display: block;
+        &:hover {
+          cursor: pointer;
+          filter: brightness(60%);
+        }
       }
     }
     .images {
