@@ -9,6 +9,7 @@ import richTextStyles from '../richTextStyles.module.scss'
 import { ClickToAdd } from '@/components/click-to-add'
 import { IconPicker } from '@/components/icon-picker'
 import { MY_PAGE_FONTS } from '@/components/layout'
+import { BlockWrapper } from '../block-wrapper'
 
 export type IconTextItem = {
   text: string
@@ -24,6 +25,7 @@ export type IconTextBaseProps = ComponentProps<{
   background: string
   titleColor: string
   titleFont: string
+  anchors?: string[]
 }>
 
 export type IconTextProps = IconTextBaseProps & { styles: {
@@ -112,7 +114,14 @@ export const IconText: React.FC<IconTextProps> = (props) => {
     styles
   } = props
 
-  const { items, title, titleColor, background, titleFont = 'roboto' } = block
+  const {
+    items,
+    title,
+    titleColor,
+    background,
+    titleFont = 'roboto',
+    anchors
+  } = block
 
   const titleRef = useRef(null)
 
@@ -146,10 +155,14 @@ export const IconText: React.FC<IconTextProps> = (props) => {
   }
 
   return (
-    <section className={styles.section} style={{
-      backgroundColor: background ?? 'white',
-      color: titleColor
-    }}>
+    <BlockWrapper
+      className={styles.section}
+      style={{
+        backgroundColor: background ?? 'white',
+        color: titleColor
+      }}
+      anchors={anchors}
+    >
       <div className={styles.container}>
         <Container className={cn(
           styles.title,
@@ -211,6 +224,6 @@ export const IconText: React.FC<IconTextProps> = (props) => {
           </Container>}
         </div>
       </div>
-    </section>
+    </BlockWrapper>
   )
 }

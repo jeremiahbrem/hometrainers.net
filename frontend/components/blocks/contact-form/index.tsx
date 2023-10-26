@@ -17,6 +17,7 @@ import { MY_PAGE_FONTS } from '@/components/layout'
 import { useIsEditing } from '@/utils/useIsEditing'
 import { ColorPicker } from '@/components/color-picker'
 import { CloseButton } from '@/components/close-button'
+import { BlockWrapper } from '../block-wrapper'
 
 type ContactFormValues = {
   name: string
@@ -38,6 +39,7 @@ export type ContactFormProps = ComponentProps<{
   button: BlockButtonProps
   titleFont: string
   inputColor: string
+  anchors?: string[]
 }>
 
 export const ContactForm: React.FC<ContactFormProps> = (props) => {
@@ -61,7 +63,8 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
     background,
     button,
     titleFont = 'roboto',
-    inputColor = '#ede8e4'
+    inputColor = '#ede8e4',
+    anchors
   } = block
 
   const { profile } = useProfile()
@@ -195,9 +198,13 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
   }
 
   return (
-    <div className={styles.contactFormPage} style={{
-      backgroundColor: background ?? 'white'
-    }}>
+    <BlockWrapper
+      className={styles.contactFormPage}
+      style={{
+        backgroundColor: background ?? 'white'
+      }}
+      anchors={anchors}
+    >
       <form
         onSubmit={e => e.preventDefault()}
         className={cn(styles.contactForm, MY_PAGE_FONTS.roboto.className)}
@@ -321,6 +328,6 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
           color={color}
         />}
       </Container>
-    </div>
+    </BlockWrapper>
   )
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './twoColumnText.module.scss'
 import { ComponentProps } from '@/components/types'
 import { TextColumn } from '../text-column'
+import { BlockWrapper } from '../block-wrapper'
 
 type TextColumn = {
   text: string
@@ -13,6 +14,7 @@ export type TwoColumnTextProps = ComponentProps<{
   left: TextColumn
   right: TextColumn
   background: string
+  anchors?: string[]
 }>
 
 type ColumnKey = 'left' | 'right'
@@ -28,6 +30,7 @@ export const TwoColumnText: React.FC<TwoColumnTextProps> = (props) => {
     left,
     right,
     background,
+    anchors
   } = block
 
   const onTextUpdate = async (key: ColumnKey, text: string) => {
@@ -61,9 +64,10 @@ export const TwoColumnText: React.FC<TwoColumnTextProps> = (props) => {
   }
 
   return (
-    <section
+    <BlockWrapper
       className={styles.twoColumnText}
       style={{ backgroundColor: background }}
+      anchors={anchors}
     >
       <TextColumn {...{
         onColorChange: (c: string) => onColorChange('left', c),
@@ -90,6 +94,6 @@ export const TwoColumnText: React.FC<TwoColumnTextProps> = (props) => {
         className: styles.right,
         background
       }} />
-    </section>
+    </BlockWrapper>
   )
 }

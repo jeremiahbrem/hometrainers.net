@@ -11,6 +11,7 @@ import { Editor } from '@/components/editors'
 import cn from 'classnames'
 import richStyles from '../richTextStyles.module.scss'
 import { MY_PAGE_FONTS } from '@/components/layout'
+import { BlockWrapper } from '../block-wrapper'
 
 export type FullPageImageTextBase = ComponentProps<{
   text: string
@@ -19,6 +20,7 @@ export type FullPageImageTextBase = ComponentProps<{
   color: string
   font: string
   background: string
+  anchors?: string[]
 }>
 
 export type FullPageImageTextProps = FullPageImageTextBase & { textPos: 'left' | 'right' }
@@ -40,6 +42,7 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
     color = '#3c3636',
     font = 'roboto',
     background,
+    anchors
   } = block
 
   const textRef = useRef(null)
@@ -81,9 +84,10 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
   }
 
   return (
-    <section
+    <BlockWrapper
       className={cn(styles.section, { [styles.right]: textPos === 'right'})}
       style={{ background }}
+      anchors={anchors}
     >
       <Container className={styles.image} preview={preview}>
         {image && <Image src={imageUrl} alt={imageAlt ?? ''} height={0} width={0} />}
@@ -121,6 +125,6 @@ export const FullPageImageText: React.FC<FullPageImageTextProps> = (props) => {
         font={font}
         background={background}
       />}
-    </section>
+    </BlockWrapper>
   )
 }
