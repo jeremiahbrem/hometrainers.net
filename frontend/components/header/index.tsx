@@ -12,7 +12,7 @@ export default function Header() {
 
   const checkStyle = classnames('material-symbols-outlined', styles.check)
 
-  return <div className={styles.header} id='header'>
+  return <div className={styles.header} id='page-header'>
     <Logo className={styles.logoContainer} />
     <p>HomeTrainers.net</p>
 

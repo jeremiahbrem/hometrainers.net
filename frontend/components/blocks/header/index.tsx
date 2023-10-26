@@ -109,7 +109,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
 
   return <div
     className={headerStyle}
-    id='header'
+    id='page-header'
     style={{ backgroundColor: background, color }}
   >
     <Container preview={preview} className={styles.logoContainer}>
