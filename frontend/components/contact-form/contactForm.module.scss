@@ -6,7 +6,6 @@
   .contact-form {
     padding: 2rem 3rem 3rem 3rem;
     background: transparent;
-    color: $fontColor;
     width: 15rem;
     margin: 2rem auto 0 auto;
     position: relative;
@@ -32,7 +31,7 @@
     }
   
     .input, textarea {
-      color: inherit;
+      color: $fontColor;
       border: none;
       padding: .5rem;
       background-color: $inputColor;
@@ -44,6 +43,7 @@
     }
 
     .input-color-picker {
+      color: $fontColor;
       position: absolute;
       bottom: 0;
       padding: 1rem;
