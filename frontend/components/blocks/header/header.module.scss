@@ -91,14 +91,11 @@
       left: -105vw;
       transition: all .25s ease-in-out;
       background: white;
-      grid-auto-flow: unset;
+      display: block;
       width: 100%;
-      justify-content: left;
       padding-top: 3rem;
       padding-left: 2rem;
       height: calc(100vh - 6.8rem);
-      align-items: flex-start;
-      grid-template-rows: max-content;
       &.open {
         left: 0;
       }
@@ -112,6 +109,10 @@
 
       .mobile-add-link {
         display: block;
+      }
+
+      & > div {
+        margin-bottom: 1rem;
       }
 
       .page-link {
