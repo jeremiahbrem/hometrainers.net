@@ -1,12 +1,12 @@
 @import '@/styles/global.scss';
 
 .section {
-  border: .2rem solid transparent;
-  border-radius: .3rem;
   position: relative;
   min-height: 1.5rem;
 
   &.editing {
+    border: .2rem solid transparent;
+    border-radius: .3rem;
     &:hover {
       border-color: $orange;
       cursor: pointer;
