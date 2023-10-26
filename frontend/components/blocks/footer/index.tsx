@@ -12,6 +12,7 @@ import { PageLinkPicker } from '../page-link-picker'
 import { ClickToAdd } from '@/components/click-to-add'
 import parse from 'html-react-parser'
 import { Editor } from '@/components/editors'
+import { usePathname } from 'next/navigation'
 
 export type BlockFooterProps = ComponentProps<{
   links: HeaderLink[]
@@ -62,6 +63,8 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
     background,
   }
 
+  const path = usePathname();
+
   return (
     <div
       className={cn(styles.footer, MY_PAGE_FONTS[font].className)}
@@ -76,7 +79,7 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
         >
           <Link
             key={idx}
-            href={isEditing ? '' : `#${sanitizeAnchor(l.label)}`}
+            href={isEditing ? '' : `${path}#${sanitizeAnchor(l.label)}`}
             className={styles.pageLink}
           >
             {l.label}

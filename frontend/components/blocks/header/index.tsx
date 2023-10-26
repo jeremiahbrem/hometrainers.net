@@ -15,6 +15,7 @@ import { sanitizeAnchor } from '../block-wrapper'
 import { PageLinkPicker } from '../page-link-picker'
 import { CloseButton } from '@/components/close-button'
 import { IMAGES_URL } from '@/api'
+import { usePathname } from 'next/navigation'
 
 export type BlockHeaderProps = ComponentProps<{
   text: string
@@ -104,6 +105,8 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
     setMenuOpen(false)
   }
 
+  const path = usePathname()
+
   return <div
     className={headerStyle}
     id='header'
@@ -167,7 +170,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
           className={styles.linkContainer}
         >
           <Link
-            href={isEditing ? '' : `#${sanitizeAnchor(l.label)}`}
+            href={isEditing ? '' : `${path}#${sanitizeAnchor(l.label)}`}
             className={styles.pageLink}
           >
             {l.label}

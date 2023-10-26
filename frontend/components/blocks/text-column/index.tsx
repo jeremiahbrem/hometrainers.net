@@ -51,7 +51,7 @@ export const TextColumn: React.FC<TextColumnProps> = (props) => {
         ref={ref}
         preview={preview}
         data-testid='text-column-content'
-        style={{ color }}
+        style={{ color: color ?? 'black' }}
       >
         {parse(text || '<p></p>')}
         <ClickToAdd {...{ text: 'text', value: text }} />
