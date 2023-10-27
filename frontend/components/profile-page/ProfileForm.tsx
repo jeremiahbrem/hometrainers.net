@@ -9,7 +9,7 @@ import cn from 'classnames'
 import { Loading } from '../loading'
 import { ImageUpload } from '../image-upload'
 import Image from 'next/image'
-import { IMAGES_URL } from '@/api'
+import { API, IMAGES_URL } from '@/api'
 import { goals } from './goals'
 import _ from 'lodash'
 import { MY_PAGE_FONTS } from '../layout'
@@ -32,6 +32,18 @@ type FormError = {
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
   const { profile, resetProfile } = useProfile()
+
+  const [cities, setCities] = useState<string[]>([])
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`${API}/cities`)
+      if (response.ok) {
+        const result = await response.json()
+        setCities(result)
+      }
+    })()
+  }, [])
   
   const [loading, setLoading] = useState(false)
  
@@ -185,7 +197,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ type }) => {
         })),
         allowMultiple: type === 'trainer',
         placeholder: 'Search or type a city',
-        options: [],
+        options: cities.map(c => ({ label: c, value: c })),
         name: 'cities',
         label: isTrainer ? 'Cities served' : 'City',
         error: errors.some(x => x.key === 'cities'),

@@ -728,3 +728,40 @@ func TestProfileImageDelete(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, "image.com", bucketService.NameArg)
 }
+
+func TestGetAllCities(t *testing.T) {
+	db := SetupProfilesTests()
+	defer TeardownProfilesTests(db)
+
+	city := models.City{
+		Name: "Tulsa",
+	}
+	city2 := models.City{
+		Name: "Owasso",
+	}
+	city3 := models.City{
+		Name: "Dallas",
+	}
+
+	db.Create(&city)
+	db.Create(&city2)
+	db.Create(&city3)
+
+	w := httptest.NewRecorder()
+
+	router := SetupRouter(db)
+
+	req, _ := http.NewRequest("GET", "/cities", nil)
+
+	router.ServeHTTP(w, req)
+
+	expected := []string{
+		"Dallas",
+		"Owasso",
+		"Tulsa",
+	}
+
+	jsonExpected, _ := json.Marshal(expected)
+
+	assert.Equal(t, string(jsonExpected), w.Body.String())
+}

@@ -61,6 +61,12 @@ func CreateProfilesHandlers(router *gin.Engine, provider services.ServiceProvide
 		context.JSON(http.StatusOK, profileResult)
 	})
 
+	router.GET("/cities", func(context *gin.Context) {
+		cities := profilesRepo.GetAllCities()
+
+		context.JSON(http.StatusOK, cities)
+	})
+
 	router.GET("/matching-profiles", func(context *gin.Context) {
 		user, ok := userValidator.Validate(context)
 

@@ -75,6 +75,13 @@ func (repo *ProfileRepository) GetProfileImages(email string) []string {
 	return images
 }
 
+func (repo *ProfileRepository) GetAllCities() []string {
+	var cities []string
+	repo.db.Model(&models.City{}).Order("name").Pluck("name", &cities)
+
+	return cities
+}
+
 func (repo *ProfileRepository) GetMatchingProfiles(goals []string, city string) []*models.Profile {
 	db := repo.db
 
