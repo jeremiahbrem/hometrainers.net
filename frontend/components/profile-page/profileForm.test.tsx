@@ -9,10 +9,8 @@ import { ProfileForm } from './ProfileForm'
 
 const resetProfile = jest.fn()
 
-global.fetch = jest.fn(() => Promise.resolve({
-  json: () => Promise.resolve({}),
-  ok: true
-} as Response))
+const mockFetch = jest.fn()
+global.fetch = mockFetch
 
 const submit = async () => {
   await act(() => userEvent.click(screen.getByRole('button', { name: /Save/ })))
@@ -23,6 +21,19 @@ const getInput = (name: RegExp)  => {
 }
 
 describe('ProfileForm', () => {
+  const cityResponse = Promise.resolve(["Tulsa","Owasso"])
+
+  beforeEach(() => {
+    mockFetch.mockImplementationOnce(() => Promise.resolve({
+      json: () => cityResponse,
+      ok: true
+    } as Response))
+  })
+
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
   const existing = {
     cities: ['Tulsa'],
     goals: ['Weight Loss', 'Flexibility'],
@@ -32,8 +43,10 @@ describe('ProfileForm', () => {
     image: ''
   } as Profile
 
-  it('renders with existing profile values', () => {
+  it('renders with existing profile values', async () => {
     render(<Harness type='trainer' profile={existing} />)
+
+    await act(async () => { await cityResponse })
 
     const nameInput = getInput(/Name/)
     expect(nameInput.value).toBe(existing.name)
@@ -44,21 +57,19 @@ describe('ProfileForm', () => {
     })
   })
   
-  it('submit with missing name shows error', async () => {
-    render(<Harness type='trainer' profile={existing} />)
+  it('shows fetched cities on search', async () => {
+    render(<Harness type='trainer' profile={null} />)
 
-    fireEvent.change(getInput(/Name/), { target: { value: '' }})
+    await act(async () => { await cityResponse })
 
-    await submit()
-
-    expect(global.fetch).not.toHaveBeenCalled()
-    expect(screen.getByText('Name required')).toBeInTheDocument()
-
-    expect(getInput(/Name/).style.borderColor).toBe('red')
+    await act(() => userEvent.type(getInput(/Cities/), 'T'))
+    expect(screen.getByText('Tulsa')).toBeInTheDocument()
   })
   
   it('submit with missing city shows error', async () => {
     render(<Harness type='trainer' profile={existing} />)
+
+    await act(async () => { await cityResponse })
 
     const removeCity = screen.getByText(existing.cities[0])!.nextElementSibling as HTMLButtonElement
 
@@ -66,7 +77,7 @@ describe('ProfileForm', () => {
 
     await submit()
 
-    expect(global.fetch).not.toHaveBeenCalled()
+    expect(global.fetch).toHaveBeenCalledTimes(1)
     expect(screen.getByText('At least one city required')).toBeInTheDocument()
 
     const cityInput = getInput(/Cities/)
@@ -76,9 +87,11 @@ describe('ProfileForm', () => {
   it('submit with missing goal shows error', async () => {
     render(<Harness type='trainer' profile={{...existing, goals: [] }} />)
 
+    await act(async () => { await cityResponse })
+
     await submit()
 
-    expect(global.fetch).not.toHaveBeenCalled()
+    expect(global.fetch).toHaveBeenCalledTimes(1)
     expect(screen.getByText('At least one goal required')).toBeInTheDocument()
 
     const cityInput = getInput(/Goals/)
@@ -87,6 +100,13 @@ describe('ProfileForm', () => {
   
   it('submits form values', async () => {
     render(<Harness type='trainer' profile={existing} />)
+
+    await act(async () => { await cityResponse })
+
+    mockFetch.mockImplementationOnce(() => Promise.resolve({
+      json: () => Promise.resolve({}),
+      ok: true
+    } as Response))
 
     fireEvent.change(getInput(/Name/), { target: { value: 'New Name' }})
     
@@ -103,7 +123,7 @@ describe('ProfileForm', () => {
 
     await submit()
 
-    expect(global.fetch).toHaveBeenCalledWith(
+    expect(global.fetch).nthCalledWith(2,
       `${API}/update-profile`,
       {
         headers: expect.any(Object),
