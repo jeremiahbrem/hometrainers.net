@@ -107,9 +107,9 @@ export function registerCommands() {
       if(!$active.is(':checked')) {
         cy.get('input[name="slug"]')
         .type('test-page-1')
-        .get('input[name="title"]')
+        .get('textarea[name="title"]')
         .type('Test Title')
-        .get('input[name="description"]')
+        .get('textarea[name="description"]')
         .type('Test Description')
         .get('[data-testid="active-switch"]')
         .click()
