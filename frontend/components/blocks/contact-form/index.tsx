@@ -306,7 +306,7 @@ export const ContactForm: React.FC<ContactFormProps> = (props) => {
             preview={preview}
             onButtonChange={onButtonChange}
             modalTop={3}
-            modalLeft={-9}
+            modalLeft={-12}
           />
         </div>
 

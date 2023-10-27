@@ -4,9 +4,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   .contact-form {
-    padding: 2rem 3rem 3rem 3rem;
+    padding: 2rem 2rem 3rem 2rem;
     background: transparent;
-    width: 15rem;
+    width: 21rem;
     margin: 2rem auto 0 auto;
     position: relative;
 
@@ -35,7 +35,7 @@
       border: none;
       padding: .5rem;
       background-color: $inputColor;
-      width: 13.5rem;
+      width: 100%;
       margin: .3rem 0;
       border: 2px solid transparent;
       resize: none;
@@ -51,7 +51,7 @@
       background: white;
       border-radius: 5px;
       z-index: 3;
-      left: -1rem;
+      left: 0rem;
     }
   
     .save-button {
@@ -63,13 +63,9 @@
     @media (max-width: 630px) {
       padding: 0rem 3rem 0rem 3rem;
     }
-    @media (max-width: 350px) {
+    @media (max-width: 400px) {
       padding: 0 2rem;
-      width: 13rem;
-  
-      input, textarea {
-        width: 11rem
-      }
+      width: 100%;
     }
   }
   .image-container {

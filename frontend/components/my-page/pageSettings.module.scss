@@ -11,7 +11,7 @@
   transition: all .25s ease-in-out;
   display: grid;
   grid-template-columns: 1fr 2.5rem;
-  z-index: 2;
+  z-index: 8;
 
   .open-button {
     text-align: right;

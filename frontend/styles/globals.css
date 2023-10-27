@@ -1,10 +1,13 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body, p {
   margin: 0;
   padding: 0;
-}
-
-body, div, section, a, p {
-  box-sizing: border-box;
 }
 
 section {
