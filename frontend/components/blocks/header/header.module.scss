@@ -13,7 +13,7 @@
   z-index: 10;
   &.editing {
     position: relative;
-    z-index: unset;
+    z-index: 9;
     padding-left: 1rem;
   }
 
