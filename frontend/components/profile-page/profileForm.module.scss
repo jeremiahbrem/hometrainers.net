@@ -4,7 +4,7 @@
   padding: 0rem 3rem 3rem 3rem;
   background: white;
   color: $fontColor;
-  width: 15rem;
+  width: 21rem;
   margin: 2rem auto 0 auto;
 
   .error {
@@ -26,7 +26,7 @@
     border: none;
     padding: .5rem;
     background-color: rgba(128, 128, 128, .2);
-    width: 13.5rem;
+    width: 100%;
     margin: .3rem 0;
     border: 2px solid transparent;
   }
@@ -63,10 +63,6 @@
   }
   @media (max-width: 350px) {
     padding: 0 2rem;
-    width: 13rem;
-
-    input {
-      width: 11rem
-    }
+    width: 100%;
   }
 }
