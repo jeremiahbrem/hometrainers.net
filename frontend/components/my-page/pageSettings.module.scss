@@ -10,7 +10,7 @@
   width: 12rem;
   transition: all .25s ease-in-out;
   display: grid;
-  grid-template-columns: 1fr 2.5rem;
+  grid-template-columns: 1fr 1.75rem;
   z-index: 8;
 
   .open-button {
@@ -30,21 +30,26 @@
 
   form {
     color: $fontColor;
+    width: 100%;
+    overflow-y: scroll;
 
     fieldset {
       border: none;
       padding-right: 0;
+      overflow: hidden;
       label {
         display: block;
         margin-bottom: .2rem;
         font-size: .8rem;
       }
-      input {
+      input, textarea {
         color: inherit;
         padding: .5rem 0 .5rem .5rem;
         background-color: rgba(128, 128, 128, .2);
-        width: 7rem;
+        width: 100%;
         border: 2px solid transparent;
+        resize: none;
+        font-family: inherit;
       }
       display: flex;
       flex-direction: column;

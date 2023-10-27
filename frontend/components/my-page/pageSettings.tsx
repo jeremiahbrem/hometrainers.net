@@ -33,7 +33,10 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
     description: page.description,
   }
 
-  const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (
+    evt: React.ChangeEvent<HTMLInputElement>
+    | React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     const key = evt.target.name
     update({
       ...settings,
@@ -80,7 +83,7 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
        
         <fieldset>
           <label htmlFor='title'>Title</label>
-          <input
+          <textarea
             id='title'
             name='title' 
             value={settings.title}
@@ -91,7 +94,7 @@ export const PageSettings: React.FC<PageSettingsProps> = (props) => {
         
         <fieldset>
           <label htmlFor='description'>Description</label>
-          <input
+          <textarea
             id='description'
             name='description' 
             value={settings.description}
