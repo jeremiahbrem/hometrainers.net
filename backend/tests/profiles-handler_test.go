@@ -180,11 +180,38 @@ func TestGetOrderedMatchingProfiles(t *testing.T) {
 
 	db.Omit("Citys.*").Omit("Goals.*").Create(&unMatchedProfile)
 
+	ignoredProfile := models.Profile{
+		Email:  "jeremiah.brem@gmail.com",
+		Name:   "Jeremiah",
+		Type:   "trainer",
+		Cities: []*models.City{&city},
+		Goals:  []*models.Goal{&goal1},
+		Image:  "",
+	}
+
+	db.Omit("Citys.*").Omit("Goals.*").Create(&ignoredProfile)
+
 	db.Create(&models.Page{
 		Blocks:    datatypes.JSON([]byte(`{"blocks": [}`)),
 		Slug:      "test-page-2",
 		Title:     "Test Page 2",
 		ProfileID: trainerProfile2.ID,
+		Active:    true,
+	})
+
+	db.Create(&models.Page{
+		Blocks:    datatypes.JSON([]byte(`{"blocks": [}`)),
+		Slug:      "test-page-3",
+		Title:     "Test Page 3",
+		ProfileID: unMatchedProfile.ID,
+		Active:    true,
+	})
+
+	db.Create(&models.Page{
+		Blocks:    datatypes.JSON([]byte(`{"blocks": [}`)),
+		Slug:      "example",
+		Title:     "Example",
+		ProfileID: ignoredProfile.ID,
 		Active:    true,
 	})
 

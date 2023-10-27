@@ -12,6 +12,11 @@ type ProfileRepository struct {
 	db *gorm.DB
 }
 
+var ignoredProfiles = []string{
+	"jeremiah.brem@gmail.com",
+	"support@hometrainers.net",
+}
+
 func CreateProfilesRepo(db *gorm.DB) ProfileRepository {
 	return ProfileRepository{db}
 }
@@ -208,7 +213,7 @@ func GetUniqueProfiles(profiles []*models.Profile) []*models.Profile {
 	uniqueProfiles := make([]*models.Profile, 0)
 
 	for _, v := range profiles {
-		if _, ok := uniqueMap[v.Email]; !ok {
+		if _, ok := uniqueMap[v.Email]; !ok && !slices.Contains(ignoredProfiles, v.Email) {
 			uniqueMap[v.Email] = 1
 			uniqueProfiles = append(uniqueProfiles, v)
 		}
