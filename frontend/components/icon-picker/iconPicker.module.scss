@@ -6,13 +6,19 @@
 
   .icon-modal {
     z-index: 2;
-    position: absolute;
-    left: 0rem;
-    top: 4rem;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 16rem;
+    margin: auto;
+    height: 23rem;
     padding: 1rem;
     background: white;
     box-shadow: 0.2rem 0.2rem 0.5rem rgba(0, 0, 0, 0.4);
     border-radius: 5px;
+    text-align: left;
 
     .modal-contents {
       position: relative;
@@ -42,6 +48,10 @@
         margin: .3rem 0;
         border: 2px solid transparent;
         color: black;
+      }
+
+      .update-button {
+        margin-bottom: .5rem;
       }
     }
   }

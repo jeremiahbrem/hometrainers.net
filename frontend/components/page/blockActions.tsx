@@ -48,7 +48,7 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
       <Button text='Background' onClick={() => setBackgroundOpen(true)} />
       
       {!isHeaderFooter && <div className={cn(styles.reorderForm, { [styles.open]: reorderOpen })}>
-        {reorderOpen && <form onSubmit={onSubmit}>
+        {reorderOpen && <form onSubmit={onSubmit} className={styles.form}>
           <label htmlFor='order'>Order</label>
           <input
             name='order'
@@ -56,6 +56,7 @@ export const BlockActions: React.FC<BlockActionProps> = (props) => {
             onChange={onChange}
             value={blockOrder}
             type='number'
+            className={styles.input}
           />
           <Button text='Update' onClick={onSubmit} />
           <Button text='Cancel' onClick={() => setReorderOpen(false)} type='button' />

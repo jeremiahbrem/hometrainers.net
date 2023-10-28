@@ -91,7 +91,13 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
               placeholder='Enter icon name'
               onChange={e => setIconVal(e.target.value)}
             />
-            <Button text='Update' onClick={onIconChange} type='button' data-testid='update-icon' />
+            <Button
+              text='Update'
+              onClick={onIconChange}
+              type='button'
+              data-testid='update-icon'
+              className={styles.updateButton}
+            />
           </form>
           <ColorPicker color={iconColor} updateColor={c => onColorChange(c)}/>
           <CloseButton onClose={onModalClose}/>
