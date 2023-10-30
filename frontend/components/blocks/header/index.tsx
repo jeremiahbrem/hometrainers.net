@@ -47,6 +47,8 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
 
   const textRef = useRef(null)
 
+  const path = usePathname()
+
   const isEditing = useIsEditing()
 
   const [addLinkOpen, setAddLinkOpen] = useState(false)
@@ -94,7 +96,11 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
     { [styles.editing]: isEditing }
   )
 
-  const logUrl = preview ? logo : `${IMAGES_URL}/${logo}`
+  const logoUrl = preview
+    ? logo
+    : path === '/example'
+    ? '/'
+    : `${IMAGES_URL}/${logo}`
 
   const onLinkClick = (idx: number) => {
     if (isEditing) {
@@ -105,8 +111,6 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
     setMenuOpen(false)
   }
 
-  const path = usePathname()
-
   return <div
     className={headerStyle}
     id='page-header'
@@ -115,7 +119,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
     <Container preview={preview} className={styles.logoContainer}>
       {logo && <Logo
         className={styles.innerLogoContainer}
-        logo={logUrl}
+        logo={logoUrl}
       />}
       {!preview && <ImageUpload 
         value={logo}
