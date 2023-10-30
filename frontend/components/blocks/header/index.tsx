@@ -96,11 +96,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
     { [styles.editing]: isEditing }
   )
 
-  const logoUrl = preview
-    ? logo
-    : path === '/example'
-    ? '/'
-    : `${IMAGES_URL}/${logo}`
+  const logoUrl = preview ? logo : `${IMAGES_URL}/${logo}`
 
   const onLinkClick = (idx: number) => {
     if (isEditing) {
