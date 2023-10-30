@@ -11,7 +11,7 @@ type LogoProps = {
 export function Logo({ className, logo }: LogoProps) {
   const path = usePathname()
 
-  const href = logo ? (path || '/') : '/'
+  const href = logo && path !== '/example' ? (path || '/') : '/'
   return (
     <Link href={href as string} className={[styles.logoContainer, className].filter(x => x).join(' ')}>
       <Image src={logo ?? '/hpt-logo.svg'} alt={'home personal trainer logo'} height={0} width={0} />
