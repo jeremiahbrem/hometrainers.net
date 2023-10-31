@@ -42,6 +42,7 @@ type ItemProps = {
   styles: {
     readonly [key: string]: string;
   }
+  initial?: IconTextItem
 }
 
 const Item: React.FC<ItemProps> = (props) => {
@@ -53,20 +54,35 @@ const Item: React.FC<ItemProps> = (props) => {
     onIconUpdate,
     styles,
     background,
+    initial
   } = props
 
   const isEditing = useIsEditing()
 
-  const { text, icon, textColor, iconColor, font = 'roboto' } = item
+  const {
+    text,
+    icon,
+    textColor,
+    iconColor,
+    font,
+  } = item
+
+  const itemTextColor = textColor || initial?.textColor || ''
+  const itemIconColor = iconColor || initial?.iconColor || ''
+  const itemFont = font || initial?.font || 'roboto'
 
   const textRef = useRef(null)
 
   const onTextChange = (newText: string) => onTextUpdate(newText, textColor, font)
   const onColorChange = (color: string) => onTextUpdate(text, color, font)
   const onFontChange = (newFont: string) => onTextUpdate(text, textColor, newFont)
-
+  if (!preview) {
+    console.log(itemTextColor)
+    // console.log(textColor)
+  }
+ 
   return (
-    <div className={styles.item} style={{ color: textColor }}>
+    <div className={styles.item} style={{ color: itemTextColor }}>
       {isEditing && !preview && <button
         className={styles.removeItem}
         onClick={onRemove}>x
@@ -74,18 +90,18 @@ const Item: React.FC<ItemProps> = (props) => {
 
       <IconPicker {...{
         onIconUpdate,
-        color: iconColor,
+        color: itemIconColor,
         preview,
         icon,
         className: styles.icon
       }} />
 
       <Container
-        className={cn(styles.text, richTextStyles.richText, MY_PAGE_FONTS[font].className)}
+        className={cn(styles.text, richTextStyles.richText, MY_PAGE_FONTS[itemFont].className)}
         ref={textRef}
         preview={preview}
         data-testid='icon-text-content'
-        style={{ color: textColor }}
+        style={{ color: itemTextColor }}
       >
         {parse(text ?? '')}
         <ClickToAdd {...{ text: 'text', value: text }} />
@@ -96,9 +112,9 @@ const Item: React.FC<ItemProps> = (props) => {
         onUpdate={onTextChange}
         right={'1rem'}
         contentRef={textRef}
-        color={textColor}
+        color={itemTextColor}
         onColorChange={onColorChange}
-        font={font}
+        font={itemFont}
         onFontChange={onFontChange}
         background={background}
       />}
@@ -140,9 +156,9 @@ export const IconText: React.FC<IconTextProps> = (props) => {
       items: [...block.items, {
         text: '',
         icon: '',
-        iconColor: '#dd940c',
-        textColor: '#3c3636',
-        font: 'roboto'
+        iconColor: '',
+        textColor: '',
+        font: ''
       }]
     })
   }
@@ -216,10 +232,16 @@ export const IconText: React.FC<IconTextProps> = (props) => {
                   { ...items[i], icon: iconName, iconColor },
                   ...items.slice(i + 1)
                 ]
-              })
+              }),
+              initial: items[0]
             }} />
           ))}
-          {isEditing && !preview && <Container preview={preview}>
+          {isEditing && !preview && <Container
+            preview={preview}
+            style={{
+              color: items[0] ? items[0].textColor : 'black'
+            }}
+          >
             <ClickToAdd value={false} text={'item'}  onClick={onItemAdd} />
           </Container>}
         </div>

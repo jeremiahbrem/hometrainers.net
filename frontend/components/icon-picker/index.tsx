@@ -68,7 +68,9 @@ export const IconPicker: React.FC<IconPickerProps> = (props) => {
         >{sanitizeIcon(icon)}</span>
         : <span />}
 
-      <ClickToAdd {...{ text: 'icon', value: icon,  }} />
+      <div style={{ color }}>
+        <ClickToAdd {...{ text: 'icon', value: icon,  }} />
+      </div>
       
       <div
         className={styles.iconModal}

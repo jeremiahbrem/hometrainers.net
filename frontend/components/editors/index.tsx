@@ -22,6 +22,7 @@ import { MY_PAGE_FONTS } from '../layout'
 type MenuBarProps = {
   setOpen: React.Dispatch<boolean>
   options?: string[]
+  color?: string
   onColorChange?: (color: string) => void
   onFontChange?: (font: string) => void
 }
@@ -29,6 +30,7 @@ type MenuBarProps = {
 const MenuBar: React.FC<MenuBarProps> = ({
   options,
   setOpen,
+  color,
   onColorChange,
   onFontChange,
 }) => {
@@ -213,7 +215,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
         style={{ display: colorOpen ? 'block' : 'none' }}
       >
         <ColorPicker
-          color={editor.getAttributes('textStyle').color}
+          color={editor.getAttributes('textStyle').color || color}
           updateColor={c => {
             editor.chain().focus().setColor(c).run()
             onColorChange(c)
