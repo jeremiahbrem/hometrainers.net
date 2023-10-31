@@ -76,11 +76,7 @@ const Item: React.FC<ItemProps> = (props) => {
   const onTextChange = (newText: string) => onTextUpdate(newText, textColor, font)
   const onColorChange = (color: string) => onTextUpdate(text, color, font)
   const onFontChange = (newFont: string) => onTextUpdate(text, textColor, newFont)
-  if (!preview) {
-    console.log(itemTextColor)
-    // console.log(textColor)
-  }
- 
+  
   return (
     <div className={styles.item} style={{ color: itemTextColor }}>
       {isEditing && !preview && <button
