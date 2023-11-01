@@ -70,7 +70,8 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'header',
       text: '',
       logo: '',
-      links: []
+      links: [],
+      blockId: '',
     },
     className: styles.header,
     testId: 'header-preview',
@@ -85,16 +86,18 @@ export const PreviewBlocks: PreviewBlocksType = [
         links: [
           { label: 'About', link: '' },
           { label: 'Contact', link: '' },
-        ]
+        ],
       },
-      blockName: 'header'
+      blockName: 'header',
+      blockId: '',
     },
     Component: BlockHeader
   },
   {
     newBlock: {
       blockName: 'footer',
-      links: []
+      links: [],
+      blockId: '',
     },
     className: styles.footer,
     testId: 'footer-preview',
@@ -108,9 +111,10 @@ export const PreviewBlocks: PreviewBlocksType = [
           { label: 'About', link: '' },
           { label: 'Contact', link: '' },
         ],
-        copyright: "HomeTrainers.net"
+        copyright: "HomeTrainers.net",
       },
-      blockName: 'footer'
+      blockName: 'footer',
+      blockId: '',
     },
     Component: BlockFooter
   },
@@ -119,14 +123,16 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'image-text-left',
       text: '',
       image: '',
-      imageAlt: ''
+      imageAlt: '',
+      blockId: '',
     },
     className: styles.imageText,
     testId: 'image-text-left-preview',
     componentProps: {
       ...defaultProps,
       block: imageTextProps,
-      blockName: 'image-text-left'
+      blockName: 'image-text-left',
+      blockId: '',
     },
     Component: ImageTextLeft
   },
@@ -135,14 +141,16 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'image-text-right',
       text: '',
       image: '',
-      imageAlt: ''
+      imageAlt: '',
+      blockId: '',
     },
     className: styles.imageText,
     testId: 'image-text-right-preview',
     componentProps: {
       ...defaultProps,
       block: imageTextProps,
-      blockName: 'image-text-right'
+      blockName: 'image-text-right',
+      blockId: '',
     },
     Component: ImageTextRight
   },
@@ -151,7 +159,8 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'full-page-image-text-left',
       text: '',
       image: '',
-      imageAlt: ''
+      imageAlt: '',
+      blockId: '',
     },
     className: styles.fullPageImageText,
     testId: 'full-page-image-text-left-preview',
@@ -160,9 +169,10 @@ export const PreviewBlocks: PreviewBlocksType = [
       block: {
         image: '/carl-barcelo-hHzzdVQnkn0-unsplash.jpg',
         text: '<h4>Reach Your Personal Goals</h4>',
-        color: '#FFFFFF'
+        color: '#FFFFFF',
       },
-      blockName: 'full-page-image-text-left'
+      blockName: 'full-page-image-text-left',
+      blockId: '',
     },
     Component: FullPageImageTextLeft
   },
@@ -171,7 +181,8 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'full-page-image-text-right',
       text: '',
       image: '',
-      imageAlt: ''
+      imageAlt: '',
+      blockId: '',
     },
     className: styles.fullPageImageText,
     testId: 'full-page-image-text-right-preview',
@@ -180,9 +191,10 @@ export const PreviewBlocks: PreviewBlocksType = [
       block: {
         image: '/carl-barcelo-hHzzdVQnkn0-unsplash.jpg',
         text: '<h4>Reach Your Personal Goals</h4>',
-        color: '#FFFFFF'
+        color: '#FFFFFF',
       },
-      blockName: 'full-page-image-text-right'
+      blockName: 'full-page-image-text-right',
+      blockId: '',
     },
     Component: FullPageImageTextRight
   },
@@ -191,7 +203,8 @@ export const PreviewBlocks: PreviewBlocksType = [
       blockName: 'contact-form',
       title: '',
       image: '',
-      imageAlt: ''
+      imageAlt: '',
+      blockId: '',
     },
     className: styles.contactForm,
     testId: 'contact-form-preview',
@@ -207,7 +220,8 @@ export const PreviewBlocks: PreviewBlocksType = [
           background: '#dd940c'
         }
       },
-      blockName: 'contact-form'
+      blockName: 'contact-form',
+      blockId: '',
     },
     Component: ContactForm
   },
@@ -215,7 +229,8 @@ export const PreviewBlocks: PreviewBlocksType = [
     newBlock: {
       blockName: 'icon-text-list',
       title: '',
-      items: []
+      items: [],
+      blockId: '',
     },
     className: styles.iconTextList,
     testId: 'icon-text-list-preview',
@@ -244,7 +259,8 @@ export const PreviewBlocks: PreviewBlocksType = [
           },
         ]
       },
-      blockName: 'icon-text-list'
+      blockName: 'icon-text-list',
+      blockId: '',
     },
     Component: IconTextList
   },
@@ -252,7 +268,8 @@ export const PreviewBlocks: PreviewBlocksType = [
     newBlock: {
       blockName: 'icon-text-row',
       title: '',
-      items: []
+      items: [],
+      blockId: '',
     },
     className: styles.iconTextRow,
     testId: 'icon-text-row-preview',
@@ -299,7 +316,8 @@ export const PreviewBlocks: PreviewBlocksType = [
           },
         ]
       },
-      blockName: 'icon-text-row'
+      blockName: 'icon-text-row',
+      blockId: '',
     },
     Component: IconTextRow
   },
@@ -315,7 +333,8 @@ export const PreviewBlocks: PreviewBlocksType = [
         color: '',
         text: '',
         font: ''
-      }
+      },
+      blockId: '',
     },
     className: styles.twoColumnText,
     testId: 'two-column-text-preview',
@@ -333,7 +352,8 @@ export const PreviewBlocks: PreviewBlocksType = [
           font: 'openSans',
         },
       },
-      blockName: 'two-column-text'
+      blockName: 'two-column-text',
+      blockId: '',
     },
     Component: TwoColumnText
   },

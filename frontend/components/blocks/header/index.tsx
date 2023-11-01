@@ -33,7 +33,7 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
     onUpdate,
     block,
     preview,
-    blockNames
+    blocks
   } = props
 
   const {
@@ -195,22 +195,22 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
       {isEditing && !preview && <PageLinkPicker {...{
         open: addLinkOpen,
         setOpen: setAddLinkOpen,
-        blockNames,
-        updateLinks: (label: string, index: number) => onUpdate({
+        blocks,
+        updateLinks: (label: string, blockId: string) => onUpdate({
           ...block,
-          links: [...block.links, { label, index }]
+          links: [...block.links, { label, blockId }]
         })
       }} />}
       
       {isEditing && !preview && editLink !== null && <PageLinkPicker {...{
         open: editLink !== null,
         setOpen: () => setEditLink(null),
-        blockNames,
-        updateLinks: (label: string, index: number) => onUpdate({
+        blocks,
+        updateLinks: (label: string, blockId: string) => onUpdate({
           ...block,
           links: [
             ...block.links.slice(0, editLink), 
-            { label, index },
+            { label, blockId },
             ...block.links.slice(editLink + 1), 
           ]
         }),

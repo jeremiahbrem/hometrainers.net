@@ -19,7 +19,7 @@ const props = {
   onUpdate: jest.fn(),
   addImage: jest.fn(),
   removeImage: jest.fn(),
-  blockNames: [],
+  blocks: [],
 }
 
 describe('Icon text', () => {

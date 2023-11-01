@@ -2,13 +2,13 @@ import { Select } from '@/components/select'
 import React, { useState } from 'react'
 import styles from './pageLinkPicker.module.scss'
 import { Button } from '@/components/button'
-import { HeaderLink } from '@/components/types'
+import { Block, HeaderLink } from '@/components/types'
 
 type PageLinkPickerProps = {
   open: boolean
   setOpen: (open: boolean) => void
-  blockNames: string[]
-  updateLinks: (label: string, index: number) => void
+  blocks: Block[]
+  updateLinks: (label: string, blockId: string) => void
   link?: HeaderLink | null
   top?: number
   right?: number
@@ -24,7 +24,7 @@ const formatBlockName = (name: string, index: number) => {
 }
 
 type FormState = {
-  index: number | null
+  blockId: string | null
   label: string
 }
 
@@ -32,7 +32,7 @@ export const PageLinkPicker: React.FC<PageLinkPickerProps> = (props) => {
   const {
     open,
     setOpen,
-    blockNames,
+    blocks,
     updateLinks,
     link,
     top,
@@ -40,30 +40,41 @@ export const PageLinkPicker: React.FC<PageLinkPickerProps> = (props) => {
   } = props
 
   const [formState, setFormState] = useState<FormState>({
-    index: link?.index ?? null,
+    blockId: link?.blockId ?? null,
     label: link?.label ?? ''
   })
 
-  const { index, label } = formState
+  const { blockId, label } = formState
 
-  const hasHeader = blockNames.includes('header')
+  const hasHeader = !!blocks.find(x => x.blockName === 'header')
 
-  const options = blockNames
-    .map((x, idx) => formatBlockName(x, hasHeader ? idx : idx + 1))
-    .map((x, idx) => ({ label: x, value: idx }))
+  const options = blocks
+    .map((x, idx) => ({
+      label: formatBlockName(x.blockName, hasHeader ? idx : idx + 1),
+      value: x.blockId
+    }))
     .filter(x => !x.label.includes('Header') && !x.label.includes('Footer'))
 
-  const selected = index != null
+  const getBlockLabel = (id: string) => {
+    const index = blocks.findIndex(x => x.blockId === id)
+    const block = blocks[index]
+
+    const displayedIndex = hasHeader ? index : index + 1
+
+    return formatBlockName(block?.blockName, displayedIndex)
+  }
+
+  const selected = blockId != null
     ? [ {
-        value: index,
-        label: formatBlockName(blockNames[index], hasHeader ? index : index + 1)
+        value: blockId,
+        label: getBlockLabel(blockId)
       }]
     : []
 
   const onSubmit = () => {
-    if (label && index != null) {
-      updateLinks(label, index)
-      setFormState({ index: null, label: '' })
+    if (label && blockId != null) {
+      updateLinks(label, blockId)
+      setFormState({ blockId: null, label: '' })
       setOpen(false)
     }
   }
@@ -93,9 +104,9 @@ export const PageLinkPicker: React.FC<PageLinkPickerProps> = (props) => {
           options,
           label: 'Select block',
           selected,
-          addValue: (val: number) => setFormState(st => ({...st, index: val })),
+          addValue: (val: string) => setFormState(st => ({...st, blockId: val })),
           placeholder: 'Select block',
-          onRemove: () => setFormState(st => ({...st, index: null })),
+          onRemove: () => setFormState(st => ({...st, blockId: null })),
           showAll: true,
         }} />
 

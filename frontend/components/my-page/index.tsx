@@ -14,6 +14,7 @@ import { PageSettings, SettingsError } from './pageSettings'
 import { useAlert } from '../alerts'
 import { useProfile } from '../profile-provider'
 import styles from './myPage.module.scss'
+import { v4 } from 'uuid'
 
 export type MyPageComponentProps = {
   Blocks:  Record<string, React.FC<ComponentProps<any>>>
@@ -125,7 +126,7 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
         ? [block, ...page!.blocks.blocks]
         : [
           ...page!.blocks.blocks.filter(x => x.blockName !== 'footer'),
-          block,
+          { ...block, blockId: v4() },
           ...page!.blocks.blocks.filter(x => x.blockName === 'footer')
         ]
 
@@ -147,7 +148,7 @@ const MyPageDisplay: React.FC<MyPageDisplayProps> = (props) => {
     reset()
     setSettingsError(null)
   }
-
+  
   return (
     <Layout {...layoutProps}>
       <div className={styles.myPage}>

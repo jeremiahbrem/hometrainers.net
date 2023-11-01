@@ -23,7 +23,7 @@ const props = {
   onUpdate,
   addImage,
   removeImage,
-  blockNames: [],
+  blocks: [],
 }
 
 const mockV4 = jest.fn()

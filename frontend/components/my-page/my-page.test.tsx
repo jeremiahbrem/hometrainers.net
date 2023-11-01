@@ -19,6 +19,15 @@ const page = {
   images: []
 }
 
+const mockV4 = jest.fn()
+
+jest.mock('uuid', () => ({
+  v4() {
+    return mockV4()
+  }
+}))
+
+
 describe('my page component', () => {
   afterEach(() => {
     jest.restoreAllMocks()
@@ -254,6 +263,7 @@ describe('my page component', () => {
     beforeEach(() => {
       mockUsePathname.mockImplementation(() => 'my-page')
       mockSession.mockImplementation(() => ({ data: true }))
+      mockV4.mockImplementation(() => 'test-id')
     })
 
     const response = Promise.resolve({
@@ -263,6 +273,7 @@ describe('my page component', () => {
           blocks: { blocks: [{
             blockName: 'test-block-1',
             text: 'test text1',
+            blockId: 'test-id'
           }]},
         }
       }
@@ -297,9 +308,10 @@ describe('my page component', () => {
                     block: { text: 'preview text' },
                     blockName: 'test-block-2',
                     preview: true,
-                    onUpdate: () => undefined
+                    onUpdate: () => undefined,
+                    blockId: ''
                   },
-                  newBlock: { blockName: 'test-block-2', text: '' },
+                  newBlock: { blockName: 'test-block-2', text: '', blockId: '' },
                   testId: 'test-preview'
                 }
               ]}
@@ -338,10 +350,12 @@ describe('my page component', () => {
               {
                 blockName: 'test-block-1',
                 text: 'test text1',
+                blockId: 'test-id'
               },
               {
                 blockName: 'test-block-2',
                 text: '',
+                blockId: 'test-id'
               },
             ]},
           }
@@ -351,6 +365,8 @@ describe('my page component', () => {
       beforeEach(async () => {
         mockFetch.mockReturnValueOnce(saveResponse)
         mockFetch.mockReturnValueOnce(refetchResponse)
+        mockV4.mockImplementationOnce(() => 'test-id-1')
+        mockV4.mockImplementationOnce(() => 'test-id-2')
 
         await act(() => userEvent.click(screen.getByRole('button', { name: /Save/ })))
       })
@@ -365,10 +381,12 @@ describe('my page component', () => {
                 {
                   blockName: 'test-block-1',
                   text: 'test text1',
+                  blockId: 'test-id'
                 },
                 {
                   blockName: 'test-block-2',
                   text: '',
+                  blockId: 'test-id'
                 },
               ]}
             }),
@@ -379,6 +397,7 @@ describe('my page component', () => {
       })
       
       it('refetches', async () => {
+        await saveResponse;
         expect(mockFetch).nthCalledWith(3,
           `${API}/my-page`,
           {
@@ -426,22 +445,24 @@ type HarnessProps = MyPageComponentProps & {
 
 const Harness: React.FC<HarnessProps> = (props) => {
   return (
-    <ProfileContext.Provider value={{
-      openAllowClose: () => undefined,
-      openDisallowClose: () => undefined,
-      resetProfile: () => Promise.resolve(),
-      profile: props.profile ?? {
-        email: 'email',
-        cities: [],
-        goals: [],
-        type: 'trainer',
-        name: 'name',
-        image: '',
-      },
-      profileLoading: props.profileLoading ?? false,
-    }}>
-      <MyPageComponent {...props} />
-    </ProfileContext.Provider>
+    <RefreshProvider>
+      <ProfileContext.Provider value={{
+        openAllowClose: () => undefined,
+        openDisallowClose: () => undefined,
+        resetProfile: () => Promise.resolve(),
+        profile: props.profile ?? {
+          email: 'email',
+          cities: [],
+          goals: [],
+          type: 'trainer',
+          name: 'name',
+          image: '',
+        },
+        profileLoading: props.profileLoading ?? false,
+      }}>
+        <MyPageComponent {...props} />
+      </ProfileContext.Provider>
+    </RefreshProvider>
   )
 }
 

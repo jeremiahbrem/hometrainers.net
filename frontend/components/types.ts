@@ -1,5 +1,6 @@
 export type Block = Record<string, any> & {
   blockName: string
+  blockId: string
   anchors?: string[]
 }
 
@@ -24,8 +25,8 @@ export type ComponentProps<T> = {
   onUpdate: (args: T) => void,
   addImage: (img: string) => void,
   removeImage: (img: string) => void,
-  blockNames: string[]
+  blocks: Block[]
   preview?: boolean
 }
 
-export type HeaderLink = { label: string, index: number }
+export type HeaderLink = { label: string, blockId: string }

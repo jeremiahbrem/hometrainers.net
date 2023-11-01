@@ -5,8 +5,8 @@ import { BlockHeader } from '.'
 describe('BlockHeader', () => {
   it('renders page links', () => {
     const links = [
-      { label: 'About', index: 1 },
-      { label: 'Contact', index: 2 },
+      { label: 'About', blockId: '1' },
+      { label: 'Contact', blockId: '2' },
     ]
 
     const block = {
@@ -24,7 +24,10 @@ describe('BlockHeader', () => {
       removeImage: jest.fn(),
       onUpdate: jest.fn(),
       block,
-      blockNames: ['image-text-left', 'two-icon-text']
+      blocks: [
+        { blockName: 'image-text-left', blockId: '1' },
+        { blockName: 'two-icon-text', blockId: '2' }
+      ]
     }} />)
 
     const expected = [

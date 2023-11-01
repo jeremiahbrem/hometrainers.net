@@ -40,7 +40,7 @@ export const PageSaver: React.FC<PageSaverProps> = (props) => {
     }
 
     setLoading(true)
-
+  
     const result = await fetchResults({
       path: '/my-page',
       method: 'POST',

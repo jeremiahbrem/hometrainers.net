@@ -5,6 +5,7 @@ import { NotFound } from '../not-found';
 import { BlockActions } from './blockActions';
 import { useIsEditing } from '@/utils/useIsEditing';
 import { useRefreshKey } from '../refresh';
+import { v4 } from 'uuid';
 
 export type SetPageContext = React.Dispatch<React.SetStateAction<Page>>
 
@@ -65,7 +66,11 @@ export function onUpdate(
     blocks: {
       blocks: [
         ...ctx.blocks.blocks.slice(0, index),
-        { ...args, blockName },
+        {
+          ...args,
+          blockName,
+          blockId: ctx.blocks.blocks[index]?.blockId || v4()
+        },
         ...ctx.blocks.blocks.slice(index + 1)
       ]
     }
@@ -85,10 +90,10 @@ export function updateAnchors(
 ): Page {
   const links = updated.blocks.blocks[index].links as HeaderLink[]
 
-  const update = (block: Block, idx: number) => {
-    const newLink = links.find(l => l.index === idx)?.label
+  const update = (block: Block) => {
+    const newLink = links.find(l => l.blockId === block.blockId)?.label
     const oldLink = (original.blocks.blocks[index].links as HeaderLink[])
-      .find(l => l.index === idx)?.label
+      .find(l => l.blockId === block.blockId)?.label
 
     let anchors = block.anchors
 
@@ -107,8 +112,8 @@ export function updateAnchors(
     return anchors
   }
 
-  updated.blocks.blocks = updated.blocks.blocks.map((b, i) => {
-    const newAnchors = update(b, i)
+  updated.blocks.blocks = updated.blocks.blocks.map((b) => {
+    const newAnchors = update(b)
 
     if (!newAnchors) {
       delete b.anchors
@@ -132,7 +137,12 @@ export function onBackgroundChange(
     blocks: {
       blocks: [
         ...ctx.blocks.blocks.slice(0, index),
-        { ...ctx.blocks.blocks[index], blockName, background: color },
+        {
+          ...ctx.blocks.blocks[index],
+          blockName,
+          background: color,
+          blockId: ctx.blocks.blocks[index]?.blockId ?? v4()
+        },
         ...ctx.blocks.blocks.slice(index + 1)
       ]
     }
@@ -199,7 +209,7 @@ export const PageComponent = (props: PageProps) => {
               ))}
               addImage={(img: string) => setPageContext(ctx => addImage(img, ctx))}
               removeImage={(img: string) => setPageContext(ctx => removeImage(img, ctx))}
-              blockNames={blocks.map(x => x.blockName)}
+              blocks={blocks}
             />
 
             {isEditing && <BlockActions {...{

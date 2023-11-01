@@ -30,7 +30,8 @@ describe('page component', () => {
     const page: Page = {
       blocks: { blocks: [{
         blockName: 'text-block',
-        text: 'test content'
+        text: 'test content',
+        blockId: ''
       }]},
       slug: 'slug',
       email: 'email@example.com',
@@ -96,7 +97,8 @@ describe('page component', () => {
       render(<PageComponent {...{
         page: {...page, blocks: { blocks: [{
           blockName: 'other',
-          text: 'test content'
+          text: 'test content',
+          blockId: ''
         }]}, },
         Blocks,
         setPageContext: jest.fn()
@@ -136,15 +138,18 @@ describe('page component', () => {
       const blocks = [
         {
           blockName: 'text1',
-          text: 'initial text1'
+          text: 'initial text1',
+          blockId: ''
         },
         {
           blockName: 'text2',
-          text: 'initial text2'
+          text: 'initial text2',
+          blockId: ''
         },
         {
           blockName: 'text3',
-          text: 'initial text3'
+          text: 'initial text3',
+          blockId: ''
         },
       ].map(x => x as Block)
   
@@ -169,15 +174,18 @@ describe('page component', () => {
         blocks: { blocks: [
           {
             blockName: 'text1',
-            text: 'initial text1'
+            text: 'initial text1',
+            blockId: ''
           },
           {
             blockName: 'text2',
-            text: 'new text2'
+            text: 'new text2',
+            blockId: expect.any(String)
           },
           {
             blockName: 'text3',
-            text: 'initial text3'
+            text: 'initial text3',
+            blockId: ''
           },
         ]}
       })
@@ -187,11 +195,13 @@ describe('page component', () => {
       const blocks = [
         {
           blockName: 'text1',
-          text: 'initial text1'
+          text: 'initial text1',
+          blockId: ''
         },
         {
           blockName: 'text2',
-          text: 'initial text2'
+          text: 'initial text2',
+          blockId: ''
         },
       ].map(x => x as Block)
   
@@ -212,12 +222,14 @@ describe('page component', () => {
         blocks: { blocks: [
           {
             blockName: 'text1',
-            text: 'initial text1'
+            text: 'initial text1',
+            blockId: ''
           },
           {
             blockName: 'text2',
             text: 'initial text2',
-            background: '#FFFFFF'
+            background: '#FFFFFF',
+            blockId: ''
           },
         ]}
       })
@@ -265,15 +277,18 @@ describe('page component', () => {
       const blocks = [
         {
           blockName: 'text1',
-          text: 'initial text1'
+          text: 'initial text1',
+          blockId: ''
         },
         {
           blockName: 'text2',
-          text: 'initial text2'
+          text: 'initial text2',
+          blockId: ''
         },
         {
           blockName: 'text3',
-          text: 'initial text3'
+          text: 'initial text3',
+          blockId: ''
         },
       ].map(x => x as Block)
   
@@ -283,11 +298,13 @@ describe('page component', () => {
           expected: [
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
           ]
         },
@@ -296,11 +313,13 @@ describe('page component', () => {
           expected: [
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
           ]
         },
@@ -309,11 +328,13 @@ describe('page component', () => {
           expected: [
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
           ]
         }
@@ -343,15 +364,18 @@ describe('page component', () => {
       const blocks = [
         {
           blockName: 'text1',
-          text: 'initial text1'
+          text: 'initial text1',
+          blockId: ''
         },
         {
           blockName: 'text2',
-          text: 'initial text2'
+          text: 'initial text2',
+          blockId: ''
         },
         {
           blockName: 'text3',
-          text: 'initial text3'
+          text: 'initial text3',
+          blockId: ''
         },
       ].map(x => x as Block)
   
@@ -372,15 +396,18 @@ describe('page component', () => {
           expected: [
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
           ]
         },
@@ -390,15 +417,18 @@ describe('page component', () => {
           expected: [
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
           ]
         },
@@ -408,15 +438,18 @@ describe('page component', () => {
           expected: [
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
           ]
         },
@@ -426,15 +459,18 @@ describe('page component', () => {
           expected: [
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
           ]
         },
@@ -444,15 +480,18 @@ describe('page component', () => {
           expected: [
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
           ]
         },
@@ -471,22 +510,29 @@ describe('page component', () => {
     it('updates page context with onReorder when including header, footer', () => {
       const blocks = [
         {
-          blockName: 'header'
+          blockName: 'header',
+          links: [],
         },
         {
           blockName: 'text1',
-          text: 'initial text1'
+          text: 'initial text1',
+          blockId: ''
+
         },
         {
           blockName: 'text2',
-          text: 'initial text2'
+          text: 'initial text2',
+          blockId: ''
+
         },
         {
           blockName: 'text3',
-          text: 'initial text3'
+          text: 'initial text3',
+          blockId: ''
         },
         {
           blockName: 'footer',
+          links: [],
         },
       ].map(x => x as Block)
   
@@ -506,22 +552,27 @@ describe('page component', () => {
           currentIndex: 2,
           expected: [
             {
-              blockName: 'header'
+              blockName: 'header',
+              links: []
             },
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
             {
-              blockName: 'footer'
+              blockName: 'footer',
+              links: [],
             },
           ]
         },
@@ -530,22 +581,27 @@ describe('page component', () => {
           currentIndex: 1,
           expected: [
             {
-              blockName: 'header'
+              blockName: 'header',
+              links: [],
             },
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
             {
-              blockName: 'footer'
+              blockName: 'footer',
+              links: [],
             },
           ]
         },
@@ -554,22 +610,27 @@ describe('page component', () => {
           currentIndex: 3,
           expected: [
             {
-              blockName: 'header'
+              blockName: 'header',
+              links: []
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
-              blockName: 'footer'
+              blockName: 'footer',
+              links: [],
             },
           ]
         },
@@ -578,22 +639,27 @@ describe('page component', () => {
           currentIndex: 1,
           expected: [
             {
-              blockName: 'header'
+              blockName: 'header',
+              links: []
             },
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
-              blockName: 'footer'
+              blockName: 'footer',
+              links: [],
             },
           ]
         },
@@ -602,22 +668,27 @@ describe('page component', () => {
           currentIndex: 3,
           expected: [
             {
-              blockName: 'header'
+              blockName: 'header',
+              links: []
             },
             {
               blockName: 'text1',
-              text: 'initial text1'
+              text: 'initial text1',
+              blockId: ''
             },
             {
               blockName: 'text3',
-              text: 'initial text3'
+              text: 'initial text3',
+              blockId: ''
             },
             {
               blockName: 'text2',
-              text: 'initial text2'
+              text: 'initial text2',
+              blockId: ''
             },
             {
-              blockName: 'footer'
+              blockName: 'footer',
+              links: [],
             },
           ]
         },
@@ -635,8 +706,8 @@ describe('page component', () => {
 
     it('adds new anchor', () => {
       const blocks = [
-        { blockName: 'header', links: [{ label: 'About', index: 1 }] },
-        { blockName: 'test-block' }
+        { blockName: 'header', links: [{ label: 'About', blockId: '1' }], blockId: '0' },
+        { blockName: 'test-block', blockId: '1' }
       ]
 
       const old: Page = {
@@ -671,21 +742,21 @@ describe('page component', () => {
       expect(result).toEqual({
         ...updated,
         blocks: { blocks: [
-          { blockName: 'header', links: [{ label: 'About', index: 1 }] },
-          { blockName: 'test-block', anchors: ['About'] }
+          { blockName: 'header', links: [{ label: 'About', blockId: '1' }], blockId: '0' },
+          { blockName: 'test-block', anchors: ['About'], blockId: '1' }
         ]}
       })
     })
     
     it('removes anchor', () => {
       const blocks = [
-        { blockName: 'header', links: [] },
-        { blockName: 'test-block', anchors: ['About'] }
+        { blockName: 'header', links: [], blockId: '0' },
+        { blockName: 'test-block', anchors: ['About'], blockId: '1' }
       ]
 
       const old: Page = {
         blocks: { blocks: [
-          { ...blocks[0], links: [{ label: 'About', index: 1 }] },
+          { ...blocks[0], links: [{ label: 'About', blockId: '1' }] },
           blocks[1]
         ]},
         slug: '',
@@ -715,21 +786,21 @@ describe('page component', () => {
       expect(result).toEqual({
         ...updated,
         blocks: { blocks: [
-          { blockName: 'header', links: [] },
-          { blockName: 'test-block', anchors: [] }
+          { blockName: 'header', links: [], blockId: '0' },
+          { blockName: 'test-block', anchors: [], blockId: '1' }
         ]}
       })
     })
     
     it('replaces anchor', () => {
       const blocks = [
-        { blockName: 'header', links: [{ label: 'About', index: 1 }] },
-        { blockName: 'test-block', anchors: ['About'] }
+        { blockName: 'header', links: [{ label: 'About', blockId: '1' }], blockId: '0' },
+        { blockName: 'test-block', anchors: ['About'], blockId: '1' }
       ]
 
       const old: Page = {
         blocks: { blocks: [
-          { ...blocks[0], links: [{ label: 'About', index: 1 }] },
+          { ...blocks[0], links: [{ label: 'About', blockId: '1' }] },
           blocks[1]
         ]},
         slug: '',
@@ -742,7 +813,7 @@ describe('page component', () => {
 
       const updated: Page = {
         blocks: { blocks: [
-          { ...blocks[0], links: [{ label: 'Contact', index: 1 }] },
+          { ...blocks[0], links: [{ label: 'Contact', blockId: '1' }] },
           blocks[1]
         ]},
         slug: '',
@@ -762,8 +833,8 @@ describe('page component', () => {
       expect(result).toEqual({
         ...updated,
         blocks: { blocks: [
-          { blockName: 'header', links: [{ label: 'Contact', index: 1 }] },
-          { blockName: 'test-block', anchors: ['Contact'] }
+          { blockName: 'header', links: [{ label: 'Contact', blockId: '1' }], blockId: '0' },
+          { blockName: 'test-block', anchors: ['Contact'], blockId: '1' }
         ]}
       })
     })
@@ -771,9 +842,9 @@ describe('page component', () => {
     it('leaves anchor unchanged', () => {
       const blocks = [
         { blockName: 'header', links: [
-          { label: 'About', index: 1 }
-        ] },
-        { blockName: 'test-block', anchors: ['About'] }
+          { label: 'About', blockId: '1' }
+        ], blockId: '0' },
+        { blockName: 'test-block', anchors: ['About'], blockId: '1' }
       ]
 
       const old: Page = {
