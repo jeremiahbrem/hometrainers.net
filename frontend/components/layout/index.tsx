@@ -20,6 +20,7 @@ import Header from '../header'
 import styles from './layout.module.scss'
 import { Footer } from '../footer'
 import { NextFont } from 'next/dist/compiled/@next/font'
+import Script from 'next/script'
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -119,13 +120,15 @@ type LayoutProps = {
   description: string
   children?: React.ReactNode
   isTrainerPage?: boolean
+  scripts?: React.ReactNode
 }
 
 export default function Layout({
   title,
   description,
   children,
-  isTrainerPage
+  isTrainerPage,
+  scripts
 }: LayoutProps) {
 
   return (
@@ -140,6 +143,17 @@ export default function Layout({
           <meta charSet="utf-8" />
           <link rel="icon" href="/favicon-144x144.png" />
         </Head>
+        <Script src='https://www.googletagmanager.com/gtag/js?id=AW-11216865483' />
+        <Script id='google-analytics'>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+  
+            gtag('config', 'AW-11216865483');
+          `}
+        </Script>
+        {scripts && scripts}
         {!isTrainerPage && <Header />}
         <main className={styles.main}>
           {children}

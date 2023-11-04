@@ -6,18 +6,13 @@ export default function TrainerProfile() {
   return (
     <Layout  {...{
       title: 'HomeTrainers.net | Create Trainer Profile',
-      description: 'Create a trainer profile'
-    }}>
-      <Script src="https://www.googletagmanager.com/gtag/js?id=AW-11216865483" />
-      <Script id="google-analytics">
+      description: 'Create a trainer profile',
+      scripts: <Script id='conversion-tracking'>
         {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
- 
-          gtag('config', 'AW-11216865483');
+          gtag('event', 'conversion', {'send_to': 'AW-11216865483/0-TqCIrfzPMYEMuRz-Qp'});
         `}
       </Script>
+    }}>
       <ProfilePage type='trainer' />
     </Layout>
   )
