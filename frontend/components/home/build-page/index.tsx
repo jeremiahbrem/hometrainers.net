@@ -31,6 +31,8 @@ export const BuildPage: React.FC = () => {
 
           <p>HomeTrainers.net will only ever charge a small, flat monthly hosting fee. Connect and negotiate pricing with your clients directly and get <strong>100%</strong> of your charged rate fees.</p>
 
+          <h4>Just get fitness certified? Building a new page is a great way to kick-start a new personal training career.</h4>
+
           <Button text='Sign up' onClick={openAllowClose} />
         </div>
         <div className={styles.images}>
