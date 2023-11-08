@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"io/fs"
 	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"server/database"
@@ -160,6 +161,8 @@ func setupRouter(
 
 func main() {
 	database.ConnectDb()
+
+	rand.Seed(time.Now().UnixNano())
 
 	oauthServer := services.CreateOauthServer(&services.SessionApi{}, database.DSN)
 
