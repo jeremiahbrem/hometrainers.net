@@ -32,6 +32,7 @@ func CreateProfilesHandlers(router *gin.Engine, provider services.ServiceProvide
 	profilesRepo := provider.GetProfilesRepo()
 	userValidator := provider.GetUserValidator()
 	bucketService := provider.GetBucketService()
+	emailService := provider.GetEmailService()
 
 	router.GET("/profile", func(context *gin.Context) {
 		user, ok := userValidator.Validate(context)
@@ -147,6 +148,11 @@ func CreateProfilesHandlers(router *gin.Engine, provider services.ServiceProvide
 		if existsErr != nil {
 			dbErr = profilesRepo.CreateProfile(profile, user.Email)
 			message = "created"
+			emailService.SendEmail(services.EmailArgs{
+				To:      "jeremiah.brem@gmail.com",
+				Subject: "Profile Created",
+				Body:    fmt.Sprintf("Email: %s\n\nName: %s\n\nType: %s", user.Email, user.Name, profile.Type),
+			})
 
 		} else {
 			dbErr = profilesRepo.UpdateProfile(existing, profile)

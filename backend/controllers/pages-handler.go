@@ -89,6 +89,7 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 	profilesRepo := provider.GetProfilesRepo()
 	userValidator := provider.GetUserValidator()
 	bucketService := provider.GetBucketService()
+	emailService := provider.GetEmailService()
 
 	router.GET("/active-pages", func(context *gin.Context) {
 		pagesRepo.GetActiveSlugs()
@@ -171,6 +172,11 @@ func CreatePagesHandlers(router *gin.Engine, provider services.ServiceProviderTy
 
 			dbErr = pagesRepo.CreatePage(page, profile)
 			message = "created"
+			emailService.SendEmail(services.EmailArgs{
+				To:      "jeremiah.brem@gmail.com",
+				Subject: "Page Created",
+				Body:    fmt.Sprintf("Email: %s\n\nSlug: %s", user.Email, page.Slug),
+			})
 
 		} else {
 			if exists := slugAlreadyExists(pagesRepo, context, profile, page.Slug); exists {
