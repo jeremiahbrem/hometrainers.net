@@ -47,7 +47,7 @@ export const MatchingTrainers: React.FC = () => {
     }
   }, [profile, profileLoading])
 
-  if (profile?.type === 'trainer' && matches.length === 0) {
+  if (profile?.type !== 'client') {
     return null
   }
 
