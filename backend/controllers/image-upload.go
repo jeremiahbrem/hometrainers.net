@@ -26,7 +26,7 @@ func CreateImageUploadHandler(router *gin.Engine, provider services.ServiceProvi
 			return
 		}
 
-		imagePath, file, ok := GetImagePath(context)
+		imagePath, file, ok := GetImage(context)
 
 		if !ok {
 			return
@@ -46,7 +46,7 @@ func CreateImageUploadHandler(router *gin.Engine, provider services.ServiceProvi
 			return
 		}
 
-		imagePath, file, ok := GetImagePath(context)
+		imagePath, file, ok := GetImage(context)
 
 		if !ok {
 			return
@@ -60,7 +60,7 @@ func CreateImageUploadHandler(router *gin.Engine, provider services.ServiceProvi
 	})
 }
 
-func GetImagePath(context *gin.Context) (string, multipart.File, bool) {
+func GetImage(context *gin.Context) (string, multipart.File, bool) {
 	request := context.Request
 
 	var file multipart.File
@@ -105,7 +105,7 @@ func GetImagePath(context *gin.Context) (string, multipart.File, bool) {
 	}
 
 	if !slices.Contains(acceptedTypes, filetype) {
-		context.JSON(http.StatusInternalServerError, gin.H{"error": "Accepted file types: jpeg, png, gif"})
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Accepted file types: jpeg, png, gif"})
 		return "", file, false
 	}
 
