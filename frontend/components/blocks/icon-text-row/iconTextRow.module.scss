@@ -69,6 +69,12 @@
     @media (max-width: 400px) {
       .items {
         grid-template-columns: 1fr;
+
+        .item {
+          .text {
+            text-align: center;
+          }
+        }
       }
     }
   }
