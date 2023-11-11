@@ -20,7 +20,7 @@ export const BuildPage: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.text}>
           <h3>
-            Build your own web page to advertise your in&#x2011;home personal training business
+            Build your own free web page to advertise your in&#x2011;home personal training business
           </h3>
           <p>Select responsive, mobile-friendly page components with editable text and images. Preview your content while editing in real-time before saving any changes.</p>
           <p>Target your specific area and personal training services with an editable page title, description, and a customizeable page url at <strong>hometrainers.net/YOUR-PATH</strong>.</p>
@@ -29,7 +29,7 @@ export const BuildPage: React.FC = () => {
             Click here for more information from an example page built entirely with the page builder.
           </Link>
 
-          <p>HomeTrainers.net will only ever charge a small, flat monthly hosting fee. Connect and negotiate pricing with your clients directly and get <strong>100%</strong> of your charged rate fees.</p>
+          <p>HomeTrainers.net does not charge extra fees for leads or commissions on your sales. Connect and negotiate pricing with your clients directly and get <strong>100%</strong> of your charged rate fees.</p>
 
           <h4>Just get fitness certified? Building a new page is a great way to kick-start a new personal training career.</h4>
 
