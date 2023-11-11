@@ -17,6 +17,18 @@
     }
   }
 
+  .social-container {
+    display: grid;
+    gap: .5rem;
+    grid-auto-flow: column;
+    .social {
+      height: 1rem;
+      width: 1rem;
+      object-fit: contain;
+      margin-top: .1rem;
+    }
+  }
+
   a, p {
     text-align: center;
   }
