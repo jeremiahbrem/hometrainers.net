@@ -29,7 +29,7 @@ export const BuildPage: React.FC = () => {
             Click here for more information from an example page built entirely with the page builder.
           </Link>
 
-          <p>HomeTrainers.net doesn't charge extra fees for leads or commissions on your sales. Connect and negotiate pricing with your clients directly and get <strong>100%</strong> of your charged rate fees.</p>
+          <p>HomeTrainers.net does not charge extra fees for leads or commissions on your sales. Connect and negotiate pricing with your clients directly and get <strong>100%</strong> of your charged rate fees.</p>
 
           <h4>Just get fitness certified? Building a new page is a great way to kick-start a new personal training career.</h4>
 
