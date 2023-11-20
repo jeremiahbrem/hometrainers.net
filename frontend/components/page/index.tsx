@@ -6,6 +6,7 @@ import { BlockActions } from './blockActions';
 import { useIsEditing } from '@/utils/useIsEditing';
 import { useRefreshKey } from '../refresh';
 import { v4 } from 'uuid';
+import Layout from '../layout';
 
 export type SetPageContext = React.Dispatch<React.SetStateAction<Page>>
 
@@ -183,7 +184,11 @@ export const PageComponent = (props: PageProps) => {
   }
 
   return (
-    <>
+    <Layout {...{
+      title: page.title,
+      description: page.description,
+      isTrainerPage: true
+    }}>
       {blocks.map((block, idx) => {
         const parsedBlock = block as unknown as Block
         const blockName = parsedBlock.blockName
@@ -236,6 +241,6 @@ export const PageComponent = (props: PageProps) => {
           </React.Fragment>
         )
       })}
-    </>
+    </Layout>
   )
 }

@@ -6,13 +6,8 @@ import { API } from '@/api';
 import { getPageResult } from '@/utils/getPageResult';
 import Layout from '@/components/layout';
 
-const Page = (props: { page: Page }) => <Layout {...{
-  title: props.page.title,
-  description: props.page.description,
-  isTrainerPage: true
-}}>
+const Page = (props: { page: Page }) =>
   <PageComponent {...{...props, Blocks, setPageContext: () => undefined }}/>
-</Layout>
 
 export const getStaticPaths = async () => {
   const response = await fetch(`${API}/active-pages`)
