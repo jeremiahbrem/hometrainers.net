@@ -64,6 +64,8 @@ export const Select: React.FC<SelectProps> = (props) => {
 
   const optionResults = filteredOptions.length === 0 && allowAdd
     ? [{ label: filter, value: filter }]
+    : filteredOptions.length > 0 && allowAdd
+    ? [{ label: filter, value: filter }, ...filteredOptions]
     : filteredOptions
 
   const maxHeight = optionResults.length * 3 + 3
