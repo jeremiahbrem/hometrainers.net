@@ -86,13 +86,18 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
           role={isEditing ? 'button' : undefined}
           onClick={() => onLinkClick(idx)}
         >
-          <Link
-            key={idx}
-            href={isEditing ? `${path}#page-footer` : `${path}#${sanitizeAnchor(l.label)}`}
-            className={styles.pageLink}
-          >
-            {l.label}
-          </Link>
+          {!isEditing &&
+            <Link
+              key={idx}
+              href={`${path}#${sanitizeAnchor(l.label)}`}
+              className={styles.pageLink}
+            >
+              {l.label}
+            </Link>
+          }
+
+          {isEditing && <p className={styles.pageLink}>{l.label}</p>}
+          
           {isEditing && !preview && <CloseButton onClose={() => onUpdate({
             ...block,
             links: block.links.filter((_, i) => i !== idx)
@@ -151,7 +156,8 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
         updateLinks: (label: string, blockId: string) => onUpdate({
           ...block,
           links: [...block.links, { label, blockId }]
-        })
+        }),
+        top: -1
       }} />}
       
       {isEditing && !preview && editLink !== null && <PageLinkPicker {...{
@@ -166,7 +172,8 @@ export const BlockFooter: React.FC<BlockFooterProps> = (props) => {
             ...block.links.slice(editLink + 1), 
           ]
         }),
-        link: links[editLink]
+        link: links[editLink],
+        top: -1
       }} />}
     </div>
   )

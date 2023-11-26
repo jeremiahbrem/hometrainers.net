@@ -59,6 +59,10 @@ export const PageLinkPicker: React.FC<PageLinkPickerProps> = (props) => {
     const index = blocks.findIndex(x => x.blockId === id)
     const block = blocks[index]
 
+    if (!block) {
+      return ''
+    }
+
     const displayedIndex = hasHeader ? index : index + 1
 
     return formatBlockName(block?.blockName, displayedIndex)

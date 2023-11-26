@@ -169,13 +169,18 @@ export const BlockHeader: React.FC<BlockHeaderProps> = (props) => {
           onClick={() => onLinkClick(idx)}
           className={styles.linkContainer}
         >
-          <Link
-            href={isEditing ? '' : `${path}#${sanitizeAnchor(l.label)}`}
-            className={styles.pageLink}
-          >
-            {l.label}
-           
-          </Link>
+          {!isEditing &&
+            <Link
+              key={idx}
+              href={`${path}#${sanitizeAnchor(l.label)}`}
+              className={styles.pageLink}
+            >
+              {l.label}
+            </Link>
+          }
+
+          {isEditing && <p className={styles.pageLink}>{l.label}</p>}
+
           {isEditing && !preview && <CloseButton onClose={() => onUpdate({
             ...block,
             links: block.links.filter((_, i) => i !== idx)
