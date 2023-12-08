@@ -19,7 +19,6 @@ export const FontPicker: React.FC<FontPickerProps> = (props) => {
       key={idx}
       className={cn(v.className, { [styles.selected]: isSelected(k) })}
       onClick={() => updateFont(k)}
-      data-selected={isSelected(k)}
     >
       {k[0].toUpperCase() + k.slice(1)}
     </button>

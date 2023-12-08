@@ -135,7 +135,7 @@ describe('Editor', () => {
       await act(() => userEvent.click(screen.getByText('font')))
       
       const option = screen.getByText('Roboto')
-      expect(option).toHaveAttribute('data-selected', 'true')
+      expect(option).toHaveClass('selected')
     })
     
     it('resets content when refresh key resets', async () => {
