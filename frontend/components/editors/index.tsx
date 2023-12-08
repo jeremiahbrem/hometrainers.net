@@ -23,6 +23,7 @@ type MenuBarProps = {
   setOpen: React.Dispatch<boolean>
   options?: string[]
   color?: string
+  font?: string
   onColorChange?: (color: string) => void
   onFontChange?: (font: string) => void
 }
@@ -31,6 +32,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
   options,
   setOpen,
   color,
+  font,
   onColorChange,
   onFontChange,
 }) => {
@@ -38,6 +40,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
 
   const [colorOpen, setColorOpen] = useState(false)
   const [fontOpen, setFontOpen] = useState(false)
+  const [currentFont, setCurrentFont] = useState(font)
 
   const opts = options
     ? allOptions.filter(x => options.includes(x))
@@ -226,7 +229,10 @@ const MenuBar: React.FC<MenuBarProps> = ({
       {onFontChange && <div
         style={{ display: fontOpen ? 'block' : 'none' }}
       >
-        <FontPicker updateFont={f => onFontChange(f)} />
+        <FontPicker updateFont={f => {
+          onFontChange(f)
+          setCurrentFont(f)
+        }} font={currentFont} />
       </div>}
     </div>
   )
@@ -332,6 +338,7 @@ export const Editor: React.FC<EditorProps> = ({
           color,
           onColorChange,
           onFontChange,
+          font,
         }} />}
         extensions={extensions}
         onUpdate={e => onUpdate(e.editor.getText() ? e.editor.getHTML() : '') }

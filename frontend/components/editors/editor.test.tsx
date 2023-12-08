@@ -125,8 +125,17 @@ describe('Editor', () => {
       
       await act(() => userEvent.click(screen.getByText('font')))
   
-      await userEvent.click(screen.getByText('Oswald'))
+      await act(() => userEvent.click(screen.getByText('Oswald')))
       expect(onFontChange).toBeCalledWith('oswald')
+    })
+    
+    it('highlights selected font', async () => {
+      render(<Harness />)
+
+      await act(() => userEvent.click(screen.getByText('font')))
+      
+      const option = screen.getByText('Roboto')
+      expect(option).toHaveAttribute('data-selected', 'true')
     })
     
     it('resets content when refresh key resets', async () => {
@@ -178,6 +187,7 @@ const Harness: React.FC<HarnessProps> = ({ options, content }) => {
       color={'#3c3636'}
       onColorChange={onColorChange}
       onFontChange={onFontChange}
+      font={'roboto'}
     />
   </>)
 }

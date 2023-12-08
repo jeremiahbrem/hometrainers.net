@@ -67,6 +67,7 @@ export const TextColumn: React.FC<TextColumnProps> = (props) => {
         onColorChange={onColorChange}
         onFontChange={onFontChange}
         background={background}
+        font={font}
       />}
     </>
   )
