@@ -54,7 +54,7 @@ describe('header', () => {
 
     cy.get('[id="about"]')
 
-    cy.contains('©2023 HomeTrainers.net')
+    cy.contains(`©${new Date().getFullYear()} HomeTrainers.net`)
 
     cy.visit('/my-page')
 
