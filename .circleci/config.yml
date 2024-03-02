@@ -128,12 +128,12 @@ workflows:
       - go-test
       - e2e-test  
       - frontend-test
-      - deploy:
-          requires:
-            - go-test
-            - e2e-test
-            - frontend-test
-          filters:
-            branches:
-              only:
-                - main
+      # - deploy:
+      #     requires:
+      #       - go-test
+      #       - e2e-test
+      #       - frontend-test
+      #     filters:
+      #       branches:
+      #         only:
+      #           - main
